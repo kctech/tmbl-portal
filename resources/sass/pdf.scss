@@ -1,0 +1,303 @@
+
+// Variables
+
+// Body
+$body-bg: #fff;
+
+// Typography
+$font-family-sans-serif: "Helvetica", sans-serif;
+$font-size-base: 0.9rem;
+$line-height-base: 1.6;
+
+// Colors
+$blue: #3490dc;
+$indigo: #6574cd;
+$purple: #9561e2;
+$pink: #f66D9b;
+$red: #e3342f;
+$orange: #f6993f;
+$yellow: #ffed4a;
+$green: #38c172;
+$teal: #4dc0b5;
+$cyan: #6cb2eb;
+
+$duration: 0.3s;
+$sectionPadding: 5em;
+$slant: 3deg;
+$slantOffset: -3deg;
+$blur : 3px;
+
+$custom-control-gutter-lg: 2rem;
+$custom-control-indicator-size: 1.5rem;
+$custom-control-indicator-size-lg: 3rem;
+$custom-control-gutter-lg: 4rem;
+$custom-control-indicator-checked-bg: #fff;
+$custom-control-indicator-checked-color: $green;
+
+// Bootstrap
+@import '~bootstrap/scss/bootstrap';
+
+//MIXINS
+/// Encodes a SVG data URL so IE doesn't choke (via codepen.io/jakob-e/pen/YXXBrp).
+/// @param {string} $svg SVG data URL.
+/// @return {string} Encoded SVG data URL.
+@function svg-url($svg) {
+
+	$svg: str-replace($svg, '"', '\'');
+	$svg: str-replace($svg, '<', '%3C');
+	$svg: str-replace($svg, '>', '%3E');
+	$svg: str-replace($svg, '&', '%26');
+	$svg: str-replace($svg, '#', '%23');
+	$svg: str-replace($svg, '{', '%7B');
+	$svg: str-replace($svg, '}', '%7D');
+	$svg: str-replace($svg, ';', '%3B');
+
+	@return url("data:image/svg+xml;charset=utf8,#{$svg}");
+
+}
+
+//converts a hex colour to RGB(a)
+@mixin hex2rgba-bg($color, $opacity: 0.5) {
+    $red: red($color);
+    $green: green($color);
+    $blue: blue($color);
+    background: rgb($red, $green, $blue); /* The Fallback */
+    background: rgba($red, $green, $blue, $opacity);
+}
+
+/// Mixin to prefix a property
+@mixin prefix($property, $value, $prefixes: ()) {
+    @each $prefix in $prefixes {
+        #{'-' + $prefix + '-' + $property}: $value;
+    }
+
+    // Output standard non-prefixed declaration
+    #{$property}: $value;
+}
+
+// transition
+@mixin transition($property: all, $duration: 300ms, $animate: linear, $delay:0s){
+    transition: $property $duration $animate $delay; 
+}  
+
+// Placeholder Mixins
+@mixin placeholder {
+    &.placeholder { @content; }
+    &:-moz-placeholder { @content; }
+    &::-moz-placeholder { @content; }
+    &::-webkit-input-placeholder { @content; }
+}
+
+.cf, .clear, .clearfix {
+  clear: both;
+}
+
+//hero
+.hero {
+  background-color: $gray-900;
+  background-size: cover;
+  background-position: center center;
+  width: 100%;
+  position: relative;
+  //height: 75vh;
+  //min-height: 450px;
+  max-height: 100vh;
+  padding: $spacer * 10;
+
+  &::before {
+    content: "";
+    z-index: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: $black;
+    opacity: 0.8;
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .container {
+      //height: 65vh;
+      //min-height: 450px;
+  }
+
+  &.short {
+      //height: 33vh;
+      padding: $spacer * 2;
+
+      .container {
+          //height: 33vh;
+      }
+  }
+
+  &.diagonal {
+      &__cta-container {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+      }
+  }
+
+  &__cta-container {
+      //background: radial-gradient(50% 47%,#2a2a2a 0%,rgba(34,34,34,0) 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      z-index: 2;
+  }
+
+  &__cta {
+      margin: $grid-gutter-width;
+      width:100%;
+
+      h1 {
+          font-size: 3.5rem !important;
+          color: $black;
+      }
+      p {
+          font-size: $h3-font-size;
+      }
+
+      @include media-breakpoint-down("lg") {
+          h1 {
+              font-size: 3.5rem !important;
+          }
+          p{
+              font-size: $h3-font-size;
+          }
+      }
+
+      @include media-breakpoint-down("md") {
+          h1 {
+              font-size: 2.5rem !important;
+          }
+          p{
+              font-size: $h4-font-size;
+          }
+      }
+
+      @include media-breakpoint-down("xs") {
+          h1 {
+              font-size: 1.5rem !important;
+          }
+          p{
+              font-size: $h5-font-size;
+          }
+      }
+  }
+
+  &__title {
+
+      margin: 0;
+      line-height: 2;
+
+      .highlight {
+          display: inline-block;
+          background-color: rgba(102, 102, 102, 0.65);
+          color: $white;
+          padding: $grid-gutter-width/2 $grid-gutter-width;
+          @include prefix(box-decoration-break, clone, webkit ms);
+          line-height: 2;
+          position: relative;
+
+          > span {
+              position: relative;
+          }
+      }
+  }
+
+  &__content {
+      background-color: rgba(0,97,170,.65);
+      color: $white;
+      position: relative;
+      padding: $grid-gutter-width;
+      width: 50%;
+
+      &.full-width {
+          width: calc(100% - #{$grid-gutter-width * 2});
+      }
+
+      p {
+          font-weight: $headings-font-weight;
+          color: $white !important;
+          
+          &:last-of-type {
+              margin-bottom: 0;
+          }
+      }
+
+      &::before {
+          content: " ";
+          background-image: none;
+          @include prefix(transition, opacity 0.25s ease, webkit ms);
+          overflow: hidden;
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 0;
+          bottom: 0;
+          height: 100%;
+          display: block;
+          background-size: 100vw 100vw;
+          background-repeat: no-repeat;
+          @include prefix(filter, blur($blur), webkit ms);
+      }
+
+      @include media-breakpoint-down("lg") {
+          width: 75%;
+      }
+
+      @include media-breakpoint-down("md") {
+      }
+
+      @include media-breakpoint-down("xs") {
+          width: 100%;
+      }
+  }
+
+}
+
+//sizing custom checks
+.custom-control-lg {
+  padding-left: $custom-control-gutter-lg;
+  font-size: $font-size-lg;
+
+  .custom-control-label {
+    position: relative;
+    margin-bottom: 0;
+
+    // Background-color and (when enabled) gradient
+    &::before {
+      position: absolute;
+      top: (($font-size-lg * $line-height-base - $custom-control-indicator-size-lg) / 2);
+      width: $custom-control-indicator-size-lg;
+      height: $custom-control-indicator-size-lg;
+      left: -$custom-control-gutter-lg;
+    }
+
+    // Foreground (icon)
+    &::after {
+      top: (($font-size-lg * $line-height-base - $custom-control-indicator-size-lg) / 2);
+      width: $custom-control-indicator-size-lg;
+      height: $custom-control-indicator-size-lg;
+      left: -$custom-control-gutter-lg;
+    }
+  }
+}
+
+.custom-checkbox, .custom-radio {
+  .custom-control-input:checked ~ .custom-control-label {
+    &::before {
+      border: $green solid 1px;
+    }
+  }
+}
+ 
