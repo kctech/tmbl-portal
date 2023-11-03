@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -38,7 +38,7 @@ class TermsConsent extends Model
      * Create a new request
      *
      * @param  array  $data
-     * @return \App\User
+     * @return \App\Models\User
      */
     protected function create(array $data)
     {
@@ -94,7 +94,7 @@ class TermsConsent extends Model
      * Edit request
      *
      * @param  array  $data
-     * @return \App\User
+     * @return \App\Models\User
      */
     protected function edit(array $data)
     {
@@ -104,7 +104,7 @@ class TermsConsent extends Model
         $client->last_name = $data['last_name'];
         $client->email = $data['email'];
         $client->tel = $data['tel'];
-        
+
         $termsConsent = TermsConsent::findOrFail($data['id']);
         $termsConsent->description = $data['description'];
         $termsConsent->type = $data['type'];
@@ -128,7 +128,7 @@ class TermsConsent extends Model
      * Soft Delete request
      *
      * @param  array  $data
-     * @return \App\User
+     * @return \App\Models\User
      */
     public static function remove($id)
     {
@@ -144,7 +144,7 @@ class TermsConsent extends Model
      * Client response to request
      *
      * @param  array  $data
-     * @return \App\User
+     * @return \App\Models\User
      */
     protected function respond(array $data)
     {

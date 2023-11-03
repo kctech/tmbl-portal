@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\User;
+use App\Models\User;
 use App\Client;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Support\Facades\Session;
@@ -14,7 +14,7 @@ class ClientPolicy
     /**
      * Determine whether the user can do anything
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @param  \App\Client  $client
      * @return mixed
      */
@@ -29,7 +29,7 @@ class ClientPolicy
     /**
      * Determine whether the user can view client
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @param  \App\Client  $client
      * @return mixed
      */
@@ -41,7 +41,7 @@ class ClientPolicy
     /**
      * Determine whether the user can view client
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @param  \App\Client  $client
      * @return mixed
      */
@@ -52,7 +52,7 @@ class ClientPolicy
             $user->role->permissions == 'sudo' //is full admin
             || ($user->role->permissions == 'admin' && $client->account_id == $user->account_id) //is admin on account
             || $client->user_id == $user_id //is the adviser who the client belongs to
-        ) { 
+        ) {
             return true;
         }
 

@@ -4,14 +4,15 @@ namespace App\Http\Controllers;
 
 use Validator;
 
-use App\User;
-use App\Role;
-use App\Account;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+
+use App\Models\User;
+use App\Models\Role;
+use App\Models\Account;
 
 class UserController extends Controller
 {
@@ -101,7 +102,7 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
     public function show(User $user)
@@ -113,7 +114,7 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
     public function edit(User $user)
@@ -132,7 +133,7 @@ class UserController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
     public function update($id)
@@ -141,7 +142,7 @@ class UserController extends Controller
         $user = User::findOrFail($id);
 
         if (auth()->user()->role->level <= $user->role->level) {
-        
+
             $validatedData = request()->validate([
                 'role_id' => 'required',
                 'account_id' => 'required',
@@ -163,7 +164,7 @@ class UserController extends Controller
 
             //dd(request());
             return redirect()->route('users.index');
-            
+
         } else {
             abort(403);
         }
@@ -172,7 +173,7 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
@@ -192,7 +193,7 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
     public function reinstate($id)
@@ -212,7 +213,7 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
     public static function list()
@@ -232,7 +233,7 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
     public function find(Request $request)
@@ -301,7 +302,7 @@ class UserController extends Controller
         }
     }
 
-    
+
 
     /**
      * Check for exisiting user
@@ -331,5 +332,5 @@ class UserController extends Controller
             return redirect(route('admin.dashboard'));
         }
     }
-    
+
 }

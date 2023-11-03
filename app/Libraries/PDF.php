@@ -12,20 +12,20 @@ class PDF {
         $private_path = Storage::disk('private')->getAdapter()->getPathPrefix();
 
         $view = view($view_name,$data);
-        
+
         $tmp_hash = md5($view.microtime(true));
         Storage::disk('tmp')->put($tmp_hash.'.htm', $view );
-        
+
         $params = "\"file://{$tmp_path}{$tmp_hash}.htm\" \"{$private_path}{$tmp_hash}.pdf\" A4";
         shell_exec( PDF::$execution_path . " {$params}" );
-        
+
         Storage::disk('tmp')->delete($tmp_hash.'.htm');
         if(Storage::disk('private')->exists($tmp_hash.'.pdf')){
             return $tmp_hash . '.pdf';
         }else{
             return false;
         }
-        
+
 
     }
 }

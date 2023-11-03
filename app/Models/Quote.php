@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -112,7 +112,7 @@ class Quote extends Model
      * Create a new request
      *
      * @param  array  $data
-     * @return \App\User
+     * @return \App\Models\User
      */
     protected function create(array $data)
     {
@@ -157,7 +157,7 @@ class Quote extends Model
             $quote->fee_2_timing = $data['fee_2_timing'];
             $quote->message = $data['message'];
             $quote->email_intro = $data['email_intro'];
-            
+
             if($quote->save()) {
                 return array('client_id'=>$clientId,'quote_id'=>$quote->id);
             }else{
@@ -173,7 +173,7 @@ class Quote extends Model
      * Edit request
      *
      * @param  array  $data
-     * @return \App\User
+     * @return \App\Models\User
      */
     protected function edit(array $data)
     {
@@ -183,7 +183,7 @@ class Quote extends Model
         $client->last_name = $data['last_name'];
         $client->email = $data['email'];
         $client->tel = $data['tel'];
-        
+
         $quote = Quote::findOrFail($data['id']);
         $quote->options = $data['options'];
         $quote->purchase_val = $data['purchase_val'];
@@ -211,7 +211,7 @@ class Quote extends Model
      * Soft Delete request
      *
      * @param  array  $data
-     * @return \App\User
+     * @return \App\Models\User
      */
     public static function remove($id)
     {
@@ -227,7 +227,7 @@ class Quote extends Model
      * Client response to request
      *
      * @param  array  $data
-     * @return \App\User
+     * @return \App\Models\User
      */
     protected function respond(array $data)
     {

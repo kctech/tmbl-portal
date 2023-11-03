@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\User;
+use App\Models\User;
 
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Session;
@@ -23,7 +23,7 @@ class AuthServiceProvider extends ServiceProvider
          ,'App\ClientTransferConsent' => 'App\Policies\ClientTransferConsentPolicy'
          ,'App\TermsConsent' => 'App\Policies\TermsConsentPolicy'
          ,'App\Quote' => 'App\Policies\QuotePolicy'
-         ,'App\User' => 'App\Policies\UserPolicy'
+         ,'App\Models\User' => 'App\Policies\UserPolicy'
          ,'App\EligibilityStatement' => 'App\Policies\EligibilityStatementPolicy'
          //,'App\AccountModule' => 'App\Policies\AccountModulePolicy'
     ];

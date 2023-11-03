@@ -1,17 +1,17 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Role extends Model
+class AccountModule extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'roles';
+    protected $table = 'account_modules';
 
     /**
      * The attributes that are mass assignable.
@@ -19,6 +19,7 @@ class Role extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'permissions'
+        'account_id', 'module', 'access'
     ];
+
 }

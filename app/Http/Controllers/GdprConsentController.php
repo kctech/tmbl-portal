@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use App\Jobs\QueueEmail;
 
-use App\GdprConsent;
-use App\Client;
-use App\User;
+use App\Models\GdprConsent;
+use App\Models\Client;
+use App\Models\User;
 
 class GdprConsentController extends Controller
 {
@@ -224,7 +224,7 @@ class GdprConsentController extends Controller
     {
         $gdprConsent = GdprConsent::findOrFail($id);
         $this->authorize('anything', $gdprConsent);
-        
+
         $validatedData = request()->validate([
             'user_id' => 'required',
             'client_id' => 'required',

@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -38,7 +38,7 @@ class GdprConsent extends Model
      * Create a new request
      *
      * @param  array  $data
-     * @return \App\User
+     * @return \App\Models\User
      */
     protected function create(array $data)
     {
@@ -87,7 +87,7 @@ class GdprConsent extends Model
      * Edit request
      *
      * @param  array  $data
-     * @return \App\User
+     * @return \App\Models\User
      */
     protected function edit(array $data)
     {
@@ -97,7 +97,7 @@ class GdprConsent extends Model
         $client->last_name = $data['last_name'];
         $client->email = $data['email'];
         $client->tel = $data['tel'];
-        
+
         $gdprConsent = GdprConsent::findOrFail($data['id']);
         $gdprConsent->consent_type = $data['consent_type'];
         $gdprConsent->consent = $data['consent'];
@@ -113,7 +113,7 @@ class GdprConsent extends Model
      * Soft Delete request
      *
      * @param  array  $data
-     * @return \App\User
+     * @return \App\Models\User
      */
     public static function remove($id)
     {
@@ -129,7 +129,7 @@ class GdprConsent extends Model
      * Client response to request
      *
      * @param  array  $data
-     * @return \App\User
+     * @return \App\Models\User
      */
     protected function respond(array $data)
     {

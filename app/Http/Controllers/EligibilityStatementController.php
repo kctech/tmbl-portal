@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use App\Jobs\QueueEmail;
 
-use App\EligibilityStatement;
-use App\Client;
-use App\User;
+use App\Models\EligibilityStatement;
+use App\Models\Client;
+use App\Models\User;
 
 class EligibilityStatementController extends Controller
 {
@@ -224,7 +224,7 @@ class EligibilityStatementController extends Controller
     {
         $eligibilityStatement = EligibilityStatement::findOrFail($id);
         $this->authorize('anything', $eligibilityStatement);
-        
+
         $validatedData = request()->validate([
             'user_id' => 'required',
             'client_id' => 'required',

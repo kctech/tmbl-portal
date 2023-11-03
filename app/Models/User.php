@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -102,7 +102,7 @@ class User extends Authenticatable implements MustVerifyEmail
         $user->last_name = $data['last_name'];
         $user->email = $data['email'];
         $user->tel = $data['tel'];
-        
+
         if(isset($data['password']) && !empty($data['password'])) {
             $user->password = Hash::make($data['password']);
         }
@@ -178,7 +178,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * Soft Delete user
      *
      * @param  array  $data
-     * @return \App\User
+     * @return \App\Models\User
      */
     public static function remove($id)
     {
@@ -210,7 +210,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * Restore user
      *
      * @param  array  $data
-     * @return \App\User
+     * @return \App\Models\User
      */
     public static function reinstate($id)
     {
@@ -230,7 +230,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsTo(Account::class);
     }
-    
+
     /**
      * Get the users role
      */
@@ -246,7 +246,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Client::class);
     }
-    
+
     /**
      * Get the users GDPR requests
      */

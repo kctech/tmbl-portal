@@ -3,15 +3,15 @@
 namespace App\Http\Controllers;
 
 use Validator;
-Use Storage;
+use Storage;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use App\Jobs\QueueEmail;
 
-use App\Quote;
-use App\Client;
-use App\User;
+use App\Models\Quote;
+use App\Models\Client;
+use App\Models\User;
 
 class QuoteController extends Controller
 {
@@ -83,7 +83,7 @@ class QuoteController extends Controller
         $validator->sometimes('last_name_2', 'required', function ($input) {
             if(!empty($input->email_2)) return true;
         });
-        
+
         //return if fails
         if ($validator->fails()) {
             return redirect()->route('quote.create')
@@ -193,7 +193,7 @@ class QuoteController extends Controller
                         array('disk' => 'documents', 'view' => 'templated.'.$record->user->account->viewset.'.quote.pdf.quote_adviser', 'file' => $record->client->uid.'/'.$record->client->uid.'_'.$record->id.'_quote_adviser.pdf')
                     );
                     dispatch(new QueueEmail($adviser))->onQueue('adviseremails');
-                    
+
                 } else {
                     $status = 1;
                     $statusMsg[] = 'Task was unsuccessful for Client '. $counter . '!';
@@ -308,7 +308,7 @@ class QuoteController extends Controller
             'email' => 'required|email'
         ],
         Quote::VALIDATION_LABELS);
-        
+
         $validatedData['id'] = $id;
         $validatedData['accepted'] = 0;
         $validatedData['signature'] = null;
@@ -487,12 +487,12 @@ class QuoteController extends Controller
                 $record = Quote::findOrFail($request->post('record_id'));
                 return self::pdf($request->post('uid'), $request->post('record_id'), 'download', 'templated.'.$record->user->account->viewset.'.quote.pdf.quote', $request->post('uid').'/'.$request->post('uid').'_'.$request->post('record_id').'_quote.pdf');
                 break;
-            
+
             default:
                 return 'forbidden';
                 break;
         }
-        
+
     }
 
     /**

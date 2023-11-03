@@ -9,7 +9,7 @@
 <div class="no-break">
 	<h2>Terms of Business</h2>
 	<h6>Our Terms of Business document outlines the services we will provide. It is an important document, so please ensure that you take time to read it carefully.</h6>
-	<p>If there is anything in this document that you are unsure about, please don’t hesitate to get in touch with your adviser</p>
+	<p>If there is anything in this document that you are unsure about, please don't hesitate to get in touch with your adviser</p>
 
 	<hr class="my-4" />
 </div>
@@ -68,15 +68,64 @@
 
 
 <div class="no-break">
+    <h2>
+        Fees &amp; Costs &ndash;
+        <br />Residential &amp; Buy to Let Mortgages
+    </h2>
+    <p>Our actual fees and charges will be explained before we do any work, and we will explain payment options to you.</p>
+    <ul>
+        <li>
+            @if($record->amount == 0)
+                We do not charge a fee for arranging your mortgage.
+            @else
+                We charge a fee for arranging your mortgage
+            @endif
+        </li>
+        <li>
+            @php
+                $amount = number_format($record->amount, 2, '.', '');
+            @endphp
+            @if($record->type == 'Fixed Fee')
+                <p>We will charge a fee of &pound;{{ $amount }}</p>
+                <p>This fee is for advice, recommendation, research and application of the loan.</p>
+            @elseif($record->type == 'Percentage')
+                <p>Percentage (%) basis. Fees vary according to individual circumstances, and we agree our fees with you before we undertake any chargeable work. This fee is for advice, recommendation, research and application of the loan.</p>
+                <p>This can be up to 1% of the mortgage amount. Our typical fee is &pound; 395.00</p>
+            @endif
+        </li>
+        <li>
+            <p>Fee payments are due as detailed below:</p>
+            <p>
+                @if($record->type == 'Fixed Fee')
+                    &pound;{{ $amount }}
+                @elseif($record->type == 'Percentage')
+                    {{ $record->amount }}%
+                @endif
+                @if($record->timing == 'Application')
+                    payable on application.
+                @elseif($record->timing == 'Offer')
+                    payable at offer.
+                @elseif($record->timing == 'Completion')
+                    payable at completion stage.
+                @endif
+            </p>
+        </li>
+    </ul>
+    <h5><strong><em>Example </em></strong><em>(for illustrative purposes only):</em></h5>
+    <p><em>If your mortgage is for &pound;100,000, we may charge up to &pound;1,000 in total, which equates to 1% of the loan.</em></p>
+
+    {{--
 	<h2>
 		Fees &amp; Costs &ndash;
 		<br />Residential &amp; Buy to Let Mortgages
 	</h2>
 	<p>We charge a fee for arranging your mortgage. Our actual fees and charges will be explained before we do any work, and we will explain payment options to you.</p>
 	<p>Fees vary according to individual circumstances, and we agree our fees with you before we undertake any chargeable work. This fee is for advice, recommendation, research and application of the loan.</p>
-	<p>This can be up to 2% of the mortgage amount and is payable on offer at the earliest.</p>
+	<p>This can be up to 1% of the mortgage amount and is payable on offer at the earliest.</p>
 	<h5><strong><em>Example</em></strong> <em>(for illustrative purposes only):</em></h5>
-	<p><em>If your mortgage is for &pound;100,000, we may charge up to &pound;2,000 in total, which equates to 2% of the loan.</em></p>
+	<p><em>If your mortgage is for &pound;100,000, we may charge up to &pound;1,000 in total, which equates to 1% of the loan.</em></p>
+    --}}
+
 	<span class="text-muted">
 		<p>There may be additional costs and charges relating to the mortgage product we recommend. You will receive a Mortgage Illustration when considering a particular mortgage and product, which will detail any fees relating to it.</p>
 		<p>We will receive commission from the mortgage lender (in addition to the fees you pay).</p>
@@ -95,7 +144,7 @@
 
 @if($record->service == 'MP' || $record->service == 'P')
 	<div class="no-break">
-		<h2>Fees &amp; Costs – Protection Planning</h2>
+		<h2>Fees &amp; Costs - Protection Planning</h2>
 		<p>We arrange policies with the insurers on your behalf. You do not pay us a fee for doing this. We will receive commission from the insurers which is a percentage of the total annual premium.</p>
 
 		<hr class="my-4" />
@@ -179,7 +228,7 @@
 	</ul>
 
 	<p>Mortgage Advice Bureau is authorised and regulated by the FCA in respect of consumer credit activities. You can check this on the FCA&rsquo;s Register by visiting <a href="https://register.fca.org.uk/">register.fca.org.uk</a> or by contacting them on <strong>0845 606 1234</strong>.</p>
-	
+
 	<hr class="my-4" />
 </div>
 

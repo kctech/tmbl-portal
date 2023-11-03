@@ -22,7 +22,7 @@ function dq($q){
 }
 
 //User
-use App\User;
+use App\Models\User;
 function getUser($id){
     return User::where('id',$id)->first();
 }
@@ -51,9 +51,9 @@ function checkModulePermission($user, $module) {
             break;
         default:
             //normal mode
-            if (in_array($module, json_decode(Session::get('modules')))) { 
+            if (in_array($module, json_decode(Session::get('modules')))) {
                 return true;
-            } else { 
+            } else {
                 return false;
             }
     }
@@ -114,7 +114,7 @@ function qs($arAdditions=[],$replaceQueryString=false) {
 }
 
 // File Routines
-// 
+//
 function underScoreToSpace($text){
     return str_replace("_"," ", $text);
 }

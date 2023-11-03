@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -38,7 +38,7 @@ class ClientTransferConsent extends Model
      * Create a new request
      *
      * @param  array  $data
-     * @return \App\User
+     * @return \App\Models\User
      */
     protected function create(array $data)
     {
@@ -91,7 +91,7 @@ class ClientTransferConsent extends Model
      * Edit request
      *
      * @param  array  $data
-     * @return \App\User
+     * @return \App\Models\User
      */
     protected function edit(array $data)
     {
@@ -101,7 +101,7 @@ class ClientTransferConsent extends Model
         $client->last_name = $data['last_name'];
         $client->email = $data['email'];
         $client->tel = $data['tel'];
-        
+
         $clientTransferConsent = ClientTransferConsent::findOrFail($data['id']);
         $clientTransferConsent->notes = $data['notes'];
         $clientTransferConsent->consent = $data['consent'];
@@ -117,7 +117,7 @@ class ClientTransferConsent extends Model
      * Soft Delete request
      *
      * @param  array  $data
-     * @return \App\User
+     * @return \App\Models\User
      */
     public static function remove($id)
     {
@@ -133,7 +133,7 @@ class ClientTransferConsent extends Model
      * Client response to request
      *
      * @param  array  $data
-     * @return \App\User
+     * @return \App\Models\User
      */
     protected function respond(array $data)
     {

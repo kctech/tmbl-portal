@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
-use App\User;
+use App\Models\User;
 
 class Client extends Model
 {
@@ -92,7 +92,7 @@ class Client extends Model
         }else{
             $query = self::where('clients.deleted_at', null)->where('clients.user_id', session('user_id', auth()->id()));
         }
-        
+
         $query = $query->where('account_id', '=', auth()->user()->account_id);
 
         //$query = $query->join('clients', 'clients.id', 'gdpr_consents.client_id');
@@ -136,7 +136,7 @@ class Client extends Model
      * Soft Delete request
      *
      * @param  array  $data
-     * @return \App\User
+     * @return \App\Models\User
      */
     public static function remove($id)
     {
@@ -192,7 +192,7 @@ class Client extends Model
     {
         return $this->belongsTo(User::class);
     }
-    
+
     /**
      * Get the clients SDLT Disclaimer requests
      */

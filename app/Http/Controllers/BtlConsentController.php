@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use App\Jobs\QueueEmail;
 
-use App\BtlConsent;
-use App\Client;
-use App\User;
+use App\Models\BtlConsent;
+use App\Models\Client;
+use App\Models\User;
 
 class BtlConsentController extends Controller
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Session;
 
 use App\Client;
 
-class SdltDisclaimer extends Model
+class EligibilityStatement extends Model
 {
     use SoftDeletes;
 
@@ -19,7 +19,7 @@ class SdltDisclaimer extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id', 'client_id', 'consent', 'consent_additional', 'consent_type'
+        'user_id', 'client_id', 'type', 'options', 'message', 'responded'
     ];
 
     /**
@@ -30,7 +30,7 @@ class SdltDisclaimer extends Model
         parent::boot();
 
         static::addGlobalScope('order', function (Builder $builder) {
-            $builder->orderBy('sdlt_disclaimers.updated_at', 'desc');
+            $builder->orderBy('eligibilitystatements.updated_at', 'desc');
         });
     }
 
@@ -38,7 +38,7 @@ class SdltDisclaimer extends Model
      * Create a new request
      *
      * @param  array  $data
-     * @return \App\User
+     * @return \App\Models\User
      */
     protected function create(array $data)
     {
@@ -67,13 +67,15 @@ class SdltDisclaimer extends Model
 
         if (!empty($clientId)) {
 
-            $sdltDisclaimer = new SdltDisclaimer();
-            $sdltDisclaimer->user_id = $data['user_id'];
-            $sdltDisclaimer->consent_type = $data['consent_type'];
-            $sdltDisclaimer->client_id = $clientId;
+            $statement = new EligibilityStatement();
+            $statement->user_id = $data['user_id'];
+            $statement->options = $data['options'];
+            $statement->message = $data['message'];
+            $statement->statement_type = $data['statement_type'];
+            $statement->client_id = $clientId;
 
-            if($sdltDisclaimer->save()) {
-                return array('client_id'=>$clientId,'consent_id'=>$sdltDisclaimer->id);
+            if($statement->save()) {
+                return array('client_id'=>$clientId,'statement_id'=>$statement->id);
             }else{
                 return false;
             }
@@ -87,7 +89,7 @@ class SdltDisclaimer extends Model
      * Edit request
      *
      * @param  array  $data
-     * @return \App\User
+     * @return \App\Models\User
      */
     protected function edit(array $data)
     {
@@ -97,13 +99,15 @@ class SdltDisclaimer extends Model
         $client->last_name = $data['last_name'];
         $client->email = $data['email'];
         $client->tel = $data['tel'];
-        
-        $sdltDisclaimer = SdltDisclaimer::findOrFail($data['id']);
-        $sdltDisclaimer->consent_type = $data['consent_type'];
-        $sdltDisclaimer->consent = $data['consent'];
 
-        if($client->save() && $sdltDisclaimer->save()) {
-            return array('client_id'=>$client->id,'consent_id'=>$sdltDisclaimer->id);
+        $statement = EligibilityStatement::findOrFail($data['id']);
+        $statement->options = $data['options'];
+        $statement->statement_type = $data['statement_type'];
+        $statement->message = $data['message'];
+        $statement->responded = 'N';
+
+        if($client->save() && $statement->save()) {
+            return array('client_id'=>$client->id,'statement_id'=>$statement->id);
         }else{
             return false;
         }
@@ -113,12 +117,12 @@ class SdltDisclaimer extends Model
      * Soft Delete request
      *
      * @param  array  $data
-     * @return \App\User
+     * @return \App\Models\User
      */
     public static function remove($id)
     {
-        $sdltDisclaimer = SdltDisclaimer::findOrFail($id);
-        if ($sdltDisclaimer->delete()) {
+        $statement = EligibilityStatement::findOrFail($id);
+        if ($statement->delete()) {
             return true;
         } else {
             return false;
@@ -129,14 +133,14 @@ class SdltDisclaimer extends Model
      * Client response to request
      *
      * @param  array  $data
-     * @return \App\User
+     * @return \App\Models\User
      */
     protected function respond(array $data)
     {
 
-        $sdltDisclaimer = SdltDisclaimer::findOrFail($data['id']);
-        $sdltDisclaimer->consent = $data['consent'];
-        $sdltDisclaimer->consent_additional = $data['consent_additional'];
+        $statement = EligibilityStatement::findOrFail($data['id']);
+        $statement->options = $data['options'];
+        $statement->responded = 'Y';
 
         $client = Client::findOrFail($data['client_id']);
         if(!empty($data['mkt_email_consent'])){
@@ -152,8 +156,8 @@ class SdltDisclaimer extends Model
             $client->mkt_post_consent = $data['mkt_post_consent'];
         }
 
-        if($client->save() && $sdltDisclaimer->save()) {
-            return array('client_id'=>$client->id,'consent_id'=>$sdltDisclaimer->id);
+        if($client->save() && $statement->save()) {
+            return array('client_id'=>$client->id,'statement_id'=>$statement->id);
         }else{
             return false;
         }
@@ -178,16 +182,16 @@ class SdltDisclaimer extends Model
     /**
      * Get the user that consent was made by.
      */
-    public static function filter($consent_status, $consent_additional, $client_surname, $sort)
+    public static function filter($statement_status, $statement_type, $client_surname, $sort)
     {
-        $query = self::select('sdlt_disclaimers.*')->where('sdlt_disclaimers.deleted_at', null)->where('sdlt_disclaimers.user_id', Session::get('user_id', auth()->id()));
-        $query = $query->join('clients', 'clients.id', 'sdlt_disclaimers.client_id');
+        $query = self::select('eligibilitystatements.*')->where('eligibilitystatements.deleted_at', null)->where('eligibilitystatements.user_id', session('user_id', auth()->id()));
+        $query = $query->join('clients', 'clients.id', 'eligibilitystatements.client_id');
 
-        if (!empty($consent_status)) {
-            $query = $query->where('sdlt_disclaimers.consent', $consent_status);
+        if (!empty($statement_status)) {
+            $query = $query->where('eligibilitystatements.responded', $statement_status);
         }
-        if (!empty($consent_additional)) {
-            $query = $query->where('sdlt_disclaimers.consent_additional', $consent_additional);
+        if (!empty($statement_type)) {
+            $query = $query->where('eligibilitystatements.statement_type', $statement_type);
         }
         if (!empty($client_surname)) {
             $query = $query->where('clients.last_name', 'like', '%'.$client_surname.'%');
@@ -195,13 +199,13 @@ class SdltDisclaimer extends Model
         if (!empty($sort)) {
             switch($sort) {
                 case 'recent' :
-                    $query = $query->orderby('sdlt_disclaimers.updated_at', 'DESC');
+                    $query = $query->orderby('eligibilitystatements.updated_at', 'DESC');
                     break;
                 case 'newest_first' :
-                    $query = $query->orderby('sdlt_disclaimers.id', 'DESC');
+                    $query = $query->orderby('eligibilitystatements.id', 'DESC');
                     break;
                 case 'oldest_first' :
-                    $query = $query->orderby('sdlt_disclaimers.id', 'ASC');
+                    $query = $query->orderby('eligibilitystatements.id', 'ASC');
                     break;
                 case 'surname_az' :
                     $query = $query->orderby('clients.last_name', 'ASC');
@@ -210,10 +214,10 @@ class SdltDisclaimer extends Model
                     $query = $query->orderby('clients.last_name', 'DESC');
                     break;
                 default :
-                    $query = $query->orderby('sdlt_disclaimers.updated_at', 'DESC');
+                    $query = $query->orderby('eligibilitystatements.updated_at', 'DESC');
             }
         } else {
-            $query = $query->orderby('sdlt_disclaimers.updated_at', 'DESC');
+            $query = $query->orderby('eligibilitystatements.updated_at', 'DESC');
         }
         return $query->paginate(config('database.pagination_size'));
     }

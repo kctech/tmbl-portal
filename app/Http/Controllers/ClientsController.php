@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use Validator;
 
-use App\Client;
-use App\User;
+use App\Models\Client;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
@@ -175,7 +175,7 @@ class ClientsController extends Controller
     {
         $client = Client::findOrFail($id);
         $this->authorize('anything', $client);
-        
+
         $validatedData = request()->validate([
             'user_id' => 'required',
             'client_id' => 'required',
@@ -359,5 +359,5 @@ class ClientsController extends Controller
             'count' => $count
         ]);
     }
-    
+
 }

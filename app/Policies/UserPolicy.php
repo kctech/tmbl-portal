@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\User;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class UserPolicy
@@ -22,14 +22,14 @@ class UserPolicy
     /**
      * Determine whether the user can do anything
      *
-     * @param  \App\User  $user
-     * @param  \App\User  $current
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\User  $current
      * @return mixed
      */
     public function anything(User $user)
     {
         return $user->role->level <= 1;
-        //return $user->role->permissions == 'sudo'; 
+        //return $user->role->permissions == 'sudo';
     }
 
 }

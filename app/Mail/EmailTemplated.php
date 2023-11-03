@@ -2,8 +2,8 @@
 
 namespace App\Mail;
 
-Use Storage;
-Use App\Http\Controllers\PdfController;
+use Storage;
+use App\Http\Controllers\PdfController;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -15,7 +15,7 @@ class EmailTemplated extends Mailable
     use Queueable, SerializesModels;
 
     public $details;
-    public $ident = "Generic Email";        
+    public $ident = "Generic Email";
 
     /**
      * Create a new message instance.
@@ -52,7 +52,7 @@ class EmailTemplated extends Mailable
         } else {
             $email->from('noreply@tmblgroup.co.uk');
         }*/
-        
+
         if (isset($this->details['replyTo'])) {
             if (!empty($this->details['replyTo'])) {
                 $email->replyTo($this->details['replyTo']);
@@ -73,7 +73,7 @@ class EmailTemplated extends Mailable
                             $file = 'saved';
                         }
                     }
-        
+
                     //attach
                     if ($file == 'saved') {
                         $email->attachFromStorageDisk($attachment['disk'], $attachment['file']);

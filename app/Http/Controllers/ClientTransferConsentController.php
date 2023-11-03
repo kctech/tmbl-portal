@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use App\Jobs\QueueEmail;
 
-use App\ClientTransferConsent;
-use App\Client;
-use App\User;
+use App\Models\ClientTransferConsent;
+use App\Models\Client;
+use App\Models\User;
 
 class ClientTransferConsentController extends Controller
 {

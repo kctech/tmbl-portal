@@ -3,15 +3,15 @@
 namespace App\Http\Controllers;
 
 use Validator;
-Use Storage;
+use Storage;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use App\Jobs\QueueEmail;
 
-use App\TermsConsent;
-use App\Client;
-use App\User;
+use App\Models\TermsConsent;
+use App\Models\Client;
+use App\Models\User;
 
 class TermsConsentController extends Controller
 {
@@ -22,7 +22,7 @@ class TermsConsentController extends Controller
      */
     public function index(Request $request)
     {
-        
+
         $services = array(
             'MR' => 'Mortgage + Referred Protection',
             'MP' => 'Mortgage + Protection',
@@ -54,7 +54,7 @@ class TermsConsentController extends Controller
                 $requests = $requests->where('service', $service);
             }
             $requests = $requests->paginate(config('database.pagination_size'));
-            
+
         }
 
         return view('admin.terms.index')->with(compact('requests'))->with('services', $services)->with('consent_status', $consent_status)->with('timing', $timing)->with('service', $service)->with('client_surname', $client_surname)->with('sort', $sort);
@@ -136,7 +136,7 @@ class TermsConsentController extends Controller
         $validator->sometimes('last_name_2', 'required', function ($input) {
             if(!empty($input->email_2)) return true;
         });
-        
+
 
         if ($validator->fails()) {
             return redirect()->route('terms-consent.create')
@@ -631,12 +631,12 @@ class TermsConsentController extends Controller
             case 'privacy':
                 return self::pdf($request->post('uid'), $request->post('record_id'), 'download', 'templated.'.$record->user->account->viewset.'.terms.pdf.privacy', $request->post('uid').'/'.$request->post('uid').'_'.$request->post('record_id').'_privacy.pdf');
                 break;
-            
+
             default:
                 return 'forbidden';
                 break;
         }
-        
+
     }
 
     /**

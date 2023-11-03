@@ -42,7 +42,6 @@
 
 <hr class="my-4" />
 
-{{--
 <div class="card mb-3">
     <div class="card-header text-white bg-dark">
         <h2 class="mb-0">
@@ -56,7 +55,7 @@
     <ul class="list-group list-group-flush">
         <li class="list-group-item">
             @if($record->amount == 0)
-                We do not charge a fee for arranging your mortgage. 
+                We do not charge a fee for arranging your mortgage.
             @else
                 We charge a fee for arranging your mortgage
             @endif
@@ -67,10 +66,10 @@
             @endphp
             @if($record->type == 'Fixed Fee')
                 <p>We will charge a fee of &pound;{{ $amount }}</p>
-                <p>This fee is for advice, recommendation, research and application of the loan.</p> 
+                <p>This fee is for advice, recommendation, research and application of the loan.</p>
             @elseif($record->type == 'Percentage')
                 <p>Percentage (%) basis. Fees vary according to individual circumstances, and we agree our fees with you before we undertake any chargeable work. This fee is for advice, recommendation, research and application of the loan.</p>
-                <p>This can be up to {{ $record->amount }}% of the mortgage amount. Our typical fee is &pound; 495.00</p>
+                <p>This can be up to 1% of the mortgage amount. Our typical fee is &pound; 395.00</p>
             @endif
         </li>
         <li class="list-group-item">
@@ -91,9 +90,13 @@
             </p>
         </li>
     </ul>
+    <div class="card-body">
+        <h5 class="card-title"><strong><em>Example </em></strong><em>(for illustrative purposes only):</em></h5>
+        <p class="card-text"><em>If your mortgage is for &pound;100,000, we may charge up to &pound;1,000 in total, which equates to 1% of the loan.</em></p>
+    </div>
 </div>
---}}
 
+{{--
 <div class="card mb-3">
     <div class="card-header text-white bg-dark">
         <h2 class="mb-0">
@@ -104,11 +107,13 @@
     <div class="card-body">
         <p class="card-text">We charge a fee for arranging your mortgage. Our actual fees and charges will be explained before we do any work, and we will explain payment options to you.</p>
         <p class="card-text">Fees vary according to individual circumstances, and we agree our fees with you before we undertake any chargeable work. This fee is for advice, recommendation, research and application of the loan.</p>
-        <p class="card-text">This can be up to 2% of the mortgage amount and is payable on offer at the earliest.</p>
+        <p class="card-text">This can be up to 1% of the mortgage amount and is payable on offer at the earliest.</p>
         <h5 class="card-title"><strong><em>Example </em></strong><em>(for illustrative purposes only):</em></h5>
-        <p class="card-text"><em>If your mortgage is for &pound;100,000, we may charge up to &pound;2,000 in total, which equates to 2% of the loan.</em></p>
+        <p class="card-text"><em>If your mortgage is for &pound;100,000, we may charge up to &pound;1,000 in total, which equates to 1% of the loan.</em></p>
     </div>
 </div>
+--}}
+
 <span class="text-muted">
     <p>There may be additional costs and charges relating to the mortgage product we recommend. You will receive a Mortgage Illustration when considering a particular mortgage and product, which will detail any fees relating to it.</p>
     <p>We will receive commission from the mortgage lender (in addition to the fees you pay).</p>
@@ -124,7 +129,7 @@
 
 
 @if($record->service == 'MP')
-    <h2>Fees &amp; Costs – Protection Planning</h2>
+    <h2>Fees &amp; Costs - Protection Planning</h2>
     <p>We arrange policies with the insurers on your behalf. You do not pay us a fee for doing this. We will receive commission from the insurers which is a percentage of the total annual premium.</p>
 
     <hr class="my-4" />

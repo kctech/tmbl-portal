@@ -10,7 +10,7 @@ $font-size-base: 0.9rem;
 $line-height-base: 1.6;
 
 // Colors
-$blue: #3490dc;
+$blue: #233c7c;
 $indigo: #6574cd;
 $purple: #9561e2;
 $pink: #f66D9b;
@@ -77,8 +77,8 @@ $custom-control-indicator-checked-color: $green;
 
 // transition
 @mixin transition($property: all, $duration: 300ms, $animate: linear, $delay:0s){
-    transition: $property $duration $animate $delay; 
-}  
+    transition: $property $duration $animate $delay;
+}
 
 // Placeholder Mixins
 @mixin placeholder {
@@ -228,7 +228,7 @@ $custom-control-indicator-checked-color: $green;
       p {
           font-weight: $headings-font-weight;
           color: $white !important;
-          
+
           &:last-of-type {
               margin-bottom: 0;
           }
@@ -300,4 +300,3 @@ $custom-control-indicator-checked-color: $green;
     }
   }
 }
- 

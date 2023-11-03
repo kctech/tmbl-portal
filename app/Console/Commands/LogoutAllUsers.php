@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
-use App\User;
+use App\Models\User;
 
 class LogoutAllUsers extends Command
 {
@@ -41,13 +41,13 @@ class LogoutAllUsers extends Command
     public function handle()
     {
         DB::table('sessions')->truncate();
-        
+
         $users = User::all();
         foreach ($users as $user) {
             $user->update(['remember_token'=>null]);
         }
 
         exec('rm -rf storage/framework/sessions/*');
-        
+
     }
 }
