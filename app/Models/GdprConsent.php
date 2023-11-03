@@ -164,7 +164,7 @@ class GdprConsent extends Model
      */
     public function client()
     {
-        return $this->belongsTo(Client::class);
+        return $this->belongsTo(\App\Models\Client::class);
     }
 
     /**
@@ -172,7 +172,7 @@ class GdprConsent extends Model
      */
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(\App\Models\User::class);
     }
 
     /**

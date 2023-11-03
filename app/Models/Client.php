@@ -182,7 +182,7 @@ class Client extends Model
      */
     public function links()
     {
-        return $this->hasMany('App\Models\Client', 'link', 'link');
+        return $this->hasMany(\App\Models\Client::class, 'link', 'link');
     }
 
     /**
@@ -190,7 +190,7 @@ class Client extends Model
      */
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(\App\Models\User::class);
     }
 
     /**
@@ -198,7 +198,7 @@ class Client extends Model
      */
     public function sdlt_disclaimers()
     {
-        return $this->hasMany(SdltDisclaimer::class);
+        return $this->hasMany(\App\Models\SdltDisclaimer::class);
     }
 
     /**
@@ -206,7 +206,7 @@ class Client extends Model
      */
     public function eligibility_statements()
     {
-        return $this->hasMany(EligibilityStatement::class);
+        return $this->hasMany(\App\Models\EligibilityStatement::class);
     }
 
     /**
@@ -214,7 +214,7 @@ class Client extends Model
      */
     public function gdpr_consents()
     {
-        return $this->hasMany(GdprConsent::class);
+        return $this->hasMany(\App\Models\GdprConsent::class);
     }
 
     /**
@@ -222,7 +222,7 @@ class Client extends Model
      */
     public function btl_consents()
     {
-        return $this->hasMany(BtlConsent::class);
+        return $this->hasMany(\App\Models\BtlConsent::class);
     }
 
     /**
@@ -230,7 +230,7 @@ class Client extends Model
      */
     public function transfer_requests()
     {
-        return $this->hasMany(ClientTransferConsent::class);
+        return $this->hasMany(\App\Models\ClientTransferConsent::class);
     }
 
     /**
@@ -238,7 +238,7 @@ class Client extends Model
      */
     public function terms_consents()
     {
-        return $this->hasMany(TermsConsent::class);
+        return $this->hasMany(\App\Models\TermsConsent::class);
     }
     /**
      * Return latest Terms request for a client
@@ -253,7 +253,7 @@ class Client extends Model
      */
     public function quotes()
     {
-        return $this->hasMany(Quote::class);
+        return $this->hasMany(\App\Models\Quote::class);
     }
 
 }

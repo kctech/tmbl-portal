@@ -95,7 +95,7 @@ class EnsureQueueListenerIsRunning extends Command
      */
     private function startQueueListener()
     {
-        $command = 'php-cli ' . base_path() . '/artisan queue:work --queue=adviseremails,clientemails --timeout=60 --sleep=5 --tries=3 > /dev/null & echo $!';
+        $command = 'php7.4 ' . base_path() . '/artisan queue:work --queue=adviseremails,clientemails --timeout=60 --sleep=5 --tries=3 >> /LOGS/`date +\%Y-\%m-\%d`-cron-portal-dev.log & echo $!';
         $pid = exec($command);
 
         return $pid;

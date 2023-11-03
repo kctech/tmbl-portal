@@ -244,7 +244,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function clients()
     {
-        return $this->hasMany(Client::class);
+        return $this->hasMany(\App\Models\Client::class);
     }
 
     /**
@@ -252,7 +252,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function gdpr_consents()
     {
-        return $this->hasMany(GdprConsent::class);
+        return $this->hasMany(\App\Models\GdprConsent::class);
     }
 
     /**
@@ -260,7 +260,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function btl_consents()
     {
-        return $this->hasMany(BtlConsent::class);
+        return $this->hasMany(\App\Models\BtlConsent::class);
     }
 
     /**
@@ -268,7 +268,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function transfer_requests()
     {
-        return $this->hasMany(ClientTransferConsent::class);
+        return $this->hasMany(\App\Models\ClientTransferConsent::class);
     }
 
     /**
@@ -276,7 +276,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function terms_consents()
     {
-        return $this->hasMany(TermsConsent::class);
+        return $this->hasMany(\App\Models\TermsConsent::class);
     }
 
     /**
@@ -284,6 +284,6 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function quotes()
     {
-        return $this->hasMany(Quote::class);
+        return $this->hasMany(\App\Models\Quote::class);
     }
 }

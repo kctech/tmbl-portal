@@ -2,8 +2,8 @@
 
 namespace App\Console;
 
-use Illuminate\Console\Scheduling\Schedule;
-use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+Use Illuminate\Console\Scheduling\Schedule;
+Use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
@@ -30,8 +30,8 @@ class Kernel extends ConsoleKernel
         //$schedule->command('backup:run')->daily()->at('02:00');
 
         $schedule->command('queue:restart')->everyMinute();
-        $schedule->command('queue:retry all')->everyMinute();
-        $schedule->command('queue:work --queue=adviseremails,clientemails--timeout=60 --sleep=5 --tries=3')->everyMinute();
+        $schedule->command('queue:retry all')->everyFifteenMinutes();
+        $schedule->command('queue:work --queue=adviseremails,clientemails--timeout=60 --sleep=5 --tries=3')->withoutOverlappting()->everyMinute();
 
         //$schedule->command('inspire')->hourly();
     }
