@@ -2,7 +2,7 @@
 
 use Faker\Generator as Faker;
 
-$factory->define(App\BtlConsent::class, function (Faker $faker) {
+$factory->define(App\Models\BtlConsent::class, function (Faker $faker) {
     return [
         //
     ];

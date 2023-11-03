@@ -193,7 +193,7 @@ class BtlConsentController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\BtlConsent  $btlConsent
+     * @param  \App\Models\BtlConsent  $btlConsent
      * @return \Illuminate\Http\Response
      */
     public function show(BtlConsent $btlConsent)
@@ -205,7 +205,7 @@ class BtlConsentController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\BtlConsent  $btlConsent
+     * @param  \App\Models\BtlConsent  $btlConsent
      * @return \Illuminate\Http\Response
      */
     public function edit(BtlConsent $btlConsent)
@@ -218,7 +218,7 @@ class BtlConsentController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\BtlConsent  $btlConsent
+     * @param  \App\Models\BtlConsent  $btlConsent
      * @return \Illuminate\Http\Response
      */
     public function update($id)
@@ -284,7 +284,7 @@ class BtlConsentController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\BtlConsent  $btlConsent
+     * @param  \App\Models\BtlConsent  $btlConsent
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
@@ -307,7 +307,7 @@ class BtlConsentController extends Controller
      * Client Responds the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\BtlConsent  $btlConsent
+     * @param  \App\Models\BtlConsent  $btlConsent
      * @return \Illuminate\Http\Response
      */
     public function respond($uid,$record_id)
@@ -377,7 +377,7 @@ class BtlConsentController extends Controller
      * Adviser Resends email to client.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\BtlConsent  $btlConsent
+     * @param  \App\Models\BtlConsent  $btlConsent
      * @return \Illuminate\Http\Response
      */
     public function resendClient($record_id)
@@ -429,7 +429,7 @@ class BtlConsentController extends Controller
      * Adviser Resends email to themselves.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\BtlConsent  $btlConsent
+     * @param  \App\Models\BtlConsent  $btlConsent
      * @return \Illuminate\Http\Response
      */
     public function resendAdviser($record_id)

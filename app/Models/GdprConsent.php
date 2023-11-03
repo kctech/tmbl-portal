@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Session;
 
-use App\Client;
+use App\Models\Client;
 
 class GdprConsent extends Model
 {

@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\ClientTransferConsent;
+use App\Models\ClientTransferConsent;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Support\Facades\Session;
 
@@ -15,7 +15,7 @@ class ClientTransferConsentPolicy
      * Determine whether the user can do anything
      *
      * @param  \App\Models\User  $user
-     * @param  \App\ClientTransferConsent  $clientTransferConsent
+     * @param  \App\Models\ClientTransferConsent  $clientTransferConsent
      * @return mixed
      */
     public function anything(User $user, ClientTransferConsent $clientTransferConsent)

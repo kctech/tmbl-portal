@@ -16,16 +16,16 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-         'App\GdprConsent' => 'App\Policies\GdprConsentPolicy'
-         ,'App\BtlConsent' => 'App\Policies\BtlConsentPolicy'
-         ,'App\SdltDisclaimer' => 'App\Policies\SdltDisclaimerPolicy'
-         ,'App\Client' => 'App\Policies\ClientPolicy'
-         ,'App\ClientTransferConsent' => 'App\Policies\ClientTransferConsentPolicy'
-         ,'App\TermsConsent' => 'App\Policies\TermsConsentPolicy'
-         ,'App\Quote' => 'App\Policies\QuotePolicy'
+         'App\Models\GdprConsent' => 'App\Policies\GdprConsentPolicy'
+         ,'App\Models\BtlConsent' => 'App\Policies\BtlConsentPolicy'
+         ,'App\Models\SdltDisclaimer' => 'App\Policies\SdltDisclaimerPolicy'
+         ,'App\Models\Client' => 'App\Policies\ClientPolicy'
+         ,'App\Models\ClientTransferConsent' => 'App\Policies\ClientTransferConsentPolicy'
+         ,'App\Models\TermsConsent' => 'App\Policies\TermsConsentPolicy'
+         ,'App\Models\Quote' => 'App\Policies\QuotePolicy'
          ,'App\Models\User' => 'App\Policies\UserPolicy'
-         ,'App\EligibilityStatement' => 'App\Policies\EligibilityStatementPolicy'
-         //,'App\AccountModule' => 'App\Policies\AccountModulePolicy'
+         ,'App\Models\EligibilityStatement' => 'App\Policies\EligibilityStatementPolicy'
+         //,'App\Models\AccountModule' => 'App\Policies\AccountModulePolicy'
     ];
 
     /**

@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Client;
+use App\Models\Client;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Support\Facades\Session;
 
@@ -15,7 +15,7 @@ class ClientPolicy
      * Determine whether the user can do anything
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Client  $client
+     * @param  \App\Models\Client  $client
      * @return mixed
      */
     public function anything(User $user, Client $client)
@@ -30,7 +30,7 @@ class ClientPolicy
      * Determine whether the user can view client
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Client  $client
+     * @param  \App\Models\Client  $client
      * @return mixed
      */
     public function show(User $user, Client $client)
@@ -42,7 +42,7 @@ class ClientPolicy
      * Determine whether the user can view client
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Client  $client
+     * @param  \App\Models\Client  $client
      * @return mixed
      */
     public function edit(User $user, Client $client)

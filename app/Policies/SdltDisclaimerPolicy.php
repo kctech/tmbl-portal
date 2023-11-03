@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\SdltDisclaimer;
+use App\Models\SdltDisclaimer;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Support\Facades\Session;
 
@@ -15,7 +15,7 @@ class SdltDisclaimerPolicy
      * Determine whether the user can do anything
      *
      * @param  \App\Models\User  $user
-     * @param  \App\SdltDisclaimer  $sdltDisclaimer
+     * @param  \App\Models\SdltDisclaimer  $sdltDisclaimer
      * @return mixed
      */
     public function anything(User $user, SdltDisclaimer $sdltDisclaimer)

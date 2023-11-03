@@ -140,7 +140,7 @@ class ClientsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Client  $client
+     * @param  \App\Models\Client  $client
      * @return \Illuminate\Http\Response
      */
     public function show(Client $client)
@@ -154,7 +154,7 @@ class ClientsController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Client  $client
+     * @param  \App\Models\Client  $client
      * @return \Illuminate\Http\Response
      */
     public function edit(Client $client)
@@ -168,7 +168,7 @@ class ClientsController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Client  $client
+     * @param  \App\Models\Client  $client
      * @return \Illuminate\Http\Response
      */
     public function update($id)
@@ -202,7 +202,7 @@ class ClientsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Client  $client
+     * @param  \App\Models\Client  $client
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
@@ -226,7 +226,7 @@ class ClientsController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Client  $client
+     * @param  \App\Models\Client  $client
      * @return \Illuminate\Http\Response
      */
     public static function list()
@@ -245,7 +245,7 @@ class ClientsController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Client  $client
+     * @param  \App\Models\Client  $client
      * @return \Illuminate\Http\Response
      */
     public function find()
@@ -265,7 +265,7 @@ class ClientsController extends Controller
      * Adviser Resends email to client.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Client  $client
+     * @param  \App\Models\Client  $client
      * @return \Illuminate\Http\Response
      */
     public function resendClientDetails($record_id)

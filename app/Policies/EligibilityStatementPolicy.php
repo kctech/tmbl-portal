@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\EligibilityStatement;
+use App\Models\EligibilityStatement;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Support\Facades\Session;
 

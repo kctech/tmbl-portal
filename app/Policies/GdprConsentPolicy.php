@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\GdprConsent;
+use App\Models\GdprConsent;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Support\Facades\Session;
 
@@ -15,7 +15,7 @@ class GdprConsentPolicy
      * Determine whether the user can do anything
      *
      * @param  \App\Models\User  $user
-     * @param  \App\GdprConsent  $gdprConsent
+     * @param  \App\Models\GdprConsent  $gdprConsent
      * @return mixed
      */
     public function anything(User $user, GdprConsent $gdprConsent)

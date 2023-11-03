@@ -182,7 +182,7 @@ class Client extends Model
      */
     public function links()
     {
-        return $this->hasMany('App\Client', 'link', 'link');
+        return $this->hasMany('App\Models\Client', 'link', 'link');
     }
 
     /**

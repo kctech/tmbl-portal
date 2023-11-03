@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\BtlConsent;
+use App\Models\BtlConsent;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Support\Facades\Session;
 
@@ -15,7 +15,7 @@ class BtlConsentPolicy
      * Determine whether the user can do anything
      *
      * @param  \App\Models\User  $user
-     * @param  \App\BtlConsent  $btlConsent
+     * @param  \App\Models\BtlConsent  $btlConsent
      * @return mixed
      */
     public function anything(User $user, BtlConsent $btlConsent)

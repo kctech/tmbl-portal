@@ -248,7 +248,7 @@ class TermsConsentController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\TermsConsent  $termsConsent
+     * @param  \App\Models\TermsConsent  $termsConsent
      * @return \Illuminate\Http\Response
      */
     public function show(TermsConsent $termsConsent)
@@ -260,7 +260,7 @@ class TermsConsentController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\TermsConsent  $termsConsent
+     * @param  \App\Models\TermsConsent  $termsConsent
      * @return \Illuminate\Http\Response
      */
     public function edit(TermsConsent $termsConsent)
@@ -273,7 +273,7 @@ class TermsConsentController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\TermsConsent  $termsConsent
+     * @param  \App\Models\TermsConsent  $termsConsent
      * @return \Illuminate\Http\Response
      */
     public function update($id)
@@ -357,7 +357,7 @@ class TermsConsentController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\TermsConsent  $termsConsent
+     * @param  \App\Models\TermsConsent  $termsConsent
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
@@ -379,7 +379,7 @@ class TermsConsentController extends Controller
      * Client Responds the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\TermsConsent  $termsConsent
+     * @param  \App\Models\TermsConsent  $termsConsent
      * @return \Illuminate\Http\Response
      */
     public function respond($uid,$record_id)
@@ -497,7 +497,7 @@ class TermsConsentController extends Controller
      * Adviser Resends email to client.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\TermsConsent  $termsConsent
+     * @param  \App\Models\TermsConsent  $termsConsent
      * @return \Illuminate\Http\Response
      */
     public function resendClient($record_id)
@@ -554,7 +554,7 @@ class TermsConsentController extends Controller
      * Adviser Resends email to themselves.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\TermsConsent  $termsConsent
+     * @param  \App\Models\TermsConsent  $termsConsent
      * @return \Illuminate\Http\Response
      */
     public function resendAdviser($record_id)
@@ -643,7 +643,7 @@ class TermsConsentController extends Controller
      * Make PDF File
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\TermsConsent  $termsConsent
+     * @param  \App\Models\TermsConsent  $termsConsent
      * @return \Illuminate\Http\Response
      */
     private static function pdf($uid, $record_id, $mode, $view, $filename)

@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\TermsConsent;
+use App\Models\TermsConsent;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Support\Facades\Session;
 
@@ -15,7 +15,7 @@ class TermsConsentPolicy
      * Determine whether the user can do anything
      *
      * @param  \App\Models\User  $user
-     * @param  \App\TermsConsentPolicy  $termsConsentPolicy
+     * @param  \App\Models\TermsConsentPolicy  $termsConsentPolicy
      * @return mixed
      */
     public function anything(User $user, TermsConsent $termsConsentPolicy)

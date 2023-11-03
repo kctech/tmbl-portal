@@ -192,7 +192,7 @@ class GdprConsentController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\GdprConsent  $gdprConsent
+     * @param  \App\Models\GdprConsent  $gdprConsent
      * @return \Illuminate\Http\Response
      */
     public function show(GdprConsent $gdprConsent)
@@ -204,7 +204,7 @@ class GdprConsentController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\GdprConsent  $gdprConsent
+     * @param  \App\Models\GdprConsent  $gdprConsent
      * @return \Illuminate\Http\Response
      */
     public function edit(GdprConsent $gdprConsent)
@@ -217,7 +217,7 @@ class GdprConsentController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\GdprConsent  $gdprConsent
+     * @param  \App\Models\GdprConsent  $gdprConsent
      * @return \Illuminate\Http\Response
      */
     public function update($id)
@@ -283,7 +283,7 @@ class GdprConsentController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\GdprConsent  $gdprConsent
+     * @param  \App\Models\GdprConsent  $gdprConsent
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
@@ -306,7 +306,7 @@ class GdprConsentController extends Controller
      * Client Responds the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\GdprConsent  $gdprConsent
+     * @param  \App\Models\GdprConsent  $gdprConsent
      * @return \Illuminate\Http\Response
      */
     public function respond($uid,$record_id)
@@ -376,7 +376,7 @@ class GdprConsentController extends Controller
      * Adviser Resends email to client.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\GdprConsent  $gdprConsent
+     * @param  \App\Models\GdprConsent  $gdprConsent
      * @return \Illuminate\Http\Response
      */
     public function resendClient($record_id)
@@ -428,7 +428,7 @@ class GdprConsentController extends Controller
      * Adviser Resends email to themselves.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\GdprConsent  $gdprConsent
+     * @param  \App\Models\GdprConsent  $gdprConsent
      * @return \Illuminate\Http\Response
      */
     public function resendAdviser($record_id)

@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\AccountModule;
+use App\Models\AccountModule;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 use Illuminate\Support\Facades\Session;
@@ -16,7 +16,7 @@ class AccountModulePolicy
      * Determine whether the user can do anything
      *
      * @param  \App\Models\User  $user
-     * @param  \App\BtlConsent  $btlConsent
+     * @param  \App\Models\BtlConsent  $btlConsent
      * @return mixed
      */
     public function module($accountModule)

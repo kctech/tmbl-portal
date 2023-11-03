@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Quote;
+use App\Models\Quote;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Support\Facades\Session;
 
@@ -15,7 +15,7 @@ class QuotePolicy
      * Determine whether the user can do anything
      *
      * @param  \App\Models\User  $user
-     * @param  \App\TermsConsentPolicy  $quotePolicy
+     * @param  \App\Models\TermsConsentPolicy  $quotePolicy
      * @return mixed
      */
     public function anything(User $user, Quote $quotePolicy)

@@ -2,7 +2,7 @@
 
 use Faker\Generator as Faker;
 
-$factory->define(App\GdprConsent::class, function (Faker $faker) {
+$factory->define(App\Models\GdprConsent::class, function (Faker $faker) {
     return [
         //
     ];

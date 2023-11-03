@@ -2,7 +2,7 @@
 
 use Faker\Generator as Faker;
 
-$factory->define(App\TermsConsent::class, function (Faker $faker) {
+$factory->define(App\Models\TermsConsent::class, function (Faker $faker) {
     return [
         //
     ];
