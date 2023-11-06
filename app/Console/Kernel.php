@@ -29,9 +29,10 @@ class Kernel extends ConsoleKernel
         //$schedule->command('backup:clean')->daily()->at('01:00');
         //$schedule->command('backup:run')->daily()->at('02:00');
 
+        //$schedule->command('test:script')->everyMinute();
         $schedule->command('queue:restart')->everyMinute();
         $schedule->command('queue:retry all')->everyFifteenMinutes();
-        $schedule->command('queue:work --queue=adviseremails,clientemails--timeout=60 --sleep=5 --tries=3')->withoutOverlappting()->everyMinute();
+        $schedule->command('queue:work --queue=adviseremails,clientemails --timeout=60 --sleep=5 --tries=3')->withoutOverlapping()->everyMinute();
 
         //$schedule->command('inspire')->hourly();
     }
