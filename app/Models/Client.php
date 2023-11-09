@@ -84,7 +84,7 @@ class Client extends Model
     /**
      * Get the user that consent was made by.
      */
-    public static function filter($consent_status, $consent_type, $client_surname, $sort)
+    public static function filter($consent_status, $consent_type, $client_search, $sort)
     {
         //allow admins access to all clients, unless impersonating
         if(!session()->has('impersonate') && in_array(auth()->user()->role->permissions, array('admin','sudo'))){
@@ -103,8 +103,8 @@ class Client extends Model
         if (!empty($consent_type)) {
             $query = $query->where('gdpr_consents.consent_type', $consent_type);
         }*/
-        if (!empty($client_surname)) {
-            $query = $query->where('clients.last_name', 'LIKE', '%'.$client_surname.'%');
+        if (!empty($client_search)) {
+            $query = $query->where(function ($q) use ($client_search) { $q->whereRaw('CONCAT(clients.first_name, " ",clients.last_name) LIKE  \'%'.$client_search.'%\'')->orWhere('clients.email', 'LIKE', '%'.$client_search.'%'); });
         }
         if (!empty($sort)) {
             switch($sort) {
@@ -129,6 +129,9 @@ class Client extends Model
         } else {
             $query = $query->orderby('clients.updated_at', 'DESC');
         }
+
+        //dq($query);
+
         return $query->paginate(config('database.pagination_size'));
     }
 

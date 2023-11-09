@@ -12,8 +12,8 @@
 <div class="card mb-4">
     <div class="card-body">
         <h3>Filters</h3>
-        <form class="d-flex align-items-center justify-content-start" method="post" action="{{ route('clients.search') }}">
-            @csrf
+        <form class="d-flex align-items-center justify-content-start" method="get" action="{{ route('clients.search') }}">
+            {{--@csrf--}}
             <div class="d-flex align-self-center">
                 <div class="card">
                     <div class="card-body bg-light d-flex align-items-center">
@@ -29,7 +29,7 @@
                 </div>
                 <div class="card ml-3">
                     <div class="card-body bg-light">
-                        <input class="form-control" placeholder="Client Surname" name="client_surname" value="{{$client_surname}}" />
+                        <input class="form-control" placeholder="Client Search" name="client_search" value="{{$client_search}}" />
                     </div>
                 </div>
                 <div class="card ml-3">
@@ -40,7 +40,7 @@
                             </div>
                             <select name="sort" id="sort"  class="form-control">
                                 <option value="recent" {{selected('recent', $sort)}}>Recently Updated</option>
-                                <option value="newest_first" {{selected('newest_first', $sort)}} {{selected('default', $sort)}}>Newset First</option>    
+                                <option value="newest_first" {{selected('newest_first', $sort)}} {{selected('default', $sort)}}>Newset First</option>
                                 <option value="oldest_first" {{selected('oldest_first', $sort)}}>Oldest First</option>
                                 <option value="surname_az" {{selected('surname_az', $sort)}}>Surname A-Z</option>
                                 <option value="surname_za" {{selected('surname_za', $sort)}}>Surname Z-A</option>
@@ -100,7 +100,7 @@
                             @else
                                 <a href="mailto:{{ $client->email }}">{{ $client->email }}</a>
                             @endif
-                        
+
                         </td>
                         <td>{{ $client->tel }}</td>
                         <td>{{ $client->mkt_email_consent }}</td>
@@ -118,7 +118,7 @@
         </table>
     </div>
     <div class="d-flex justify-content-center">
-        {{ $clients->links() }}
+        {{ $clients->appends(['consent_status'=>$consent_status ?? '', 'client_search'=>$client_search ?? '', 'sort'=>$sort ?? ''])->links() }}
     </div>
 </div>
 

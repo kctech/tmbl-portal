@@ -20,31 +20,19 @@ class ClientsController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->isMethod('post')) {
-            $consent_status = $request->input('consent_status');
-            $consent_type = $request->input('consent_type');
-            $client_surname = $request->input('client_surname');
-            $sort = $request->input('sort');
+        $consent_status = $request->consent_status ?? "";
+        $consent_type = $request->consent_type ?? "";
+        $client_search = $request->client_search ?? "";
+        $sort = $request->sort ?? "";
 
-            $clients = Client::filter($consent_status, $consent_type, $client_surname, $sort);
+        $clients = Client::filter($consent_status, $consent_type, $client_search, $sort);
 
-            if ($consent_status == "") $consent_status = 'default';
-            if ($consent_type == "") $consent_type = 'default';
-            if ($sort == "") $sort = 'recent';
-        } else {
-            $consent_status = 'default';
-            $consent_type ='default';
-            $client_surname = '';
-            $sort = 'recent';
+        if ($consent_status == "") $consent_status = 'default';
+        if ($consent_type == "") $consent_type = 'default';
+        if ($client_search == "") $client_search = '';
+        if ($sort == "") $sort = 'recent';
 
-            if(!Session::has('impersonate') && in_array(auth()->user()->role->permissions,array('admin','sudo'))){
-                $clients = Client::where('deleted_at', null)->paginate(config('database.pagination_size'));
-            }else{
-                $clients = Client::where('account_id', Session::get('account_id'))->where('user_id', Session::get('user_id', auth()->id()))->paginate(config('database.pagination_size'));
-            }
-        }
-
-        return view('admin.clients.index')->with(compact('clients'))->with('consent_status', $consent_status)->with('consent_type', $consent_type)->with('client_surname', $client_surname)->with('sort', $sort);
+        return view('admin.clients.index')->with(compact('clients'))->with('consent_status', $consent_status)->with('consent_type', $consent_type)->with('client_search', $client_search)->with('sort', $sort);
     }
 
     /**

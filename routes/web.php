@@ -23,7 +23,7 @@ Route::patch('/things/{id}', 'ThingsController@update');
 Route::delete('/things/{id}', 'ThingsController@destroy');
 */
 
-/*use Illuminate\Support\Facades\Hash;*/    
+/*use Illuminate\Support\Facades\Hash;*/
 Route::get('/mkpw', function() {
     return Hash::make('qwerty1234');
 });
@@ -63,15 +63,15 @@ Route::prefix('admin')->group(function () {
         Route::get('/users/stop-impersonating', 'UserController@stopImpersonating')->name('users.stop-impersonating');
         Route::get('/users/reinstate/{id}', 'UserController@reinstate')->name('users.reinstate')->where('id', '[0-9]+');
         Route::resource('users', 'UserController');
-        
+
         //CLIENTS
-        Route::post('/clients/search', 'ClientsController@index')->name('clients.search');
+        Route::get('/clients/search', 'ClientsController@index')->name('clients.search');
         Route::post('/clients/find', 'ClientsController@find')->name('clients.find');
         Route::get('/clients/resend-login/{id}', 'ClientsController@resendClientDetails')->name('clients.resend-login')->where('id', '[0-9]+');
         Route::post('/clients/check-linked', 'ClientsController@checkLinked')->name('clients.linked');
         Route::post('/clients/check-duplicate', 'ClientsController@checkDuplicate')->name('clients.duplicate');
         Route::resource('clients', 'ClientsController');
-        
+
         //GDPR
         Route::post('/gdpr-consent/search', 'GdprConsentController@index')->name('gdpr-consent.search');
         Route::get('/gdpr-consent/resend-client/{id}', 'GdprConsentController@resendClient')->name('gdpr-consent.resend-client')->where('id', '[0-9]+');
@@ -117,7 +117,7 @@ Route::prefix('admin')->group(function () {
         Route::get('/eligibility-statements/resend-client/{id}', 'EligibilityStatementController@resendClient')->name('eligibility-statements.resend-client')->where('id', '[0-9]+');
         Route::get('/eligibility-statements/resend-adviser/{id}', 'EligibilityStatementController@resendAdviser')->name('eligibility-statements.resend-adviser')->where('id', '[0-9]+');
         Route::resource('eligibility-statements', 'EligibilityStatementController');
-        
+
         //CALCULATORS
         Route::get('/calculators', function () { return view('admin.calcs.index'); })->name('calculators.index');
 
@@ -125,9 +125,9 @@ Route::prefix('admin')->group(function () {
         Route::resource('roles', 'RoleController');
 
         //Route::get('/quote', function () { return view('admin.quote.view'); })->name('quote.index');
-        
+
     });
-    
+
 });
 
 Route::prefix('clients')->group(function () {
