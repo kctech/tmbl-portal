@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <!-- Mobile viewport optimized: j.mp/bplateviewport -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
-    
+
     <!-- standard meta information -->
     <meta name="designer" content="Perpetual https://perpetual.pro" />
     <meta name="author" content="Perpetual https://perpetual.pro" />
@@ -19,7 +19,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <!-- 2h refresh 
+    <!-- 2h refresh
     <meta http-equiv="refresh" content="7200">-->
 
     <title>{{ config('app.name', 'TMBL Portal') }}</title>
@@ -141,7 +141,7 @@
 </head>
 <body>
     <div id="app">
-    
+
         <nav class="navbar navbar-dark p-0 fixed-top bg-dark shadow d-sm-block d-md-block d-lg-none">
             <a class="navbar-brand" href="{{ route('admin.dashboard') }}">
                 <img class="" src="{{asset('img/'.Session::get('viewset','default').'/'.Session::get('logo','tmbl_logo.png'))}}" alt="{{ config('app.name', Session::get('viewset','default').' Portal') }}" width="237" height="84" />
@@ -153,10 +153,10 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
                 @if (Auth::check())
-                    <form id="search" method="POST" action="{{ route('clients.search') }}">
-                        @csrf
+                    <form id="search" method="GET" action="{{ route('clients.search') }}">
+                        {{--@csrf--}}
                         <div class="input-group w-100">
-                            <input name="client_surname" class="form-control form-control-dark" type="text" placeholder="Client's Surname" aria-label="Client Surname Search" aria-describedby="button-search">
+                            <input name="client_search" class="form-control form-control-dark" type="text" placeholder="Client's Name/Email" aria-label="Client Search" aria-describedby="button-search">
                             <div class="input-group-append">
                                 <button class="btn btn-outline-secondary" type="button" id="button-search"><i class="fa fa-search"></i></button>
                             </div>
@@ -296,7 +296,7 @@
                             </a>
                             <h2>Adviser Portal</h2>
                         </div>
-                        
+
                         @guest
 
                             <ul class="nav flex-column mb-2">
@@ -323,12 +323,12 @@
                             </ul>
 
                         @else
-                            <form id="search2" method="POST" action="{{ route('clients.search') }}">
-                                @csrf
-                                <div class="input-group mb-3 w-100">
-                                    <input name="client_surname" class="form-control form-control-dark" type="text" placeholder="Client's Surname" aria-label="Client Surname Search" aria-describedby="button-search2">
+                            <form id="search" method="GET" action="{{ route('clients.search') }}">
+                                {{--@csrf--}}
+                                <div class="input-group w-100">
+                                    <input name="client_search" class="form-control form-control-dark" type="text" placeholder="Client's Name/Email" aria-label="Client Search" aria-describedby="button-search">
                                     <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary" type="button" id="button-search2"><i class="fa fa-search"></i></button>
+                                        <button class="btn btn-outline-secondary" type="button" id="button-search"><i class="fa fa-search"></i></button>
                                     </div>
                                 </div>
                             </form>
@@ -470,11 +470,11 @@
 
                     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                         <h1 class="h2">@yield('title','Dashboard')</h1>
-                        
+
                         <div class="btn-toolbar mb-2 mb-md-0">
 
                             @yield('breadcrumbs')
-                            
+
                         </div>
                     </div>
 
