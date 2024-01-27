@@ -31,7 +31,7 @@
 
 <p><small>All companies known together in this document as &ldquo;we&rdquo;. &ldquo;our&rdquo; and &ldquo;us&rsquo;</small></p>
 
-<p>The Mortgage Broker (Eaton Socon) is a trading name of The Mortgage Broker (London) Limited who are an Appointed Representative of Mortgage Advice Bureau Ltd and Mortgage Advice Bureau (Derby) Ltd. As joint controllers of your data, we comply with Data Protection laws in the United Kingdom.</p>
+<p>The Mortgage Broker (London) Limited are an Appointed Representative of Mortgage Advice Bureau Ltd and Mortgage Advice Bureau (Derby) Ltd. As joint controllers of your data, we comply with Data Protection laws in the United Kingdom</p>
 
 <hr class="my-4" />
 
@@ -91,7 +91,6 @@
             <li>Estate agents with whom you may be interacting, but only with your consent;</li>
             <li>New home builders, as a legitimate interest of the builder in order to assess affordability for the property;</li>
             <li>Enquiries you may perform on third-party mortgage sourcing websites;</li>
-            <li>Your financial information from your bank available via Open Banking with your consent</li>
         </ul>
     </li>
 </ul>
@@ -125,33 +124,31 @@
         </tr>
         <tr>
             <td valign="top">
-                <p>To source products, provide indicative quotes, and process &amp;deliver your application for a mortgage or protection product</p>
+                <p>To process and deliver your application for a mortgage or protection product</p>
             </td>
             <td valign="top">
                 <ul>
                     <li>Identity</li>
                     <li>Contact</li>
                     <li>Financial</li>
+                    <li>Special Category</li>
                     <li>Transaction</li>
                     <li>Marketing &amp; Comms</li>
-                    <li>Special Category</li>
+
                 </ul>
             </td>
             <td valign="top">
                 <p>Performance of a contract with you</p>
                 <p>To comply with a legal obligation</p>
                 <p>Necessary for our legitimate interests (to record information about customer vulnerability and recover debts due to us)</p>
-                <p>Explicit Consent / appropriate safeguards for the fundamental rights and interest of the data subject</p>
             </td>
         </tr>
         <tr>
             <td valign="top">
                 <p>To manage our client relationship with you which will include:</p>
                 <ul>
-                    <li>Create and maintain access to the My Mortgage Account portal account</li>
                     <li>Notifying you about changes to our terms or privacy policy</li>
                     <li>Customer reviews / surveys</li>
-                    <li>On-going communications until you are ready to proceed</li>
                     <li>Re-engagement when existing products nears expiry / review protection needs</li>
                 </ul>
             </td>
@@ -167,7 +164,7 @@
                 <p>Performance of a contract with you</p>
                 <p>To comply with a legal obligation</p>
                 <p>Necessary for our legitimate interests<br />
-                (to re-engage with you to review your existing mortgage / protection needs, to maintain and improve customer service standards, and to communicate with you as part of a nurture journey until you are ready to proceed with a mortgage / protection application)</p>
+                (to re-engage with you to review your existing mortgage / protection needs, and to maintain and improve customer service standards)</p>
             </td>
         </tr>
         <tr>
@@ -181,14 +178,12 @@
                     <li>Profile &amp; Usage</li>
                     <li>Transaction</li>
                     <li>Marketing &amp; Comms</li>
-                    <li>Special Category</li>
                 </ul>
             </td>
             <td valign="top">
                 <p>To comply with a legal obligation</p>
                 <p>Necessary for our legitimate interests<br />
                 (to ensure that complaints can be responded to accurately)</p>
-                <p>Legal Claims &amp; Judicial Acts</p>
             </td>
         </tr>
         <tr>
@@ -204,7 +199,7 @@
                 </ul>
             </td>
             <td valign="top">
-                <p>Necessary for our legitimate interests and of the New Home Builder / Estate Agent (to ensure that a property is affordable before proceeding with the purchase process)</p>
+                <p>Necessary for our legitimate interests and of the New Home Builder / Estate Agent (to ensure that a property is affordable before proceeding with the purchase process)/p>
             </td>
         </tr>
         <tr>
@@ -242,27 +237,41 @@
         </tr>
         <tr>
             <td valign="top">
-                <p>To use data analytics and other systems including AI and automated decision making to improve our website, products/services, marketing, customer relationships and experiences</p>
+                <p>To deliver relevant website content and advertisements to you and measure or understand the effectiveness of the advertising we serve to you</p>
             </td>
             <td valign="top">
                 <ul>
                     <li>Identity</li>
                     <li>Contact</li>
                     <li>Financial</li>
-                    <li>Special Category</li>
                     <li>Technical</li>
                     <li>Profile &amp; Usage</li>
                 </ul>
             </td>
             <td valign="top">
-                <p>Consent / Explicit Consent</p>
-                <p>Necessary for our legitimate interests (to analyse customer usage, update our website, to develop our business, and to inform our client re-engagement and marketing strategy)</p>
+                <p>Necessary for our legitimate interests (to study how customers use our products/services, to develop them, to grow our business and to inform our marketing strategy)</p>
+            </td>
+        </tr>
+        <tr>
+            <td valign="top">
+                <p>To use data analytics to improve our website, products/services, marketing, customer relationships and experiences</p>
+            </td>
+            <td valign="top">
+                <ul>
+                    <li>Technical</li>
+                    <li>Profile &amp; Usage</li>
+                </ul>
+            </td>
+            <td valign="top">
+                <p>Necessary for our legitimate interests (to analyse customer usage, update our website, to develop our business and to inform our marketing strategy)</p>
             </td>
         </tr>
     </tbody>
 </table>
 
-<p>We only use your personal data for the purposes stated above, unless we reasonably consider that we need to use it for another reason and it is compatible with the original purpose. If we need to use your personal data for an unrelated purpose, we will notify you and explain the legal basis which allows us to do so.
+<p>We will only use your personal data for the purposes stated above, unless we reasonably consider that we need to use it for another reason and it is compatible with the original purpose. Please contact us for an explanation as to how any new processing compatible with the original purpose.</p>
+
+<p>If we need to use your personal data for an unrelated purpose, we will notify you and explain the legal basis which allows us to do so. Please note that we may process your personal data without your knowledge or consent, in compliance with the above rules, where this is required or permitted by law.</p>
 
 <hr class="my-4" />
 
@@ -515,7 +524,7 @@ However please note that your personal information will not be passed to any thi
 
 <h2>EU Citizens</h2>
 <p>Clients who reside within the European Union retain their data subject rights under the EU General Data Protection Regulation. EU-based clients with queries regarding how Mortgage Advice Bureau processes their data can contact our EU representative DataRep by emailing
-    <a href="mailto:datarequest@datarep.com">datarequest@datarep.com</a> or by visiting their website 
+    <a href="mailto:datarequest@datarep.com">datarequest@datarep.com</a> or by visiting their website
     <a href="http://www.datarep.com/data-request">www.datarep.com/data-request</a>
 </p>
 
@@ -528,6 +537,6 @@ However please note that your personal information will not be passed to any thi
 
 <h2>What if I am still not satisfied?</h2>
 
-<p>If you are not satisfied with how the Mortgage Advice Bureau has responded to your enquiry, you have the right to complain to the 
+<p>If you are not satisfied with how the Mortgage Advice Bureau has responded to your enquiry, you have the right to complain to the
 	<a href="https://ico.org.uk/for-the-public/" target="_blank">Information Commissioner&rsquo;s Office</a> (ICO), who is the regulator for data protection in the United Kingdom.
 </p>

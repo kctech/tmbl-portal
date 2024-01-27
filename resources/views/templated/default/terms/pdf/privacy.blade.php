@@ -36,15 +36,15 @@
 <div class="no-break">
     <p><small>All companies known together in this document as &ldquo;we&rdquo;. &ldquo;our&rdquo; and &ldquo;us&rsquo;</small></p>
 
-    <p>The Mortgage Broker (Eaton Socon) is a trading name of The Mortgage Broker (London) Limited who are an Appointed Representative of Mortgage Advice Bureau Ltd and Mortgage Advice Bureau (Derby) Ltd. As joint controllers of your data, we comply with Data Protection laws in the United Kingdom.</p>
-    
+    <p>The Mortgage Broker (London) Limited are an Appointed Representative of Mortgage Advice Bureau Ltd and Mortgage Advice Bureau (Derby) Ltd. As joint controllers of your data, we comply with Data Protection laws in the United Kingdom</p>
+
     <hr class="my-4" />
 </div>
 
 <div class="no-break">
     <h2>The personal data we collect about you</h2>
     <p>Personal data collected, used, stored and transferred by us may include:</p>
-    
+
     <ul>
         <li>
             <strong>Identity Data </strong>including forenames, last name, maiden name, date of birth, gender, marital status, and username or similar identifier
@@ -71,26 +71,26 @@
             <strong>Marketing and Communications Data </strong>including your preferences in receiving marketing from us and our business partners and your communication preferences
         </li>
     </ul>
-    
+
     <hr class="my-4" />
 </div>
 
 <div class="no-break">
     <h2>How do we collect your personal data?</h2>
     <p>Personal data is collected by us using the following methods:</p>
-    
+
     <ul>
         <li>
             <strong>Direct interactions </strong>with an adviser in person, by post, phone (including call recordings and voicemail), email, videoconferencing or otherwise when sourcing and applying for mortgage or protection products, processing Identity, Contact and Financial categories of personal data.
         </li>
     </ul>
-    
+
     <ul>
         <li>
             <strong>Automated technologies or technical interactions </strong>with our website, via the My Mortgage Account portal, web enquiry form or the Find A Mortgage function, processing Identity, Contact, Financial and Technical categories of personal data.
         </li>
     </ul>
-    
+
     <p>
         <strong>Third parties or publicly available sources </strong>(processing Identity, Contact and Financial categories of personal data) such as:
     </p>
@@ -104,7 +104,7 @@
             </ul>
         </li>
     </ul>
-    
+
     <hr class="my-4" />
 </div>
 
@@ -272,16 +272,16 @@
             </tr>
         </tbody>
     </table>
-    
+
     <p>We only use your personal data for the purposes stated above, unless we reasonably consider that we need to use it for another reason and it is compatible with the original purpose. If we need to use your personal data for an unrelated purpose, we will notify you and explain the legal basis which allows us to do so.
-    
+
     <hr class="my-4" />
 </div>
 
 <div class="no-break">
     <h2>Changes to our Privacy Notice</h2>
     <p>We keep our Privacy Notice under regular review. This Privacy Notice was last updated on 23<sup>rd</sup> December 2023. Historic versions can be obtained by contacting us.</p>
-    
+
     <hr class="my-4" />
 </div>
 
@@ -293,7 +293,7 @@
         and all results are reviewed by advisers or administrative staff. If you require any further information about this data processing please contact
         <a href="mailto:data.protection@mab.org.uk">data.protection@mab.org.uk</a>
     </p>
-    
+
     <hr class="my-4" />
 </div>
 
@@ -301,18 +301,18 @@
     <h2>Marketing communications</h2>
     <p>You will also have the choice to opt-in to receiving other related marketing information and related products and services. You can opt-out of receiving these types of communications at any time by contacting <a href="mailto:data.protection@mab.org.uk">data.protection@mab.org.uk</a> or by clicking on the relevant link in email communications you receive from us.
     However please note that your personal information will not be passed to any third-party organisation for marketing purposes.</p>
-    
+
     <p>However please note that your personal information will not be passed to any third-party organisation for marketing purposes.</p>
-    
+
     <hr class="my-4" />
 </div>
 
 <div class="no-break">
     <h2>Data Security</h2>
     <p>We have put in place appropriate security measures to prevent your personal data from being accidentally lost, used or accessed in an unauthorised way, altered or disclosed. We also limit access to your personal data to only those members of staff, appointed representatives, advisers, business partners and suppliers who have a business need to know. They will only process your personal data on our instructions and they are subject to a duty of confidentiality.</p>
-    
+
     <p>We have put in place procedures to deal with any suspected personal data breach and will notify you and any applicable regulator of a breach where we are legally required to do so.</p>
-    
+
     <hr class="my-4" />
 </div>
 
@@ -320,21 +320,21 @@
     <h2>Cookies</h2>
     <p>When using our website, you can set your browser to refuse all or some browser cookies, or to alert you when websites set or access cookies. If you disable or refuse cookies, please note that some parts of this website may become inaccessible or not function properly. For more information about the cookies we use, please see our
     <a href="https://beta.mortgageadvicebureau.com/cookies-policy" target="_blank">cookie policy</a>.</p>
-    
+
     <hr class="my-4" />
 </div>
 
 <div class="no-break">
     <h2>Website Third-party links</h2>
     <p>Our website may include links to third-party websites, plug-ins and applications. Clicking on those links or enabling those connections may allow third parties to collect or share data about you. We do not control these third-party websites and are not responsible for their privacy statements. When you leave our website, we encourage you to read the privacy notice of every website you visit.</p>
-    
+
     <hr class="my-4" />
 </div>
 
 <div class="no-break">
     <h2>Sharing of personal data outside of the United Kingdom</h2>
     <p>Some of our external suppliers are based overseas so their processing of your personal data will involve a transfer of data outside of the UK. In such cases data is transferred under conditions to provide protection to personal data equivalent to UK Data Protection standards. This includes the use of standard contractual clauses in contracts with external suppliers in order to provide the same level of protection for personal data as it has in the UK.</p>
-    
+
     <hr class="my-4" />
 </div>
 
@@ -431,9 +431,9 @@
             </tr>
         </tbody>
     </table>
-    
+
     <p>These companies are required to ensure appropriate security measures are in place and maintain the confidentiality of your personal data, and to use your personal data only in the course of providing such services and in accordance with our instructions.</p>
-    
+
     <hr class="my-4" />
 </div>
 
@@ -490,80 +490,80 @@
             </tr>
         </tbody>
     </table>
-    
+
     <p>After these retention periods if there is no other on-going client relationship your personal data will either be securely deleted or anonymised so that it can be used for statistical purposes but without any method of identifying you individually.</p>
-    
+
     <hr class="my-4" />
 </div>
 
 <div class="no-break">
     <h2>Your legal rights regarding your personal data</h2>
     <p>You have the right to:</p>
-    
+
     <ul>
         <li>
             <strong>Request access </strong>to your personal data. This enables you to receive a copy of the personal data we hold about you and to check that we are lawfully processing it.
         </li>
     </ul>
-    
+
     <ul>
         <li>
             <strong>Request correction </strong>of the personal data. This enables you to have any incomplete or inaccurate data corrected, though we may need to verify the accuracy of the new data you provide to us.
         </li>
     </ul>
-    
+
     <ul>
         <li>
             <strong>Request erasure </strong>of your personal data. This enables you to ask us to delete personal data where there is no good reason for us continuing to process it. You can also ask us to delete your personal data where you have successfully objected to the processing (see below), where we may have processed your information unlawfully or where we are required to erase your personal data to comply with local law. Note, however, that we may not always be able to delete the data for specific legal reasons which will be notified to you, if applicable, at the time of your request.
         </li>
     </ul>
-    
+
     <ul>
         <li>
             <strong>Object to processing </strong>of your personal data where we are relying on a legitimate interest (or those of a third party) and there is something about your particular situation which makes you want to object to processing on this ground as you feel it impacts on your fundamental rights and freedoms. You also have the right to object where we are processing your personal data for direct marketing purposes. In some cases, we may demonstrate that we have compelling legitimate grounds to process your information which override your rights and freedoms.
         </li>
     </ul>
-    
+
     <ul>
         <li>
             <strong>Request restriction of processing </strong>of your personal data. This enables you to ask us to suspend the processing of your personal data in the following scenarios: (a) if you want us to establish the data's accuracy; (b) where our use of the data is unlawful but you do not want us to erase it; (c) where you need us to hold the data even if we no longer require it as you need it to establish, exercise or defend legal claims; or (d) you have objected to our use of your data but we need to verify whether we have overriding legitimate grounds to use it.
         </li>
     </ul>
-    
+
     <ul>
         <li>
             <strong>Request the transfer </strong>of your personal data to you or to a third party. We will provide to you, or a third party you have chosen, your personal data in a structured, commonly used, machine-readable format. Note that this right only applies to automated information which you initially provided consent for us to use or where we used the information to perform a contract with you.
         </li>
     </ul>
-    
+
     <ul>
         <li>
             <strong>Withdraw consent at any time </strong>where we are relying on consent to process your personal data. However, this will not affect the lawfulness of any processing carried out before you withdraw your consent. If you withdraw your consent, we may not be able to provide certain products or services to you. We will advise you if this is the case at the time you withdraw your consent.
         </li>
     </ul>
-    
+
     <hr class="my-4" />
-    
+
     <h2>EU Citizens</h2>
     <p>Clients who reside within the European Union retain their data subject rights under the EU General Data Protection Regulation. EU-based clients with queries regarding how Mortgage Advice Bureau processes their data can contact our EU representative DataRep by emailing
-        <a href="mailto:datarequest@datarep.com">datarequest@datarep.com</a> or by visiting their website 
+        <a href="mailto:datarequest@datarep.com">datarequest@datarep.com</a> or by visiting their website
         <a href="http://www.datarep.com/data-request">www.datarep.com/data-request</a>
     </p>
-    
+
     <hr class="my-4" />
 </div>
 
 <div class="no-break">
     <h2>Questions</h2>
     <p>If you have any questions or complaints relating to how we use your personal data, or if you wish to exercise any of your rights regarding your personal data, please email <a href="mailto:Data.Protection@mab.org.uk">Data.Protection@mab.org.uk</a> or by writing to us. We will respond to you as soon as is possible. The length of time will depend on the type and complexity of the request, but you will receive a response no later than one month from the initial request.</p>
-    
+
     <hr class="my-4" />
 </div>
 
 <div class="no-break">
     <h2>What if I am still not satisfied?</h2>
 
-    <p>If you are not satisfied with how the Mortgage Advice Bureau has responded to your enquiry, you have the right to complain to the 
+    <p>If you are not satisfied with how the Mortgage Advice Bureau has responded to your enquiry, you have the right to complain to the
         <a href="https://ico.org.uk/for-the-public/" target="_blank">Information Commissioner&rsquo;s Office</a> (ICO), who is the regulator for data protection in the United Kingdom.
     </p>
 </div>
