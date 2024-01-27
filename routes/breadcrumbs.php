@@ -8,6 +8,11 @@ Breadcrumbs::for('admin.dashboard', function (BreadcrumbTrail $trail) {
     $trail->push('Dashboard', route('admin.dashboard'));
 });
 
+// Leads
+Breadcrumbs::for('leads', function (BreadcrumbTrail $trail) {
+    $trail->push('Leads', route('leads.index'));
+});
+
 // Home > GDPR
 Breadcrumbs::for('gdpr-consent', function (BreadcrumbTrail $trail) {
     $trail->parent('admin.dashboard');

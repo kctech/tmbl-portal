@@ -29,6 +29,7 @@
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" type="text/css">
 
     <!-- Styles -->
+    @livewireStyles
     <link href="{{ mix('/css/'.Session::get('css','default.css')) }}" rel="stylesheet">
     <style type="text/css">
         body {
@@ -171,6 +172,14 @@
                                 Dashboard
                             </a>
                         </li>
+                        @can('leads')
+                            <li class="nav-item">
+                                <a class="nav-link {{ isActive('admin/leads') }}" href="{{ route('leads.index') }}">
+                                    <i class="fa fa-inbox"></i>
+                                    Leads
+                                </a>
+                            </li>
+                        @endcan
                         @can('calculators')
                             <li class="nav-item">
                                 <a class="nav-link {{ isActive('admin/calculators') }}" href="{{ route('calculators.index') }}">
@@ -340,6 +349,14 @@
                                         Dashboard
                                     </a>
                                 </li>
+                                {{--@can('leads')--}}
+                                    <li class="nav-item">
+                                        <a class="nav-link {{ isActive('admin/leads') }}" href="{{ route('leads.index') }}">
+                                            <i class="fa fa-inbox"></i>
+                                            Leads
+                                        </a>
+                                    </li>
+                                {{--@endcan--}}
                                 @can('calculators')
                                     <li class="nav-item">
                                         <a class="nav-link {{ isActive('admin/calculators') }}" href="{{ route('calculators.index') }}">
@@ -504,6 +521,7 @@
     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">@csrf</form>
 
     <!-- Scripts -->
+    @livewireScripts
     <script src="{{ mix('/js/default.js') }}"></script>
     <script>
         app.ticktock(45,1);

@@ -217,3 +217,23 @@ function imgBase64($file) {
 function cssToInline($file) {
     return file_get_contents(public_path(). '/'.$file);
 }
+
+/* String Helpers */
+function split_name($name) {
+    $arr = explode(' ', trim($name));
+    $num = count($arr);
+    $first_name = $middle_name = $last_name = null;
+
+    if ($num == 2) {
+        list($first_name, $last_name) = $arr;
+    } elseif ($num == 3) {
+        list($first_name, $middle_name, $last_name) = $arr;
+    } else {
+        $first_name = $arr[0];
+        $last_name = $arr[array_key_last($arr)];
+    }
+
+    return (object) compact(
+        'first_name', 'middle_name', 'last_name'
+    );
+}

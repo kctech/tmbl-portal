@@ -54,6 +54,10 @@ Route::prefix('admin')->group(function () {
         //DASHBOARD
         Route::get('/dashboard', 'DashboardController@index')->name('admin.dashboard');
 
+        //LEADS
+        Route::get('/leads', 'LeadController@index')->name('leads.index');
+        Route::get('/leads/sources', 'LeadController@sources')->name('leads.sources');
+
         //USERS
         Route::post('/users/search', 'UserController@index')->name('users.search');
         Route::post('/users/find', 'UserController@find')->name('users.find');

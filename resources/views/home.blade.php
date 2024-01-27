@@ -1,6 +1,6 @@
 @extends('layouts.frontend')
 
-@section('title','Client Portal')
+@section('title','TMB Portal')
 
 @section('pagetitle','Choose your role...')
 
