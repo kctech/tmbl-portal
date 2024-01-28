@@ -13,7 +13,7 @@
             <div class="card">
                 <div class="card-body bg-light d-flex align-items-center">
                     <div class="custom-control custom-radio custom-control-inline">
-                        <input wire:click="$set('source_status','id_asc')" type="radio" id="source_status_all" name="source_status" class="custom-control-input" value="" {{checked('', $source_status)}}>
+                        <input wire:click="$set('source_status','')" type="radio" id="source_status_all" name="source_status" class="custom-control-input" value="" {{checked('', $source_status)}}>
                         <label class="custom-control-label" for="source_status_all">All Sources</label>
                     </div>
                     <div class="custom-control custom-radio custom-control-inline">
@@ -24,7 +24,7 @@
             </div>
             <div class="card ml-3">
                 <div class="card-body bg-light">
-                    <input class="form-control" placeholder="Client Search" wire:model="search_filter" value="{{$search_filter}}" />
+                    <input class="form-control" placeholder="Source Search" wire:model="search_filter" value="{{$search_filter}}" />
                 </div>
             </div>
             <div class="card ml-3">

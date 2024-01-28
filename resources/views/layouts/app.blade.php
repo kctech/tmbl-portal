@@ -205,13 +205,14 @@
                             </li>
                         @endcan
                         <!--
-                            @can('gdprconsents')<li class="nav-item">
-                            <a class="nav-link {{ isActive('admin/gdpr-consent') }}" href="{{ route('gdpr-consent.index') }}">
-                                <i class="fa fa-user"></i>
-                                GDPR Consents
-                            </a>
-                        </li>
-                        @endcan
+                            @can('gdprconsents')
+                                <li class="nav-item">
+                                <a class="nav-link {{ isActive('admin/gdpr-consent') }}" href="{{ route('gdpr-consent.index') }}">
+                                    <i class="fa fa-user"></i>
+                                    GDPR Consents
+                                </a>
+                            </li>
+                            @endcan
                         -->
                         @can('transferrequests')
                             <li class="nav-item">
@@ -349,14 +350,14 @@
                                         Dashboard
                                     </a>
                                 </li>
-                                {{--@can('leads')--}}
+                                @can('leads')
                                     <li class="nav-item">
                                         <a class="nav-link {{ isActive('admin/leads') }}" href="{{ route('leads.index') }}">
                                             <i class="fa fa-inbox"></i>
                                             Leads
                                         </a>
                                     </li>
-                                {{--@endcan--}}
+                                @endcan
                                 @can('calculators')
                                     <li class="nav-item">
                                         <a class="nav-link {{ isActive('admin/calculators') }}" href="{{ route('calculators.index') }}">
@@ -382,13 +383,14 @@
                                     </li>
                                 @endcan
                                 <!--
-                                    @can('gdprconsents')<li class="nav-item">
-                                    <a class="nav-link {{ isActive('admin/gdpr-consent') }}" href="{{ route('gdpr-consent.index') }}">
-                                        <i class="fa fa-user"></i>
-                                        GDPR Consents
-                                    </a>
-                                </li>
-                                @endcan
+                                    @can('gdprconsents')
+                                        <li class="nav-item">
+                                        <a class="nav-link {{ isActive('admin/gdpr-consent') }}" href="{{ route('gdpr-consent.index') }}">
+                                            <i class="fa fa-user"></i>
+                                            GDPR Consents
+                                        </a>
+                                    </li>
+                                    @endcan
                                 -->
                                 @can('transferrequests')
                                     <li class="nav-item">

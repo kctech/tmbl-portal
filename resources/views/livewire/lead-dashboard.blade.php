@@ -14,7 +14,7 @@
             <div class="card">
                 <div class="card-body bg-light d-flex align-items-center">
                     <div class="custom-control custom-radio custom-control-inline">
-                        <input wire:click="$set('lead_status','id_asc')" type="radio" id="lead_status_all" name="lead_status" class="custom-control-input" value="" {{checked('', $lead_status)}}>
+                        <input wire:click="$set('lead_status','')" type="radio" id="lead_status_all" name="lead_status" class="custom-control-input" value="" {{checked('', $lead_status)}}>
                         <label class="custom-control-label" for="lead_status_all">All Leads</label>
                     </div>
                     <div class="custom-control custom-radio custom-control-inline">
@@ -25,7 +25,7 @@
             </div>
             <div class="card ml-3">
                 <div class="card-body bg-light">
-                    <input class="form-control" placeholder="Client Search" wire:model="search_filter" value="{{$search_filter}}" />
+                    <input class="form-control" placeholder="Lead Search" wire:model="search_filter" value="{{$search_filter}}" />
                 </div>
             </div>
             <div class="card ml-3">
@@ -68,6 +68,7 @@
                         <th>Email Address</th>
                         <th>Contact Number</th>
                         <th>Recieved</th>
+                        <th>Source</th>
                         <th>Status</th>
                         <th></th>
                     </tr>
@@ -91,6 +92,7 @@
                                 {{\Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i')}}
                                 <span class="badge badge-primary">{{\Carbon\Carbon::parse($item->created_at)->diffForHumans()}}</span>
                             </td>
+                            <td>{{ $item->source->source ?? 'Unknown' }}</td>
                             <td>{{ $item->status }}</td>
                             <td>actions</td>
                         </tr>

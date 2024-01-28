@@ -10,6 +10,7 @@ class Lead extends Model
     const NEW_LEAD = 0;
     const QUALIFIED_LEAD = 1;
     const ALLOCATED_LEAD = 2;
+    const REMOVED_LEAD = 3;
 
     /**
      * The table associated with the model.
@@ -30,5 +31,13 @@ class Lead extends Model
     public function newQuery()
     {
         return parent::newQuery()->where('account_id', session('account_id'));
+    }
+
+    /**
+     * Get the client that owns the consent is related to.
+     */
+    public function source()
+    {
+        return $this->belongsTo(\App\Models\ApiKey::class);
     }
 }

@@ -26,6 +26,8 @@ class AuthServiceProvider extends ServiceProvider
          ,'App\Models\User' => 'App\Policies\UserPolicy'
          ,'App\Models\EligibilityStatement' => 'App\Policies\EligibilityStatementPolicy'
          //,'App\Models\AccountModule' => 'App\Policies\AccountModulePolicy'
+         ,'App\Models\Lead' => 'App\Policies\LeadPolicy'
+         ,'App\Models\ApiKey' => 'App\Policies\ApiKeyPolicy'
     ];
 
     /**
@@ -54,6 +56,10 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('users', function ($user) {
             return $user->role->level <= 1;
             //return checkModulePermission($user, 'users');
+        });
+        Gate::define('leads', function ($user) {
+            return $user->role->level <= 1;
+            //return checkModulePermission($user, 'leads');
         });
         Gate::define('clients', function ($user) {
             return checkModulePermission($user, 'clients');

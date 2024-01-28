@@ -26,8 +26,6 @@ class LeadSources extends Component
     public $view = 'list';
     public $filtersActive = 0;
     public $message_bar = '';
-    public $active_only_switch="1";
-    public $show_active_only = true;
 
     //form vars
     public $match_types = ['EQUAL', 'ANY', 'ANY_STARTS_WITH'];
@@ -61,6 +59,7 @@ class LeadSources extends Component
     public function mount()
     {
         $this->user_id = session('user_id');
+        $this->source_status = session(self::$session_prefix . 'source_status') ?? ApiKey::ACTIVE;
         $this->search_filter = session(self::$session_prefix . 'search_filter') ?? '';
         $this->sort_order = session(self::$session_prefix . 'sort_order') ?? '';
         $this->source = session(self::$session_prefix . 'source') ?? '';
@@ -70,12 +69,6 @@ class LeadSources extends Component
         $this->confidential = session(self::$session_prefix . 'confidential') ?? 0;
         $this->tooltip = session(self::$session_prefix . 'tooltip') ?? '';
         $this->order = session(self::$session_prefix . 'order') ?? 0;
-        $this->active_only_switch = session(self::$session_prefix . 'active_only_switch') ?? "1";
-        if ($this->active_only_switch == "1") {
-            $this->show_active_only = true;
-        } else {
-            $this->show_active_only = false;
-        }
     }
 
     public function updated($prop, $value)
@@ -83,14 +76,6 @@ class LeadSources extends Component
         session()->put(self::$session_prefix . $prop, $value);
 
         $this->message_bar = '';
-    }
-
-    public function updatedActiveOnlySwitch($value){
-        if($value == "1"){
-            $this->show_active_only = true;
-        }else{
-            $this->show_active_only = false;
-        }
     }
 
     public function data()
@@ -115,8 +100,8 @@ class LeadSources extends Component
             $query = $query->orderBy('id', 'asc');
         }
 
-        if ($this->show_active_only) {
-            $query = $query->where('status',0);
+        if ($this->source_status != '') {
+            $query = $query->where('status', $this->source_status);
         }
 
         if (!empty(trim($this->search_filter))) {
@@ -131,6 +116,7 @@ class LeadSources extends Component
 
     public function filter()
     {
+        session()->put(self::$session_prefix . 'source_status', $this->source_status);
         session()->put(self::$session_prefix . 'search_filter', $this->search_filter);
         session()->put(self::$session_prefix . 'sort_order', $this->sort_order);
         $this->emit('updated',['message'=>'Filtering applied']);
@@ -138,8 +124,10 @@ class LeadSources extends Component
 
     public function resetFilters()
     {
+        $this->source_status = '';
         $this->search_filter = '';
         $this->sort_order = '';
+        session()->forget(self::$session_prefix . 'source_status');
         session()->forget(self::$session_prefix . 'search_filter');
         session()->forget(self::$session_prefix . 'sort_order');
         $this->emit('updated', ['message' => 'Filters reset']);

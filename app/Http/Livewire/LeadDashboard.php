@@ -37,6 +37,7 @@ class LeadDashboard extends Component
     public function mount()
     {
         $this->user_id = session('user_id');
+        $this->lead_status = session(self::$session_prefix . 'lead_status') ?? '';
         $this->search_filter = session(self::$session_prefix . 'search_filter') ?? '';
         $this->sort_order = session(self::$session_prefix . 'sort_order') ?? '';
     }
@@ -86,6 +87,7 @@ class LeadDashboard extends Component
 
     public function filter()
     {
+        session()->put(self::$session_prefix . 'lead_status', $this->lead_status);
         session()->put(self::$session_prefix . 'search_filter', $this->search_filter);
         session()->put(self::$session_prefix . 'sort_order', $this->sort_order);
         $this->emit('updated',['message'=>'Filtering applied']);
