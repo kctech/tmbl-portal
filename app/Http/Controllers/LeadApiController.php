@@ -29,7 +29,7 @@ class LeadApiController extends Controller
      */
     public function store(Request $request)
     {
-        dump($request->all());
+        //dump($request->all());
 
         //prepare incoming request, check its not empty
         $full_request = $request->all();

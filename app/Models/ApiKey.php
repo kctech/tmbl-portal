@@ -36,16 +36,17 @@ class ApiKey extends Model
      */
     protected $hidden = [];
 
-    public function newQuery()
+
+    /*public function newQuery()
     {
         return parent::newQuery()->where('account_id', session('account_id'));
-    }
+    }*/
 
     /**
      * Get the users quotes
      */
     public function leads()
     {
-        return $this->hasMany(\App\Models\Lead::class);
+        return $this->hasMany(\App\Models\Lead::class, 'source_id', 'id');
     }
 }

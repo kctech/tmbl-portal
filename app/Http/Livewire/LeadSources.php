@@ -28,18 +28,9 @@ class LeadSources extends Component
     public $message_bar = '';
 
     //form vars
-    public $match_types = ['EQUAL', 'ANY', 'ANY_STARTS_WITH'];
-    public $confidential_types = [0 => 'No', 1 => 'Yes'];
-
-
-    //actionable vars
+    public $status = [0 => 'Inactive', 1 => 'Active'];
     public $source = null;
-    public $value = null;
-    public $match_type = 'EQUAL';
-    public $icon = null;
-    public $tooltip = null;
-    public $order = 0;
-    public $confidential = 0;
+    public $api_token = null;
 
     //save vars
     public $save_mode = 'create';
@@ -62,13 +53,10 @@ class LeadSources extends Component
         $this->source_status = session(self::$session_prefix . 'source_status') ?? ApiKey::ACTIVE;
         $this->search_filter = session(self::$session_prefix . 'search_filter') ?? '';
         $this->sort_order = session(self::$session_prefix . 'sort_order') ?? '';
+
         $this->source = session(self::$session_prefix . 'source') ?? '';
-        $this->value = session(self::$session_prefix . 'value') ?? '';
-        $this->match_type = session(self::$session_prefix . 'match_type') ?? 'EQUAL';
-        $this->icon = session(self::$session_prefix . 'icon') ?? '';
-        $this->confidential = session(self::$session_prefix . 'confidential') ?? 0;
-        $this->tooltip = session(self::$session_prefix . 'tooltip') ?? '';
-        $this->order = session(self::$session_prefix . 'order') ?? 0;
+        $this->api_token = session(self::$session_prefix . 'api_token') ?? '';
+        $this->status = session(self::$session_prefix . 'status') ?? '';
     }
 
     public function updated($prop, $value)
@@ -81,7 +69,7 @@ class LeadSources extends Component
     public function data()
     {
         $this->filtersActive = 0;
-        $query = ApiKey::query();
+        $query = ApiKey::where('account_id', session('account_id'));
 
         if ($this->sort_order != '') {
             ++$this->filtersActive;
@@ -136,9 +124,10 @@ class LeadSources extends Component
     public function delete($id)
     {
         $account_source  = ApiKey::find($id);
-        if ($account_source ) {
-
-            if ($account_source ->delete() !== false) {
+        if ($account_source) {
+            $account_source->status = ApiKey::INACTIVE;
+            $account_source->save();
+            if ($account_source->save() !== false) {
                 $this->emit('updated', ['message' => 'Source [' . $account_source ->source . '] has been deleted']);
                 $this->message_bar = 'Source [' . $account_source ->source . '] has been deleted.';
                 $this->search_filter = '';
@@ -146,15 +135,15 @@ class LeadSources extends Component
                 return true;
             }
         }
-        $this->emit('updated', ['message' => "Source [" . $account_source ->source . "] couldn't be deleted."]);
+        $this->emit('updated', ['message' => "Source [" . $account_source->source ?? 'unknown' . "] couldn't be deleted."]);
     }
 
     public function restore($id)
     {
-        $account_source  = ApiKey::find($id);
+        $account_source  = ApiKey::find($id)->withTrashed();
         if ($account_source ) {
-            $account_source ->status = 0;
-            if ($account_source ->save() !== false) {
+            $account_source->status = ApiKey::ACTIVE;
+            if ($account_source->save() !== false && $account_source->restore()) {
                 $this->emit('updated', ['message' => 'Source [' . $account_source ->source . '] has been restored']);
                 $this->message_bar = 'Source [' . $account_source ->source . '] has been restored.';
                 $this->search_filter = '';
@@ -171,12 +160,8 @@ class LeadSources extends Component
         $this->save_mode = 'create';
 
         $this->source = null;
-        $this->value = null;
-        $this->match_type = 'EQUAL';
-        $this->icon = null;
-        $this->tooltip = null;
-        $this->order = null;
-        $this->confidential = 0;
+        $this->api_token = null;
+        $this->status = 0;
 
         $this->view = 'form';
     }
@@ -189,12 +174,8 @@ class LeadSources extends Component
         $base = ApiKey::where('id', $id)->first();
         if ($base) {
             $this->source = $base->source;
-            $this->value = $base->value;
-            $this->match_type = $base->match_type;
-            $this->icon = $base->icon;
-            $this->confidential = $base->confidential;
-            $this->tooltip = $base->tooltip;
-            $this->order = $base->order;
+            $this->api_token = $base->api_token;
+            $this->status = $base->status;
 
             $this->view = 'form';
         } else {
@@ -209,12 +190,8 @@ class LeadSources extends Component
         $base = ApiKey::where('id', $id)->first();
         if($base){
             $this->source = $base->source;
-            $this->value = $base->value;
-            $this->match_type = $base->match_type;
-            $this->icon = $base->icon;
-            $this->confidential = $base->confidential;
-            $this->tooltip = $base->tooltip;
-            $this->order = $base->order;
+            $this->api_token = $base->api_token;
+            $this->status = $base->status;
 
             $this->view = 'form';
         }else{
@@ -222,32 +199,24 @@ class LeadSources extends Component
         }
     }
 
-    public function save_account_source()
+    public function save()
     {
-
-        $this->source = preg_replace('/\[\]/', '', $this->source);
-
+        if($this->save_mode == 'update'){
+            $api_token_validation = 'required|alpha_num|min:50|max:60';
+        }else{
+            $api_token_validation = 'required|alpha_num|min:50|max:60|unique:\App\Models\ApiKey,api_token';
+        }
         $validatedData = Validator::make(
             [
                 'account_id' => session('account_id'),
                 'source' => $this->source,
-                'value' => $this->value,
-                'match_type' => $this->match_type,
-                'icon' => $this->icon,
-                'confidential' => $this->confidential,
-                'tooltip' => $this->tooltip,
-                'order' => $this->order,
-                'status' => 0
+                'api_token' => $this->api_token,
+                'status' => $this->status
             ],
             [
                 'account_id' => 'required|numeric',
-                'source' => 'required|alpha_num',
-                'value' => 'required',
-                'match_type' => 'required|in:'.implode(",", $this->match_types),
-                'icon' => 'required',
-                'confidential' => 'required|in:0,1',
-                'tooltip' => 'required',
-                'order' => 'required|integer|min:0',
+                'source' => 'required',
+                'api_token' => $api_token_validation,
                 'status' => 'required|in:0,1'
             ]
         );

@@ -22,7 +22,7 @@ class EnsureTokenIsValid
         $token = $request->input('api_token') ?? $request->get('api_token') ?? $request->header('x-api-token') ?? null;
 
         if(!is_null($token)){
-            $tokenValid = ApiKey::where('api_token', $token)->first();
+            $tokenValid = ApiKey::where('api_token', $token)->where('status', ApiKey::ACTIVE)->first();
         }
 
         if (!$tokenValid) {

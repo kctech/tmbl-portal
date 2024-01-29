@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app_livewire')
 
 @section('title') Leads @endsection
 
