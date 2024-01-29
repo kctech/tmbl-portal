@@ -247,9 +247,9 @@ class LeadSources extends Component
 
     public function render()
     {
-        $this->data();
         $list = [];
         if($this->view == 'list'){
+            $this->data();
             $list = $this->data->paginate(Session::get('database.pagination_size', config('database.pagination_size')));
         }
         return view('livewire.lead-sources', [

@@ -17,112 +17,114 @@
     @endforeach
 </div> <!-- end .flash-message -->
 
-<div wire:loading.remove>
-    @if($view == 'form')
 
-        <div class="form-group row">
-            <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Source Name') }}</label>
-            <div class="col-md-6">
-                <input type="text" class="form-control{{ $errors->has('source') ? ' is-invalid' : '' }}" wire:model.defer="source">
-                @if ($errors->has('source'))
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $errors->first('source') }}</strong>
-                    </span>
-                @endif
-            </div>
+@if($view == 'form')
+
+    <div class="form-group row">
+        <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Source Name') }}</label>
+        <div class="col-md-6">
+            <input type="text" class="form-control{{ $errors->has('source') ? ' is-invalid' : '' }}" wire:model.defer="source">
+            @if ($errors->has('source'))
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $errors->first('source') }}</strong>
+                </span>
+            @endif
         </div>
-        <div class="form-group row">
-            <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('API Token') }}</label>
-            <div class="col-md-6">
-                <input type="text" class="form-control{{ $errors->has('api_token') ? ' is-invalid' : '' }}" wire:model.defer="api_token">
-                @if ($errors->has('api_token'))
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $errors->first('api_token') }}</strong>
-                    </span>
-                @endif
-            </div>
+    </div>
+    <div class="form-group row">
+        <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('API Token') }}</label>
+        <div class="col-md-6">
+            <input type="text" class="form-control{{ $errors->has('api_token') ? ' is-invalid' : '' }}" wire:model.defer="api_token">
+            @if ($errors->has('api_token'))
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $errors->first('api_token') }}</strong>
+                </span>
+            @endif
         </div>
-        <div class="form-group row">
-            <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Status') }}</label>
-            <div class="col-md-6">
-                <div class="form-control{{ $errors->has('status') ? ' is-invalid' : '' }}" style="height:auto;">
-                    <div class="custom-control custom-radio mb-2">
-                        <input type="radio" id="stage_event_{{\App\Models\ApiKey::ACTIVE}}" wire:model="status" class="custom-control-input" value="{{\App\Models\ApiKey::ACTIVE}}" />
-                        <label class="custom-control-label" for="stage_event_{{\App\Models\ApiKey::ACTIVE}}">Active</label>
-                    </div>
-                    <div class="custom-control custom-radio">
-                        <input type="radio" id="stage_event_{{\App\Models\ApiKey::INACTIVE}}" wire:model="status" class="custom-control-input" value="{{\App\Models\ApiKey::INACTIVE}}" />
-                        <label class="custom-control-label" for="stage_event_{{\App\Models\ApiKey::INACTIVE}}">Inactive</label>
+    </div>
+    <div class="form-group row">
+        <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Status') }}</label>
+        <div class="col-md-6">
+            <div class="form-control{{ $errors->has('status') ? ' is-invalid' : '' }}" style="height:auto;">
+                <div class="custom-control custom-radio mb-2">
+                    <input type="radio" id="stage_event_{{\App\Models\ApiKey::ACTIVE}}" wire:model="status" class="custom-control-input" value="{{\App\Models\ApiKey::ACTIVE}}" />
+                    <label class="custom-control-label" for="stage_event_{{\App\Models\ApiKey::ACTIVE}}">Active</label>
+                </div>
+                <div class="custom-control custom-radio">
+                    <input type="radio" id="stage_event_{{\App\Models\ApiKey::INACTIVE}}" wire:model="status" class="custom-control-input" value="{{\App\Models\ApiKey::INACTIVE}}" />
+                    <label class="custom-control-label" for="stage_event_{{\App\Models\ApiKey::INACTIVE}}">Inactive</label>
+                </div>
+            </div>
+            @if ($errors->has('status'))
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $errors->first('status') }}</strong>
+                </span>
+            @endif
+        </div>
+    </div>
+    <div class="form-group row mb-0">
+        <div class="col-md-6 offset-md-4">
+            <button wire:click="save()" type="button" class="btn btn-primary">
+                {{ __('Save') }}
+            </button>
+            <button type="button" class="btn btn-danger ml-auto" wire:click="$set('view','list')">
+                {{ __('Cancel') }}
+            </button>
+        </div>
+    </div>
+
+@elseif($view == 'list')
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h3>Filters</h3>
+
+            <div class="d-flex align-self-center">
+                <div class="card">
+                    <div class="card-body bg-light d-flex align-items-center">
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input wire:click="$set('source_status','')" type="radio" id="source_status_all" wire:model="source_status" class="custom-control-input" value="">
+                            <label class="custom-control-label" for="source_status_all">All Sources</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input wire:click="$set('source_status','{{\App\Models\ApiKey::ACTIVE}}')" type="radio" id="source_status_no" wire:model="source_status" class="custom-control-input" value="{{\App\Models\ApiKey::ACTIVE}}">
+                            <label class="custom-control-label" for="source_status_no">Active Sources Only</label>
+                        </div>
                     </div>
                 </div>
-                @if ($errors->has('status'))
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $errors->first('status') }}</strong>
-                    </span>
-                @endif
-            </div>
-        </div>
-        <div class="form-group row mb-0">
-            <div class="col-md-6 offset-md-4">
-                <button wire:click="save()" type="button" class="btn btn-primary">
-                    {{ __('Save') }}
-                </button>
-                <button type="button" class="btn btn-danger ml-auto" wire:click="$set('view','list')">
-                    {{ __('Cancel') }}
-                </button>
-            </div>
-        </div>
-
-    @elseif($view == 'list')
-
-        <div class="card mb-4">
-            <div class="card-body">
-                <h3>Filters</h3>
-
-                <div class="d-flex align-self-center">
-                    <div class="card">
-                        <div class="card-body bg-light d-flex align-items-center">
-                            <div class="custom-control custom-radio custom-control-inline">
-                                <input wire:click="$set('source_status','')" type="radio" id="source_status_all" wire:model="source_status" class="custom-control-input" value="">
-                                <label class="custom-control-label" for="source_status_all">All Sources</label>
-                            </div>
-                            <div class="custom-control custom-radio custom-control-inline">
-                                <input wire:click="$set('source_status','{{\App\Models\ApiKey::ACTIVE}}')" type="radio" id="source_status_no" wire:model="source_status" class="custom-control-input" value="{{\App\Models\ApiKey::ACTIVE}}">
-                                <label class="custom-control-label" for="source_status_no">Active Sources Only</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card ml-3">
-                        <div class="card-body bg-light">
-                            <input class="form-control" placeholder="Source Search" wire:model="search_filter" value="{{$search_filter}}" />
-                        </div>
-                    </div>
-                    <div class="card ml-3">
-                        <div class="card-body bg-light">
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text"><i class="far fa-sort-alpha-down"></i></div>
-                                </div>
-                                <select wire:model="sort_order" id="sort_order"  class="form-control">
-                                    <option value="recent" {{selected('recent', $sort_order)}}>Recently Updated</option>
-                                    <option value="newest_first" {{selected('newest_first', $sort_order)}} {{selected('default', $sort_order)}}>Newset First</option>
-                                    <option value="oldest_first" {{selected('oldest_first', $sort_order)}}>Oldest First</option>
-                                    <option value="surname_az" {{selected('surname_az', $sort_order)}}>Surname A-Z</option>
-                                    <option value="surname_za" {{selected('surname_za', $sort_order)}}>Surname Z-A</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="ml-auto d-flex align-items-center justify-content-center">
-                        <button wire:click="resetFilters" class="btn btn-outline-dark btn-lg">
-                            <i class="fas fa-times fa-sm"></i> Clear
-                        </button>
+                <div class="card ml-3">
+                    <div class="card-body bg-light">
+                        <input class="form-control" placeholder="Source Search" wire:model="search_filter" value="{{$search_filter}}" />
                     </div>
                 </div>
-
+                <div class="card ml-3">
+                    <div class="card-body bg-light">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text"><i class="far fa-sort-alpha-down"></i></div>
+                            </div>
+                            <select wire:model="sort_order" id="sort_order"  class="form-control">
+                                <option value="recent" {{selected('recent', $sort_order)}}>Recently Updated</option>
+                                <option value="newest_first" {{selected('newest_first', $sort_order)}} {{selected('default', $sort_order)}}>Newset First</option>
+                                <option value="oldest_first" {{selected('oldest_first', $sort_order)}}>Oldest First</option>
+                                <option value="surname_az" {{selected('surname_az', $sort_order)}}>Surname A-Z</option>
+                                <option value="surname_za" {{selected('surname_za', $sort_order)}}>Surname Z-A</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="ml-auto d-flex align-items-center justify-content-center">
+                    <button wire:click="resetFilters" class="btn btn-outline-dark btn-lg">
+                        <i class="fas fa-times fa-sm"></i> Clear
+                    </button>
+                </div>
             </div>
 
         </div>
+
+    </div>
+
+    <div wire:loading.remove>
 
         <div class="card mb-4">
 
@@ -211,17 +213,18 @@
                 {{ $list->links() }}
             </div>
         </div>
-    @endif
-</div>
 
-<div class="w-100" wire:loading>
-    <div class="card mt-4 border-0 shadow">
-        <div class="card-body p-1">
-            <div class="p-3 d-flex align-items-center justify-content-center text-center">
-                {{ __('Loading...') }}
+    </div>
+
+    <div class="w-100" wire:loading>
+        <div class="card mt-4 border-0 shadow">
+            <div class="card-body p-1">
+                <div class="p-3 d-flex align-items-center justify-content-center text-center">
+                    {{ __('Loading...') }}
+                </div>
             </div>
         </div>
     </div>
-</div>
+@endif
 
 </div>
