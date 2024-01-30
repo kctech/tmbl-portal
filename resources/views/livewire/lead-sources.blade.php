@@ -1,7 +1,7 @@
 <div>
 
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Lead Sources</h1>
+    <div id="topbar_title"><h1 class="h2">Lead Sources</h1></div>
 
     <div class="btn-toolbar mb-2 mb-md-0">
         {{ Breadcrumbs::render('leads') }}
@@ -227,4 +227,37 @@
     </div>
 @endif
 
+<div id="topbar_title_content" class="d-none">
+    <h1 class="h2">Lead Sources</h1>
 </div>
+
+</div>
+
+@push('js')
+    <script>
+
+        Livewire.on('updated', data => {
+            if(typeof data.message != 'undefined'){
+                app.alerts.toast(data.message);
+            }
+        });
+
+        Livewire.on('error', data => {
+            console.log("message");
+            if(typeof data.message != 'undefined'){
+                app.alerts.toast(data.message,'error');
+            }else{
+                app.alerts.toast('An error occurred','error');
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            Livewire.hook('message.processed', (message, component) => {
+                $("#topbar_title").html($("#topbar_title_content").html());
+            });
+
+            $("#topbar_title").html($("#topbar_title_content").html());
+        });
+
+    </script>
+@endpush

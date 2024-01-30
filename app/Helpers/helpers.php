@@ -237,3 +237,14 @@ function split_name($name) {
         'first_name', 'middle_name', 'last_name'
     );
 }
+
+function is_json($string){
+    return ((is_string($string) &&
+            (is_object(json_decode($string)) ||
+            is_array(json_decode($string))))) ? true : false;
+}
+
+function widget_title($title, $excludes=[]) {
+    if($title == 'ALL' || in_array($title, $excludes)) return '';
+    return ucfirst(str_replace('_', ' ', $title));
+}

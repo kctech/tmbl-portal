@@ -1,6 +1,6 @@
 @extends('layouts.app_livewire')
 
-@section('title') Leads @endsection
+@section('title') Leads Dashboard @endsection
 
 @section('content')
     @livewire('lead-dashboard')

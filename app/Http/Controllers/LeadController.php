@@ -31,6 +31,16 @@ class LeadController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
+    public function manage()
+    {
+        return view('admin.leads.manage');
+    }
+
+    /**
+     * Show the lead sources editor.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
     public function sources()
     {
         return view('admin.leads.sources');
