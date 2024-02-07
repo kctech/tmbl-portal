@@ -3,21 +3,34 @@ namespace App\Libraries;
 
 use GuzzleHttp\Client;
 
-class MABLead {
+class MABApi {
 
     public static $debug = true;
     public static $reporting = false;
-    private $client_id = "71ac9f40-f78d-4b90-a639-2bd6232d56c9";
-    private $client_secret = "ca20522e-c428-4f3e-a217-0a6c8c8cd396";
+    private static $ENDPOINT_URL = "https://api.mymortgageaccount.co.uk";
+    private static $TOKEN_URL = "https://sts.mymortgageaccount.co.uk";
+    private static $client_id = "";
+    private static $client_secret = "";
     private $token = "";
 
-	public function __construct($debug = false)
+	public function __construct($debug = false, $scope = 'leads:write:import', $live = true)
 	{
+        if(!$live){
+            static::$ENDPOINT_URL = env('UAT_URL');
+            static::$TOKEN_URL = env('UAT_TOKEN_URL');
+            static::$client_id = env('UAT_CLIENT_ID');
+            static::$client_secret = env('UAT_CLIENT_SECRET');
+        }else{
+            static::$ENDPOINT_URL = env('UAT_URL');
+            static::$TOKEN_URL = env('UAT_TOKEN_URL');
+            static::$client_id = env('UAT_CLIENT_ID');
+            static::$client_secret = env('UAT_CLIENT_SECRET');
+        }
         static::$debug = $debug;
-        $this->getToken();
+        $this->getToken($scope);
     }
 
-    private function getToken()
+    private function getToken($scope)
     {
         $headers = [
             'debug' => static::$debug,
@@ -26,13 +39,13 @@ class MABLead {
                 'Content-Type' => 'application/x-www-form-urlencoded'
             ], 'form_params' => [
                 'grant_type'    => 'client_credentials',
-                'client_id'     => $this->client_id,
-                'client_secret' => $this->client_secret,
-                'scope'         => 'leads:write:import',
+                'client_id'     => static::$client_id,
+                'client_secret' => static::$client_secret,
+                'scope'         => $scope,
             ]
         ];
 
-        $token_call = static::callApiEndpoint($headers, [], [], "https://sts.mymortgageaccount.co.uk/connect/token", 'POST', 'application/x-www-form-urlencoded', null, static::$debug);
+        $token_call = static::callApiEndpoint($headers, [], [], static::$TOKEN_URL."/connect/token", 'POST', 'application/x-www-form-urlencoded', null, static::$debug);
         if (static::$debug) {
             dump($token_call);
         }
@@ -42,6 +55,8 @@ class MABLead {
                 dump($this->token);
             }
             return true;
+        }else{
+            dd($token_call);
         }
     }
 
@@ -57,7 +72,7 @@ class MABLead {
         return $headers;
     }
 
-    public function newLead($data, $endpoint = 'https://api.mymortgageaccount.co.uk/lead/leads/imports', $encoding = 'application/json')
+    public function newLead($data)
     {
         /*
         full lead object
@@ -117,15 +132,16 @@ class MABLead {
             "additionalProp3": "string"
         }
         */
-
-        $headers = $this->makeHeaders();
-        $response = static::callApiEndpoint($headers, $data, [], $endpoint, 'POST', $encoding, null, static::$debug);
-        return $response;
+        return $this->apiCall($data, static::$ENDPOINT_URL.'/lead/leads/imports');
     }
 
-    public function apiCall($data, $endpoint = 'https://api.mymortgageaccount.co.uk/lead/leads/imports', $encoding = 'application/json'){
+    public function getAdvisers(){
+        return $this->apiCall([], static::$ENDPOINT_URL.'/lead/introducers/050364a6-11bc-4483-9c2f-a0fd42ed343b/firmsbasic', 'GET');
+    }
+
+    public function apiCall($data, $endpoint, $method='POST', $encoding = 'application/json'){
         $headers = $this->makeHeaders();
-        $response = static::callApiEndpoint($headers, $data, [], $endpoint, 'POST', $encoding, null, static::$debug);
+        return static::callApiEndpoint($headers, $data, [], $endpoint, $method, $encoding, null, static::$debug);
     }
 
 	private static function callApiEndpoint($headers, $body, $querystring, $endpoint, $method, $encoding = 'application/json', $additional_data = null, $debug = false)

@@ -298,4 +298,12 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(\App\Models\Lead::class, 'user_id', 'id');
     }
+
+    /**
+     * Get the users quotes
+     */
+    public function leads_this_month()
+    {
+        return $this->hasMany(\App\Models\Lead::class, 'user_id', 'id')->where('allocated_at','>', \Carbon\Carbon::now()->startofMonth()->subMonth()->endOfMonth()->toDateTimeString());
+    }
 }

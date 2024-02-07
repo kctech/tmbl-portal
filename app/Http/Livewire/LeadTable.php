@@ -7,7 +7,7 @@ use Livewire\WithPagination;
 
 use App\Models\Lead;
 
-use App\Libraries\MABLead;
+use App\Libraries\MABApi;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
@@ -36,6 +36,7 @@ class LeadTable extends Component
 
     public $lead_id = null;
     public $lead = null;
+    public $advisers = [];
 
     public function mount()
     {
@@ -110,78 +111,86 @@ class LeadTable extends Component
         if($base){
             $this->lead_id = $id;
             $this->lead = $base;
+            $this->advisers = \App\Models\User::withCount('leads')->where('account_id', session('account_id'))->orderBy('leads_count', 'asc')->get();
         }else{
             $this->emit('error', ['message' => "Cant find lead [" . $id . "]"]);
         }
     }
 
-    public function assign($lead_id, $adviser=null){
+    public function assign($lead_id, $adviser_email=null){
         $lead = Lead::find($lead_id);
         if($lead){
-            $data = [
-                //"mortgageBasis" => 1,
-                //"prospectType" => 1,
-                "contactMethodTypeId" => 4,
-                //"groupId" => 1,
-                "introducerId" => "6388e19c-feb1-4df2-8bcc-704a090999b0",
-                "introducerBranchId" => "1061f882-a004-4b6c-84d4-ab5bb9a03826",
-                //"introducerStaffId" => "03580d2b-4aee-4983-b904-6016f142d9e6",
-                //"groupEmailAddress" => "Devnoreply1@mab.org.uk",
-                //"submittedByName" => "Create Local Lead Referer",
-                "dateTimeGdprConsent" => \Carbon\Carbon::parse($lead->created_at)->format("Y-m-d\TH:i:s\Z"),
-                //"mortgagePurpose" => 1,
-                //"currentBuyingPosition" => 2,
-                //"howCanWeHelp" => 1,
-                //"plotNumber" => 42,
-                //"foundFutureHome" => false,
-                //"totalGrossSalary" => 80000,
-                //"propertyValue" => 300000,
-                //"deposit" => 30000,
-                "distributionType" => 4,
-                "distributionGroupId" => "5a4aaeb5-484e-4018-a2e6-a2e988fef65e",
-                //"leadReferralType" => 0,
-                //"timeOfReferral" => "2023-02-06T09:17:18.684Z",
-                //"creationDate" => "2023-02-06T09:17:18.684Z",
-                "notes" => "From TMBL Portal",
-                //"consenter" => 0,
-                "customers" => [
-                    [
-                        //"id" => "feecfecc-8cad-4175-a781-37ea4cb1e8b2",
-                        //"title" => 1,
-                        "firstName" => $lead->first_name,
-                        "lastName" => $lead->last_name,
-                        "emailAddress" => $lead->email_address,
-                        "telephoneNumber" => $lead->contact_number,
-                        "dateOfBirth" => "1900-01-01T00:00:00Z",
-                        //"gender" => 1,
-                        //"maritalStatus" => 2,
-                        "index" => 0,
-                        //"employmentStatus" => 1,
-                        //"workedLongerThan6MonthsForCurrentEmployer" => true,
-                        //"retirementAge" => 65,
-                        //"hasActiveUserAccount" => false,
-                        //"midasProClientId" => null
-                    ]
-                ],
-                //"allocatedFirmId" => null,
-                //"allocatedFirmBranchId" => null,
-                //"allocatedAdviserId" => null,
-                //"shouldSendCustomerInviteEmail" => true,
-                //"midasProClientFolderID" => null,
-                //"customFields" => [
-                //    "Portal_Lead_ID" => $lead->id,
-               // ]
-            ];
+            if(is_null($adviser_email)){
+                $adviser_id = \App\Models\User::where('email_address',$adviser_email)->first()->id ?? null;
+                $data = [
+                    //"mortgageBasis" => 1,
+                    //"prospectType" => 1,
+                    "contactMethodTypeId" => 4,
+                    //"groupId" => 1,
+                    "introducerId" => "6388e19c-feb1-4df2-8bcc-704a090999b0",
+                    "introducerBranchId" => "1061f882-a004-4b6c-84d4-ab5bb9a03826",
+                    //"introducerStaffId" => "03580d2b-4aee-4983-b904-6016f142d9e6",
+                    //"groupEmailAddress" => "Devnoreply1@mab.org.uk",
+                    //"submittedByName" => "Create Local Lead Referer",
+                    "dateTimeGdprConsent" => \Carbon\Carbon::parse($lead->created_at)->format("Y-m-d\TH:i:s\Z"),
+                    //"mortgagePurpose" => 1,
+                    //"currentBuyingPosition" => 2,
+                    //"howCanWeHelp" => 1,
+                    //"plotNumber" => 42,
+                    //"foundFutureHome" => false,
+                    //"totalGrossSalary" => 80000,
+                    //"propertyValue" => 300000,
+                    //"deposit" => 30000,
+                    "distributionType" => 4,
+                    "distributionGroupId" => "5a4aaeb5-484e-4018-a2e6-a2e988fef65e",
+                    //"leadReferralType" => 0,
+                    //"timeOfReferral" => "2023-02-06T09:17:18.684Z",
+                    //"creationDate" => "2023-02-06T09:17:18.684Z",
+                    "notes" => "From TMBL Portal",
+                    //"consenter" => 0,
+                    "customers" => [
+                        [
+                            //"id" => "feecfecc-8cad-4175-a781-37ea4cb1e8b2",
+                            //"title" => 1,
+                            "firstName" => $lead->first_name,
+                            "lastName" => $lead->last_name,
+                            "emailAddress" => $lead->email_address,
+                            "telephoneNumber" => $lead->contact_number,
+                            "dateOfBirth" => "1900-01-01T00:00:00Z",
+                            //"gender" => 1,
+                            //"maritalStatus" => 2,
+                            "index" => 0,
+                            //"employmentStatus" => 1,
+                            //"workedLongerThan6MonthsForCurrentEmployer" => true,
+                            //"retirementAge" => 65,
+                            //"hasActiveUserAccount" => false,
+                            //"midasProClientId" => null
+                        ]
+                    ],
+                    //"allocatedFirmId" => null,
+                    //"allocatedFirmBranchId" => null,
+                    //"allocatedAdviserId" => null,
+                    //"shouldSendCustomerInviteEmail" => true,
+                    //"midasProClientFolderID" => null,
+                    //"customFields" => [
+                    //    "Portal_Lead_ID" => $lead->id,
+                // ]
+                ];
 
-            $mab_lead = new MABLead(false);
-            $mab_lead_response = $mab_lead->newLead($data);
-            dump($mab_lead_response);
-            if($mab_lead_response->status){
-                $this->emit('updated', ['message' => "Lead allocated [" . $lead_id . "]"]);
-                $lead->status = Lead::ALLOCATED_LEAD;
-                $lead->save();
+                /*
+                $mab = new MABApi(false);
+                $mab_lead_response = $mab->newLead($data);
+                if($mab_lead_response->status){
+                    $this->emit('updated', ['message' => "Lead allocated [" . $lead_id . "]"]);
+                    $lead->status = Lead::ALLOCATED_LEAD;
+                    $lead->user_id = $adviser_id;
+                    $lead->save();
+                }else{
+                    $this->emit('error', ['message' => "Unable to send to MAB Portal [" . $lead_id . "]"]);
+                }
+                */
             }else{
-                $this->emit('error', ['message' => "Unable to send to MAB Portal [" . $lead_id . "]"]);
+                $this->emit('error', ['message' => "Todo..."]);
             }
         }else{
             $this->emit('error', ['message' => "Cant find lead [" . $lead_id . "]"]);
