@@ -4,14 +4,8 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 
-use App\Models\SSOClientCredentials;
+use App\Models\SSOCredentials;
 
-use Illuminate\Support\Facades\Http;
-use Illuminate\Http\Request;
-use Auth;
-
-use Illuminate\Support\Facades\Mail;
-use App\Mail\EmailTemplated;
 use App\Jobs\QueueEmail;
 
 Use Carbon\Carbon;
@@ -53,7 +47,7 @@ class SSOCredentialExpiryReminder extends Command
      */
     public function handle()
     {
-        $credentials = SSOClientCredentials::where('enabled',1)->where(function($q){$q->whereNotNull('expiry')->where('expiry','!=','');})->get();
+        $credentials = SSOCredentials::where('enabled',1)->where(function($q){$q->whereNotNull('expiry')->where('expiry','!=','');})->get();
         foreach($credentials as $credential){
             session()->put('account_id', $credential->account_id);
             if(Carbon::parse($credential->expiry)->diffInDays(Carbon::now()) < self::$threshold_days){
@@ -74,8 +68,8 @@ class SSOCredentialExpiryReminder extends Command
         $emailVars = [
             //'force' => true,
             'data' => $data,
-            'to' => ["support@reach-ats.com,development@reach-ats.com"],
-            'from' => "noreply@reach-ats.com",
+            'to' => ["kyle@perpetual.pro"],
+            'from' => "portal@tmblgroup.co.uk",
             'fromName' => "Reach SSO Credential Checker",
             'subject' => "IMPORTANT: SSO credentials expiring for account ". $data->credential->account_id,
             'view' => "email.system.sso_credential_expiry"
@@ -83,7 +77,7 @@ class SSOCredentialExpiryReminder extends Command
 
         //send email
         try {
-            dispatch(new QueueEmail($client))->onQueue('clientemails');
+            dispatch(new QueueEmail($emailVars))->onQueue('clientemails');
             return __("SUCCESS: Email send reminding for " . $data->credential->id . "(" . $data->credential->account_id . ")");
         } catch (\Exception $e) {
             Log::error($e);

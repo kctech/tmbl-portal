@@ -101,8 +101,6 @@ class GraphConnector
                 ]);
             }
 
-            dd($response);
-
             $data = json_decode($response->getBody()->getContents());
             foreach($data->value as $user) {
                 if(is_null($user->mail)) continue;

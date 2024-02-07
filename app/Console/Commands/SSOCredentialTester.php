@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Log;
 
 use Carbon\Carbon;
 
-class SSOCredentialExpiryReminder extends Command
+class SSOCredentialTester extends Command
 {
 
     public static $threshold_days = 30;
@@ -78,7 +78,7 @@ class SSOCredentialExpiryReminder extends Command
         dump($users);
 
         //TEAMS
-        /*$meeting = new OnlineMeeting($client_email_address);
+        $meeting = new OnlineMeeting($client_email_address);
         $meeting->subject = "Portal TEST - please ignore/cancel";
         $meeting->description = "Testing Azure/Teams API credentials";
         $meeting->date = $date->format("Y-m-d");
@@ -113,6 +113,6 @@ class SSOCredentialExpiryReminder extends Command
                 $err = "NO_ERROR";
         }
 
-        dd($err);*/
+        dd($err);
     }
 }
