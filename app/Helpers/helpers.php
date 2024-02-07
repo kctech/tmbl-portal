@@ -248,3 +248,22 @@ function widget_title($title, $excludes=[]) {
     if($title == 'ALL' || in_array($title, $excludes)) return '';
     return ucfirst(str_replace('_', ' ', $title));
 }
+
+function anyEmpty($arr_strings) {
+    foreach($arr_strings as $string){
+        if(empty($string)){
+            return true;
+        }
+    }
+    return false;
+}
+
+function is_email($email)
+{
+    if (!empty($email)) {
+        if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return true;
+        }
+    }
+    return false;
+}

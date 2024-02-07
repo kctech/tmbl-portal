@@ -174,3 +174,6 @@ Route::get('/sdlt-consent/respond/{code}/{id}', 'SdltDisclaimerController@respon
 Route::get('/transfer-request/respond/{code}/{id}', 'ClientTransferConsentController@respond')->name('transfer-request.respond')->where('code', '[A-za-z0-9]+')->where('id', '[0-9]+');
 Route::get('/terms-consent/respond/{code}/{id}', 'TermsConsentController@respond')->name('terms-consent.respond')->where('code', '[A-za-z0-9]+')->where('id', '[0-9]+');
 Route::get('/quote/respond/{code}/{id}', 'QuoteController@respond')->name('quote.respond')->where('code', '[A-za-z0-9]+')->where('id', '[0-9]+');
+
+//SSO
+Route::get('/platform/{provider}/auth','\App\Http\Controllers\Auth\LoginController@ssoAuthenticate')->where('provider','[A-Za-z]+');
