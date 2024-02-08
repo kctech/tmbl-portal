@@ -1,4 +1,4 @@
-<nav class="col-md-2 d-none d-lg-block @if(Session::has('impersonate')) bg-dark @else bg-dark @endif text-light sidebar p-2">
+<nav class="col-md-2 d-none d-lg-block @if(Session::has('impersonate')) bg-dark @else bg-primary @endif text-light sidebar p-2">
 
     <div class="sidebar-sticky">
         <div class="w-100 text-center mb-2">

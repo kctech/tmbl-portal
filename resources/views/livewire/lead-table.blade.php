@@ -144,7 +144,7 @@
                                             <button class="btn btn-sm btn-danger btn-blockX" wire:click="deallocate({{$lead_id}})">Remove {{$lead->owner->full_name()}} from lead</button>
                                         @elseif($lead->status == \App\Models\Lead::TRANSFERRED)
                                             {{ \App\Libraries\Interpret::LeadStatus($lead->status) }} to {{$lead->owner->full_name()}}
-                                        @else@else
+                                        @else
                                             {{ \App\Libraries\Interpret::LeadStatus($lead->status) }}
                                         @endif
                                     </div>
@@ -205,7 +205,12 @@
                                     <span class="badge badge-primary">{{\Carbon\Carbon::parse($item->created_at)->diffForHumans()}}</span>
                                 </td>
                                 <td>{{ $item->source->source ?? 'Unknown' }}</td>
-                                <td>{{ \App\Libraries\Interpret::LeadStatus($item->status) }}</td>
+                                <td>
+                                    {{ \App\Libraries\Interpret::LeadStatus($item->status) }}
+                                    @if(is_numeric($item->user_id))
+                                        <br /><span class="badge badge-primary">{{$item->owner->full_name() ?? 'Unknown User'}}</span>
+                                    @endif
+                                </td>
                                 <td class="text-right">
                                     @if($item->status == \App\Models\Lead::PROSPECT)
                                         <button class="btn btn-primary" wire:click="info({{$item->id}})">Actions</button>
