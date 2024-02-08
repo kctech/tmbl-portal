@@ -41,7 +41,7 @@ class LeadApiController extends Controller
         //prepare new lead
         $new_lead = [];
         $new_lead['uuid'] = Str::uuid();
-        $new_lead['status'] = LEAD::NEW_LEAD;
+        $new_lead['status'] = LEAD::PROSPECT;
         $new_lead['source_id'] = session('source_id') ?? 0;
         $new_lead['account_id'] = session('account_id') ?? 0;
 

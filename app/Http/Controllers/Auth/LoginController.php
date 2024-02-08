@@ -31,7 +31,7 @@ class LoginController extends Controller
 
     //tells laravel what the name of the column in the database is for a user
     public function username(){
-        return 'emailAddress';
+        return 'email';
     }
 
     /**

@@ -164,7 +164,9 @@ class GraphConnector
             "DoNotDisturb" => 5,
             "BeRightBack" => 6,
             "Away" => 7,
-            "Offline" => 8
+            "Offline" => 8,
+            "PresenceUnknown" => 9,
+            "OutOfOffice" => 10,
         ];
 
         //get users and an array of theirs ids
@@ -175,13 +177,13 @@ class GraphConnector
         //get all user id's presences - faster than individual as avoids multiple api calls per user
         $presences = $this->getMultipleUserPresence($ids);
         foreach($users as $user){
-            if ($presences[$user->id]->activity == "PresenceUnknown") { $presences[$user->id]->activity = "Offline"; }
-            $statuses[strtolower($user->mail)] = $presences[$user->id]->activity;
+            //if ($presences[$user->id]->activity == "PresenceUnknown") { $presences[$user->id]->activity = "Offline"; }
+            $statuses[strtolower($user->mail)] = $presences[$user->id];
         }
 
         //sort users by online status
         uasort($statuses, function($a,$b) use ($status_orders){
-            return (($status_orders[$a] ?? 10)) <=> (($status_orders[$b] ?? 10));
+            return (($status_orders[$a->activity] ?? 10)) <=> (($status_orders[$b->activity] ?? 10));
         });
 
         return $statuses;

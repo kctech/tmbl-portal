@@ -31,7 +31,7 @@
 
         {{--<div>
             <div class="custom-control custom-checkbox mb-3">
-                <input type="checkbox" name="remember" id="remember" class="custom-control-input" value="1" {{ old('remember') ? 'checked' : '' }} /> 
+                <input type="checkbox" name="remember" id="remember" class="custom-control-input" value="1" {{ old('remember') ? 'checked' : '' }} />
                 <label class="custom-control-label" for="remember">{{ __('Remember Me') }}</label>
             </div>
         </div>--}}

@@ -9,10 +9,12 @@ use \Carbon\Carbon;
 class Lead extends Model
 {
 
-    const NEW_LEAD = 0;
-    const QUALIFIED_LEAD = 1;
-    const ALLOCATED_LEAD = 2;
-    const REMOVED_LEAD = 3;
+    const PROSPECT = 0;
+    const CLAIMED = 1;
+    const CONTACTED = 2;
+    const TRANSFERRED = 3;
+    const COLD = 4;
+    const DEAD = 5;
 
     /**
      * The table associated with the model.
@@ -41,6 +43,14 @@ class Lead extends Model
     public function source()
     {
         return $this->belongsTo(\App\Models\ApiKey::class);
+    }
+
+    /**
+     * Get the client that owns the consent is related to.
+     */
+    public function owner()
+    {
+        return $this->belongsTo(\App\Models\User::class,'user_id','id');
     }
 
     //date query filter maker

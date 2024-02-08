@@ -30,7 +30,7 @@
                         <label class="custom-control-label" for="lead_status_all">All Leads</label>
                     </div>
                     <div class="custom-control custom-radio custom-control-inline">
-                        <input wire:click="$set('lead_status','{{\App\Models\Lead::NEW_LEAD}}')" type="radio" id="lead_status_no" name="lead_status" class="custom-control-input" value="{{\App\Models\Lead::NEW_LEAD}}" {{checked(\App\Models\Lead::NEW_LEAD, $lead_status)}}>
+                        <input wire:click="$set('lead_status','{{\App\Models\Lead::PROSPECT}}')" type="radio" id="lead_status_no" name="lead_status" class="custom-control-input" value="{{\App\Models\Lead::PROSPECT}}" {{checked(\App\Models\Lead::PROSPECT, $lead_status)}}>
                         <label class="custom-control-label" for="lead_status_no">New Leads Only</label>
                     </div>
                 </div>
@@ -100,24 +100,53 @@
                             <div class="w-100 h-100 position-relative">
                                 <div class="list_{{$lead_id}} position-absolute overflow-auto" style="top:0; bottom:0; left:0; right:0;">
                                     <div class="list-group list-group-flush">
-                                        @foreach($advisers as $adviser)
-                                            <div class="list-group-item p-1">
-                                                <div class="row">
-                                                    <div class="col-1 text-right">
-                                                        <i class="fas fa-circle text-danger"></i>
-                                                    </div>
-                                                    <div class="col-7 text-truncate">
-                                                        {{$adviser->first_name}} {{$adviser->last_name}}
-                                                    </div>
-                                                    <div class="col-2 text-right">
-                                                        {{$adviser->leads_this_month->count()}} this mo.
-                                                    </div>
-                                                    <div class="col-2 text-right">
-                                                        <button class="btn btn-sm btn-primary btn-block" wire:click="assign({{$lead_id}},'{{$adviser->emailAddress}}')">Allocate</button>
+                                        @if($lead->status == \App\Models\Lead::PROSPECT)
+                                            @foreach($advisers as $adviser)
+                                                <div class="list-group-item p-1">
+                                                    <div class="row">
+                                                        <div class="col-1 text-right">
+                                                            @switch(($adviser->presence->availability ?? 'unknown'))
+                                                                @case('Available')
+                                                                    <i class="fas fa-check-circle text-success " data-tooltip title="{{$adviser->presence->activity}}"></i>
+                                                                    @break
+                                                                @case('Busy')
+                                                                    <i class="fas fa-circle text-danger" data-tooltip title="{{$adviser->presence->activity}}"></i>
+                                                                    @break
+                                                                @case('Away')
+                                                                    <i class="fas fa-circle text-warning" data-tooltip title="{{$adviser->presence->activity}}"></i>
+                                                                    @break
+                                                                @case('Offline')
+                                                                    <i class="fas fa-times-circle text-muted" data-tooltip title="{{$adviser->presence->activity}}"></i>
+                                                                    @break
+                                                                @default
+                                                                    <i class="fas fa-question-circle text-muted" data-tooltip title="{{$adviser->presence->activity ?? 'unknown'}}"></i>
+                                                            @endswitch
+                                                        </div>
+                                                        <div class="col-5 text-truncate">
+                                                            {{$adviser->first_name}} {{$adviser->last_name}}
+                                                        </div>
+                                                        <div class="col-2 text-right">
+                                                            {{$adviser->leads_this_month->count()}} this mo.
+                                                        </div>
+                                                        <div class="col-4 text-right">
+                                                            @if($lead->status == \App\Models\Lead::PROSPECT)
+                                                                <button class="btn btn-sm btn-secondary btn-blockX" wire:click="allocate({{$lead_id}},'{{$adviser->id}}')">Allocate</button>
+                                                                <button class="ml-2 btn btn-sm btn-primary btn-blockX" wire:click="transfer({{$lead_id}},'{{$adviser->email}}')">Transfer</button>
+                                                            @endif
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        @endforeach
+                                            @endforeach
+                                        @elseif($lead->status == \App\Models\Lead::CLAIMED)
+                                            Claimed by {{$lead->owner->full_name()}}
+                                            <button class="ml-2 btn btn-sm btn-primary btn-blockX" wire:click="transfer({{$lead_id}},'{{$lead->owner->email}}')">Transfer to MAB</button>
+                                            <br />
+                                            <button class="btn btn-sm btn-danger btn-blockX" wire:click="deallocate({{$lead_id}})">Remove {{$lead->owner->full_name()}} from lead</button>
+                                        @elseif($lead->status == \App\Models\Lead::TRANSFERRED)
+                                            {{ \App\Libraries\Interpret::LeadStatus($lead->status) }} to {{$lead->owner->full_name()}}
+                                        @else@else
+                                            {{ \App\Libraries\Interpret::LeadStatus($lead->status) }}
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="overflow-msg overflow-msg-scroll d-none position-absolute text-muted text-center" style="bottom:0; left:0; right:0; background-image: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,1));">
@@ -176,7 +205,7 @@
                                     <span class="badge badge-primary">{{\Carbon\Carbon::parse($item->created_at)->diffForHumans()}}</span>
                                 </td>
                                 <td>{{ $item->source->source ?? 'Unknown' }}</td>
-                                <td>{{ $item->status }}</td>
+                                <td>{{ \App\Libraries\Interpret::LeadStatus($item->status) }}</td>
                                 <td class="text-right">
                                     <button class="btn btn-primary" wire:click="info({{$item->id}})">Actions</button>
                                 </td>

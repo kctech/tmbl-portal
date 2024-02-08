@@ -25,7 +25,7 @@ class CreateLeadsTable extends Migration
             $table->string('email_address')->nullable();
             $table->string('contact_number')->nullable();
             $table->json('data')->nullable();
-            $table->tinyInteger('status')->default(\App\Models\Lead::NEW_LEAD);
+            $table->tinyInteger('status')->default(\App\Models\Lead::PROSPECT);
             $table->timestamp('allocated_at')->nullable();
             $table->timestamps();
 

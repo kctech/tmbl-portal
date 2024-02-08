@@ -37,9 +37,9 @@ class Dev extends Command
      */
     public function handle()
     {
-        //$mab = new \App\Libraries\MABApi(false,'introducers:read:authorizedfirms',true);
+        $mab = new \App\Libraries\MABApi(false,'introducers:read:authorizedfirms',true);
         //dd($mab->getAdvisers());
-        //dd($mab->getAdviser("Sam Kirtikar"));
+        dd($mab->getAdviser("Marc Finch"));
 
 
         //Try and instantiate an Azureprovider instance for teams. It'll throw if there's no account config for it or it's not enabled

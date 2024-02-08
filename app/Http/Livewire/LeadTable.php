@@ -111,13 +111,77 @@ class LeadTable extends Component
         if($base){
             $this->lead_id = $id;
             $this->lead = $base;
-            $this->advisers = \App\Models\User::withCount('leads')->where('account_id', session('account_id'))->orderBy('leads_count', 'asc')->get();
+            $this->advisers = $this->buildAdvisersList();
         }else{
             $this->emit('error', ['message' => "Cant find lead [" . $id . "]"]);
         }
     }
 
-    public function assign($lead_id, $adviser_email=null){
+    private function buildAdvisersList(){
+        $list = [];
+        $users = [];
+        $default_status = (object)[
+            "availability" => "PresenceUnknown",
+            "activity" => "PresenceUnknown",
+            "statusMessage" => null
+        ];
+        $system_users = \App\Models\User::withCount('leads')->where('account_id', session('account_id'))->orderBy('leads_count', 'asc')->get();
+
+        try {
+            $azure = new \App\Libraries\SSO\AzureProvider(1, 'TEAMS', true);
+        } catch (\App\Exceptions\AccountNotConfiguredException $exception) {
+            dd("No teams meeting support for account: 1");
+        }
+        $graph = new \App\Libraries\Azure\GraphConnector($azure);
+        //$users = $graph->getUsers();
+        $azure_user_presence = $graph->getUsersWithPresence();
+
+        //Preserve presence order and show Portal users only
+        foreach($system_users as $user){
+            $users[$user->email] = $user;
+        }
+        foreach($azure_user_presence as $email => $status){
+            if(isset($users[$email])){
+                $users[$email]->presence = $status ?? $default_status;
+                $list[] = $users[$email];
+            }
+        }
+        return $list;
+
+        /*
+        list of all Azure Users
+        foreach($system_users as $user){
+            $user->presence = $azure_user_presence[$user->email] ?? $default_status;
+        }
+        return $system_users;
+        */
+    }
+
+    public function deallocate($lead_id){
+        $lead = Lead::find($lead_id);
+        if($lead){
+            $lead->status = Lead::PROSPECT;
+            $lead->user_id = null;
+            $lead->allocated_at = null;
+            $lead->save();
+        }else{
+            $this->emit('error', ['message' => "Cant find lead [" . $lead_id . "]"]);
+        }
+    }
+
+    public function allocate($lead_id, $adviser_id){
+        $lead = Lead::find($lead_id);
+        if($lead){
+            $lead->status = Lead::CLAIMED;
+            $lead->user_id = $adviser_id;
+            $lead->allocated_at = date('Y-m-d H:i:s');
+            $lead->save();
+        }else{
+            $this->emit('error', ['message' => "Cant find lead [" . $lead_id . "]"]);
+        }
+    }
+
+    public function transfer($lead_id, $adviser_email=null){
         $lead = Lead::find($lead_id);
         if($lead){
             if(is_null($adviser_email)){
@@ -180,20 +244,17 @@ class LeadTable extends Component
                 $mab_lead_response = $mab->newLead($data);
                 if($mab_lead_response->status){
                     $this->emit('updated', ['message' => "Lead allocated [" . $lead_id . "]"]);
-                    $lead->status = Lead::ALLOCATED_LEAD;
+                    $lead->status = Lead::TRANSFERRED;
                     $lead->user_id = 0;
+                    $lead->allocated_at = date('Y-m-d H:i:s');
                     $lead->save();
                 }else{
                     $this->emit('error', ['message' => "Unable to send to MAB Portal [" . $lead_id . "]"]);
                 }
             }else{
-                $this->emit('error', ['message' => "Todo..."]);
-                return;
-
-
-                $adviser = \App\Models\User::where('email_address',$adviser_email)->first() ?? null;
+                $adviser = \App\Models\User::where('email',$adviser_email)->first() ?? null;
                 if(is_null($adviser->mab_id)){
-                    $mab = new \App\Libraries\MABApi(false,'introducers:read:authorizedfirms',false);
+                    $mab = new \App\Libraries\MABApi(false,'introducers:read:authorizedfirms',true);
                     $mab_id = $mab->getAdviser($adviser->full_name());
                     if(!is_null($mab_id)){
                         $adviser->mab_id = $mab_id;
@@ -206,7 +267,7 @@ class LeadTable extends Component
                     return;
                 }
 
-                list($mab_firm_id,$mab_branch_id,$mab_user_id) = explode("|",$adviser);
+                list($mab_firm_id,$mab_branch_id,$mab_user_id) = explode("|",$adviser->mab_id);
 
                 $data = [
                     //"mortgageBasis" => 1,
@@ -227,12 +288,12 @@ class LeadTable extends Component
                     //"totalGrossSalary" => 80000,
                     //"propertyValue" => 300000,
                     //"deposit" => 30000,
-                    "distributionType" => 4,
-                    "distributionGroupId" => "5a4aaeb5-484e-4018-a2e6-a2e988fef65e",
+                    "distributionType" => 3,
+                    //"distributionGroupId" => "5a4aaeb5-484e-4018-a2e6-a2e988fef65e",
                     //"leadReferralType" => 0,
                     //"timeOfReferral" => "2023-02-06T09:17:18.684Z",
                     //"creationDate" => "2023-02-06T09:17:18.684Z",
-                    "notes" => "From TMBL Portal",
+                    "notes" => "From DEV TMBL Portal",
                     //"consenter" => 0,
                     "customers" => [
                         [
@@ -267,7 +328,7 @@ class LeadTable extends Component
                 $mab_lead_response = $mab->newLead($data);
                 if($mab_lead_response->status){
                     $this->emit('updated', ['message' => "Lead allocated [" . $lead_id . "]"]);
-                    $lead->status = Lead::ALLOCATED_LEAD;
+                    $lead->status = Lead::TRANSFERRED;
                     $lead->user_id = $adviser->id;
                     $lead->save();
                 }else{
@@ -313,6 +374,8 @@ class LeadTable extends Component
         $list = [];
         if($this->view == 'list'){
             $list = $this->data->paginate(Session::get('database.pagination_size', config('database.pagination_size')));
+        }elseif(!is_null($this->lead_id)){
+            $this->advisers = $this->buildAdvisersList();
         }
         return view('livewire.lead-table', [
             'list' => $list
