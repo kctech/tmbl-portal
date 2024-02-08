@@ -76,49 +76,30 @@ class GraphConnector
      */
     public function getUsers($filter='')
     {
-        if (is_null($this->access_token)) {
-            $this->initialise();
+        $email_filter = $this->_email ?? $filter;
+
+        if(!empty($email_filter)){
+            //NOTE: reason for str_replace - escaping single quotes in email addresses
+            //https://stackoverflow.com/questions/41491222/single-quote-escaping-in-microsoft-graph
+            //http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/abnf/odata-abnf-construction-rules.txt
+            //SQUOTE-in-string = SQUOTE SQUOTE ; two consecutive single quotes represent one within a string literal
+            $url = 'users?$select=mail,id&$filter=startswith(mail,\'' . str_replace("'", "''", $email_filter) . '\')';
+        }else{
+            $url = 'users?$select=mail,id';
         }
-        try {
-            $headers = [
-                'Authorization' => 'Bearer ' . $this->access_token,
-                'Accept'        => 'application/json',
-            ];
 
-            $email_filter = $this->_email ?? $filter;
-
-            if(!empty($email_filter)){
-                //NOTE: reason for str_replace - escaping single quotes in email addresses
-                //https://stackoverflow.com/questions/41491222/single-quote-escaping-in-microsoft-graph
-                //http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/abnf/odata-abnf-construction-rules.txt
-                //SQUOTE-in-string = SQUOTE SQUOTE ; two consecutive single quotes represent one within a string literal
-                $response = $this->client->request('GET', self::BASE_GRAPH_URL . 'users?$select=mail,id&$filter=startswith(mail,\'' . str_replace("'", "''", $email_filter) . '\')', [
-                    'headers' => $headers
-                ]);
-            }else{
-                $response = $this->client->request('GET', self::BASE_GRAPH_URL . 'users?$select=mail,id', [
-                    'headers' => $headers
-                ]);
-            }
-
-            $data = json_decode($response->getBody()->getContents());
-            foreach($data->value as $user) {
-                if(is_null($user->mail)) continue;
-                if(!empty($filter)){
-                    if(stripos($user->mail,$filter)!==false){
-                        $this->users[] = $user;
-                    }
-                }else{
+        $data = $this->getAll('GET',$url,[],[],"value");
+        foreach($data as $user) {
+            if(is_null($user->mail)) continue;
+            if(!empty($filter)){
+                if(stripos($user->mail,$filter)!==false){
                     $this->users[] = $user;
                 }
+            }else{
+                $this->users[] = $user;
             }
-            return $this->users;
-
-        } catch (\Exception $exception) {
-            Log::critical($exception->getMessage(),['tenant_id' => $this->provider->getTenantId()]);
-            return null;
         }
-
+        return $this->users;
     }
 
     /**
@@ -138,6 +119,72 @@ class GraphConnector
             }
         }
         return null;
+    }
+
+    /**
+     * Gets presence status of a current Azure users from microsoft
+     */
+    public function getUserPresence($user_id)
+    {
+        return $this->callApi('GET', 'users/'.$user_id.'/presence');
+    }
+
+    /**
+     * Gets presence status of a current Azure users from microsoft
+     */
+    public function getMultipleUserPresence($user_ids)
+    {
+        $data = $this->getAll('POST','communications/getPresencesByUserId', [
+            'headers' => [
+                'Content-Type'  => 'application/json',
+            ],
+            'body' => json_encode(['ids' => $user_ids])
+        ]);
+        $output = [];
+        foreach(($data ?? []) as $user){
+            $output[$user->id] = (object)[
+                "availability" => $user->availability,
+                "activity" => $user->activity,
+                "statusMessage" => $user->statusMessage
+            ];
+
+        }
+        return $output;
+    }
+
+    public function getUsersWithPresence(){
+
+        //vars
+        $ids = $statuses = [];
+        $status_orders = [
+            "Available" => 1,
+            "Busy" => 2,
+            "InAMeeting" => 3,
+            "InACall" => 4,
+            "DoNotDisturb" => 5,
+            "BeRightBack" => 6,
+            "Away" => 7,
+            "Offline" => 8
+        ];
+
+        //get users and an array of theirs ids
+        $users = $this->getUsers();
+        foreach($users as $user){
+            $ids[] = $user->id;
+        }
+        //get all user id's presences - faster than individual as avoids multiple api calls per user
+        $presences = $this->getMultipleUserPresence($ids);
+        foreach($users as $user){
+            if ($presences[$user->id]->activity == "PresenceUnknown") { $presences[$user->id]->activity = "Offline"; }
+            $statuses[strtolower($user->mail)] = $presences[$user->id]->activity;
+        }
+
+        //sort users by online status
+        uasort($statuses, function($a,$b) use ($status_orders){
+            return (($status_orders[$a] ?? 10)) <=> (($status_orders[$b] ?? 10));
+        });
+
+        return $statuses;
     }
 
     public function createOnlineMeeting(OnlineMeeting $online_meeting, $is_online_meeting = true) {
@@ -242,6 +289,40 @@ class GraphConnector
 
         return $online_meeting;
 
+    }
+
+    private function getAll($method, $url, $options=[], $currentData=[],$key="value"){
+        $data = $this->callApi($method, $url, $options);
+        $currentData = array_merge($currentData,($data->{$key} ?? []));
+        if(!empty(($data->{"@odata.nextLink"} ?? null))){
+            return $this->getAll($method, $data->{"@odata.nextLink"}, $options, $currentData,$key);
+        }else{
+            return $currentData;
+        }
+    }
+
+    private function callApi($method,$url,$options=[]){
+        if (is_null($this->access_token)) {
+            $this->initialise();
+        }
+        try {
+            $base_options = ['headers' => [
+                    'Authorization' => 'Bearer ' . $this->access_token,
+                    'Accept'        => 'application/json',
+                ]
+            ];
+
+            $call_options = array_merge_recursive($base_options, $options);
+
+            $response = $this->client->request($method, self::BASE_GRAPH_URL.(str_ireplace(self::BASE_GRAPH_URL,'',$url)), $call_options);
+
+            //return $response;
+            return json_decode($response?->getBody()?->getContents() ?? '');
+
+        } catch (\Exception $exception) {
+            Log::critical($exception->getMessage(),['tenant_id' => $this->provider->getTenantId()]);
+            return null;
+        }
     }
 
 }

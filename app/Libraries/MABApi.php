@@ -11,20 +11,23 @@ class MABApi {
     private static $TOKEN_URL = "https://sts.mymortgageaccount.co.uk";
     private static $client_id = "";
     private static $client_secret = "";
+    private static $user_list_endpoint = "";
     private $token = "";
 
 	public function __construct($debug = false, $scope = 'leads:write:import', $live = true)
 	{
         if(!$live){
-            static::$ENDPOINT_URL = env('UAT_URL');
-            static::$TOKEN_URL = env('UAT_TOKEN_URL');
-            static::$client_id = env('UAT_CLIENT_ID');
-            static::$client_secret = env('UAT_CLIENT_SECRET');
+            static::$ENDPOINT_URL = env('MAB_UAT_URL');
+            static::$TOKEN_URL = env('MAB_UAT_TOKEN_URL');
+            static::$client_id = env('MAB_UAT_CLIENT_ID');
+            static::$client_secret = env('MAB_UAT_CLIENT_SECRET');
+            static::$user_list_endpoint = env('MAB_UAT_USER_LIST_ENDPOINT');
         }else{
-            static::$ENDPOINT_URL = env('UAT_URL');
-            static::$TOKEN_URL = env('UAT_TOKEN_URL');
-            static::$client_id = env('UAT_CLIENT_ID');
-            static::$client_secret = env('UAT_CLIENT_SECRET');
+            static::$ENDPOINT_URL = env('MAB_LIVE_URL');
+            static::$TOKEN_URL = env('MAB_LIVE_TOKEN_URL');
+            static::$client_id = env('MAB_LIVE_CLIENT_ID');
+            static::$client_secret = env('MAB_LIVE_CLIENT_SECRET');
+            static::$user_list_endpoint = env('MAB_LIVE_USER_LIST_ENDPOINT');
         }
         static::$debug = $debug;
         $this->getToken($scope);
@@ -136,7 +139,21 @@ class MABApi {
     }
 
     public function getAdvisers(){
-        return $this->apiCall([], static::$ENDPOINT_URL.'/lead/introducers/050364a6-11bc-4483-9c2f-a0fd42ed343b/firmsbasic', 'GET');
+        return $this->apiCall([], static::$ENDPOINT_URL.'/lead/introducers/'.static::$user_list_endpoint.'/firmsbasic', 'GET');
+    }
+
+    public function getAdviser($name){
+        $firms = $this->apiCall([], static::$ENDPOINT_URL.'/lead/introducers/'.static::$user_list_endpoint.'/firmsbasic', 'GET');
+        foreach(($firms->data ?? []) as $firm){
+            foreach(($firm->branches ?? []) as $branch){
+                foreach(($branch->advisers ?? [])as $adviser){
+                    if(strtolower(trim($adviser->name)) == strtolower(trim($name))){
+                        return $firm->firmId."|".$branch->branchId."|".$adviser->adviserId;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     public function apiCall($data, $endpoint, $method='POST', $encoding = 'application/json'){
