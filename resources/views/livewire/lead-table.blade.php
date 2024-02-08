@@ -105,22 +105,24 @@
                                                 <div class="list-group-item p-1">
                                                     <div class="row">
                                                         <div class="col-1 text-right">
-                                                            @switch(($adviser->presence->availability ?? 'unknown'))
-                                                                @case('Available')
-                                                                    <i class="fas fa-check-circle text-success " data-tooltip title="{{$adviser->presence->activity}}"></i>
-                                                                    @break
-                                                                @case('Busy')
-                                                                    <i class="fas fa-circle text-danger" data-tooltip title="{{$adviser->presence->activity}}"></i>
-                                                                    @break
-                                                                @case('Away')
-                                                                    <i class="fas fa-circle text-warning" data-tooltip title="{{$adviser->presence->activity}}"></i>
-                                                                    @break
-                                                                @case('Offline')
-                                                                    <i class="fas fa-times-circle text-muted" data-tooltip title="{{$adviser->presence->activity}}"></i>
-                                                                    @break
-                                                                @default
-                                                                    <i class="fas fa-question-circle text-muted" data-tooltip title="{{$adviser->presence->activity ?? 'unknown'}}"></i>
-                                                            @endswitch
+                                                            <span class="tip" title="{{$adviser->presence->activity ?? 'unknown'}}">
+                                                                @switch(($adviser->presence->availability ?? 'unknown'))
+                                                                    @case('Available')
+                                                                        <i class="fas fa-check-circle text-success"></i>
+                                                                        @break
+                                                                    @case('Busy')
+                                                                        <i class="fas fa-circle text-danger"></i>
+                                                                        @break
+                                                                    @case('Away')
+                                                                        <i class="fas fa-circle text-warning"></i>
+                                                                        @break
+                                                                    @case('Offline')
+                                                                        <i class="fas fa-times-circle text-muted"></i>
+                                                                        @break
+                                                                    @default
+                                                                        <i class="fas fa-question-circle text-muted"></i>
+                                                                @endswitch
+                                                            </span>
                                                         </div>
                                                         <div class="col-5 text-truncate">
                                                             {{$adviser->first_name}} {{$adviser->last_name}}

@@ -173,6 +173,12 @@
     <script src="{{ mix('/js/default.js') }}"></script>
     <script>
         app.ticktock(45,1);
+
+        document.addEventListener("DOMContentLoaded", () => {
+            Livewire.hook('message.processed', (message, component) => {
+                app.resetUIJs();
+            });
+        });
     </script>
     @stack('js')
 

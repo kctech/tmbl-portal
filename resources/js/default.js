@@ -1,4 +1,7 @@
-console.log("TMBL Adviser Portal by Perpetual. v1.0");
+console.log("TMBL Adviser Portal by Perpetual. v2.0");
+
+app = {};
+app.tooltips_enabled = true;
 
 /*lazy loading*/
 (function() {
@@ -16,15 +19,16 @@ console.log("TMBL Adviser Portal by Perpetual. v1.0");
 }());
 
 $(document).ready(function() {
-	$('.tip,[data-toggle="tooltip"]').tooltip();
-	formElements();
+    app.uiElements();
+    app.formElements();
+
 	/* esc closes modal */
 	$(document).bind('keydown', 'esc', function(){
 		$('.modal').modal('hide');
 	});
 	/* enter fires search */
 	$('#search').on('keypress',function(e) {
-		if(e.which == 13) {								
+		if(e.which == 13) {
 			$('#_search').val($(this).val());
 			$('#filter_form').submit();
 		}
@@ -44,24 +48,155 @@ $(document).ready(function() {
 	});
 });
 
-function formElements(){
-	$('.select2').select2({
-		minimumResultsForSearch: 10,
-		theme: 'bootstrap4',
-		closeOnSelect: true,
-		width:'100%'
-	});
-	$(".select2-tags").select2({
-		theme: 'bootstrap4',
-		closeOnSelect: true,
-		width:'100%',
-	    tags: true,
-	    tokenSeparators: [',']
-	});
-	$('.component_datepicker').datepicker({format: 'dd/mm/yyyy',clearBtn: true});
-    $('.component_future_datepicker').datepicker({format: 'dd/mm/yyyy',clearBtn: true,startDate: "now",autoclose: true});
-    $('.component_past_datepicker').datepicker({format: 'dd/mm/yyyy',clearBtn: true,endDate: "now",autoclose: true});
-    $(".component_month_datepicker").datepicker( {
+
+app.showOnHover = function (hover_element, show_element = '.show-on-hover') {
+    $('body').on({
+        'mouseover': function () {
+            $(this).find(show_element).fadeTo(100, 1);
+        },
+        'mouseleave': function () {
+            $(this).find(show_element).fadeTo(0, 0);
+        }
+    }, hover_element);
+}
+
+app.uiElementsDestroy = function() {
+    $('[data-toggle="popover"], .popover').popover('dispose');
+    $('[data-toggle="dropdown"], .dropdown-toggle').dropdown('dispose');
+    $('[data-toggle="tooltip"], .tip').tooltip('dispose');
+}
+
+app.uiElementsCreate = function() {
+    if (app.tooltips_enabled) {
+        /*$('[data-toggle="tooltip"], .tip').tooltip();*/
+        $('[data-toggle="tooltip"], .tip').each((_i, e) => {
+            $(e).tooltip();
+        });
+        $('[data-toggle="tooltip"], .tip').on('click',function () {
+            $('[data-toggle="tooltip"], .tip').tooltip("hide");
+        });
+    } else {
+        $('[data-toggle="tooltip"], .tip').tooltip('disable');
+        $('.tip-force').tooltip();
+    }
+
+    /*$('[data-toggle="popover"], .popover').popover();*/
+    $('[data-toggle="popover"], .popover').each((_i, e) => {
+        $(e).popover();
+    });
+
+    /*$('[data-toggle="dropdown"], .dropdown-toggle').popover();*/
+    $('[data-toggle="dropdown"], .dropdown-toggle').each((_i, e) => {
+        $(e).dropdown();
+    });
+}
+
+app.uiElements = function (report=false) {
+    app.uiElementsDestroy();
+    app.uiElementsCreate();
+    if (report !== false) {
+        console.log('reset ui component js');
+    }
+};
+
+app.formElementsDestroy = function () {
+    /* destroy to prevent duplicates */
+    $('select.select2.select2-hidden-accessible').select2('destroy');
+    $(".component_datepicker, .component_future_datepicker, .component_past_datepicker, .component_month_datepicker").datepicker("destroy");
+}
+
+app.formElementsCreate = function() {
+    /* init custom elements */
+    $('select.select2,select.selectpicker').each((_i, e) => {
+        var $e = $(e);
+        var $placeholder = 'Select an option';
+        if ($e.attr('placeholder') != "" && typeof $e.attr('placeholder') != "undefined") {
+            $placeholder = $e.attr('placeholder');
+        }
+        $e.select2({
+            minimumResultsForSearch: 10,
+            theme: 'bootstrap4',
+            width: '100%',
+            dropdownParent: $e.parent(),
+            placeholder: {
+                id: 'PLACEHOLDER_VALUE', // the value of the option
+                text: $placeholder
+            }
+        });
+    });
+    /*$('.select2,.selectpicker').select2({
+        placeholder: {
+            id: 'PLACEHOLDER_VALUE', // the value of the option
+            text: 'Select an option'
+        },
+        minimumResultsForSearch: 10,
+        theme: 'bootstrap4',
+        width: '100%'
+    });*/
+    $('select.select2-tags').each((_i, e) => {
+        var $e = $(e);
+        var $placeholder = 'Click to select or type a tag';
+        if ($e.attr('placeholder') != "" && typeof $e.attr('placeholder') != "undefined"){
+            $placeholder = $e.attr('placeholder');
+        }
+        $e.select2({
+            theme: 'bootstrap4',
+            width: '100%',
+            tags: true,
+            tokenSeparators: [','],
+            dropdownParent: $e.parent(),
+            placeholder: $placeholder
+        });
+    });
+    /*$(".select2-tags").select2({
+        theme: 'bootstrap4',
+        width: '100%',
+        tags: true,
+        tokenSeparators: [','],
+        placeholder: 'Click to select or type a tag'
+    });*/
+    $('select.select2-optgroup').each((_i, e) => {
+        var $e = $(e);
+        var $placeholder = 'Select an option';
+        if ($e.attr('placeholder') != "" && typeof $e.attr('placeholder') != "undefined") {
+            $placeholder = $e.attr('placeholder');
+        }
+        $e.select2({
+            minimumResultsForSearch: 10,
+            theme: 'bootstrap4',
+            width: '100%',
+            matcher: app.modelMatcher,
+            dropdownParent: $e.parent(),
+            placeholder: {
+                id: 'PLACEHOLDER_VALUE', // the value of the option
+                text: $placeholder
+            }
+        });
+    });
+
+    /*$('.select2-optgroup').select2({
+        placeholder: {
+            id: 'PLACEHOLDER_VALUE', // the value of the option
+            text: 'Select an option'
+        },
+        minimumResultsForSearch: 10,
+        theme: 'bootstrap4',
+        width: '100%',
+        matcher: app.modelMatcher
+    });*/
+
+    $(document).on('select2:open', () => {
+        let allFound = document.querySelectorAll('.select2-container--open .select2-search__field');
+        $(this).one('mouseup', () => {
+            setTimeout(() => {
+                allFound[allFound.length - 1].focus();
+            }, 0);
+        });
+    });
+    $('.component_datepicker').datepicker({ format: 'dd/mm/yyyy', clearBtn: true });
+    $('.component_future_datepicker').datepicker({ format: 'dd/mm/yyyy', clearBtn: true, startDate: "now", autoclose: true });
+    $('.component_past_datepicker').datepicker({ format: 'dd/mm/yyyy', clearBtn: true, endDate: "now", autoclose: true });
+    $(".component_month_datepicker").datepicker({
         format: "M yyyy",
         startView: "months",
         minViewMode: "months",
@@ -70,9 +205,46 @@ function formElements(){
         autoclose: true
     });
 }
+app.formElements = function (report=false) {
+    app.formElementsDestroy();
+    app.formElementsCreate();
+    if(report !== false) {
+        console.log('reset form component js');
+    }
+};
 
-function regexValidate(value,type='required'){
-    switch(type) {
+app.destroyUIJs = function () {
+    app.formElementsDestroy();
+    app.uiElementsDestroy();
+    console.log('destroyed ui components');
+}
+
+app.createUIJs = function () {
+    app.formElementsCreate();
+    app.uiElementsCreate();
+    console.log('created ui components');
+}
+
+app.resetUIJs = function () {
+    app.uiElements();
+    app.formElements();
+    console.log('reset ui components');
+}
+
+/* copy to clipboard */
+app.copyToClipboard = function (textContent, copyText = "Copied to clipboard") {
+    var inp = document.createElement('input');
+    document.body.appendChild(inp);
+    inp.value = textContent;
+    inp.select();
+    document.execCommand('copy', false);
+    inp.remove();
+
+    app.alerts.toast(copyText);
+}
+
+app.regexValidate = function(value, type = 'required') {
+    switch (type) {
         case "required":
             var regex = /^\s*$/;
             break;
@@ -101,20 +273,14 @@ function regexValidate(value,type='required'){
             break;
     }
 
-    if(!regex.test(value)){
+    if (!regex.test(value)) {
         return false;
-    }else{
+    } else {
         return true;
     }
 }
 
-app = {};
-
 app.alerts = {};
-
-app.formElements = formElements;
-app.regexValidate = regexValidate;
-
 app.alerts.confirmDelete = function(form_id,name) {
 	swal.fire({
 	  title: 'Confirm Deletion',
@@ -199,7 +365,7 @@ app.modal = {
 		.done(function(response) {
 			response = JSON.parse(response);
 			console.log(response);
-			if(response.status == app.status.VALIDATION_ERROR){
+			if(response.status ==app.status.VALIDATION_ERROR){
 				$( "#"+formId+" .invalid-feedback" ).remove();
 				$( "#"+formId+" .form-control" ).removeClass("is-invalid");
 				if(response.validation.length==1){
@@ -211,12 +377,12 @@ app.modal = {
 					}
 					$( "#alert-" + formId ).html('<i class="fas fa-exclamation-circle"></i> There are ' + response.validation.length + " problems, please review the items below.<ul class=\"mb-0\">" + errors + '</ul>').removeClass("d-none");
 				}
-				
-			
+
+
 				$("select + span.select2 span.select2-selection").css('border-color','#ced4da');
 				$.each(response.validation, function( index,validation_item ) {
-					field = validation_item.key;	
-					feedback = validation_item.value;	
+					field = validation_item.key;
+					feedback = validation_item.value;
 					/*console.log(value);*/
 					$( "#"+formId+" .form-control[name="+field+"]" ).addClass("is-invalid");
 					$("select.is-invalid + span.select2 span.select2-selection").css('border-color','#b20000');
@@ -224,13 +390,13 @@ app.modal = {
 				$('.element-scroll-top').animate({ scrollTop: 0 }, 'slow');
 				return false;
 			}
-			if(response.status == app.status.OK){
+			if(response.status ==app.status.OK){
 				if(typeof response.data!='undefined' && typeof response.data.redirect_url!='undefined'){
 					window.location.href = response.data.redirect_url;
 				}else{
 					window.location.reload();
 				}
-				
+
 				return true;
 			}
 		});
@@ -247,7 +413,7 @@ app.ticktock = function(warn,kill) {
 		countTimer++;
 		console.log("App running: "+countTimer+"mins, has "+((warn+kill)-countTimer)+"mins left before logout.");
 	}, 60000);
-	_ticker = setTimeout(function(){ 
+	_ticker = setTimeout(function(){
 		swal.fire({
 		  title: 'Inactive Session',
 		  html: 'Due to a period of inactivity, your session will be signed out shortly ('+ (kill*60) +'s).<br />Please refresh the page you\'re on to stay logged in.',
@@ -278,7 +444,7 @@ app.logout = function() {
 };
 
 app.ticktock_frontend = function(warn,kill) {
-	_ticker_frontend = setTimeout(function(){ 
+	_ticker_frontend = setTimeout(function(){
 		swal.fire({
 		  title: 'Hello?',
 		  html: 'This page has been idle for a while, so to protect your privacy the page will redirect soon ('+ (kill*60) +'s)...',
@@ -302,7 +468,7 @@ app.ticktock_frontend = function(warn,kill) {
 
 accounting.settings = {
 	currency: {
-		symbol : "£", 
+		symbol : "£",
 		format: "%s%v",
 		decimal : ".",
 		thousand: ",",
