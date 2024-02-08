@@ -73,8 +73,8 @@
         @if(!is_null($lead_id))
             <div class="card">
                 <div class="card-header d-flex flex-row justify-content-center align-items-center">
-                    <h2 class="mb-0">{{$lead->first_name}} {{$lead->last_name}}</h2>
-                    <button class="ml-auto btn btn-primary" wire:click="assign({{$lead_id}})">Send to MAB</button>
+                    <h2 class="mb-0 mr-auto">{{$lead->first_name}} {{$lead->last_name}}</h2>
+                    @if($lead->status == \App\Models\Lead::PROSPECT)<button class="btn btn-primary" wire:click="assign({{$lead_id}})">Send to MAB Distribution Group</button>@endif
                     <button class="ml-3 btn btn-secondary" wire:click="close()">Close</button>
                 </div>
                 <div class="card-body p-1">
@@ -207,7 +207,11 @@
                                 <td>{{ $item->source->source ?? 'Unknown' }}</td>
                                 <td>{{ \App\Libraries\Interpret::LeadStatus($item->status) }}</td>
                                 <td class="text-right">
-                                    <button class="btn btn-primary" wire:click="info({{$item->id}})">Actions</button>
+                                    @if($item->status == \App\Models\Lead::PROSPECT)
+                                        <button class="btn btn-primary" wire:click="info({{$item->id}})">Actions</button>
+                                    @else
+                                        <button class="btn btn-secondary" wire:click="info({{$item->id}})">Info</button>
+                                    @endif
                                 </td>
                             </tr>
 
