@@ -40,6 +40,7 @@ class Test extends Command
     public function handle()
     {
 
+        dump("running artisan task");
         Log::debug("running artisan task");
 
     }
