@@ -24,15 +24,19 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+
+        //$schedule->command('test:script')->everyMinute();
+
         //$schedule->command('telescope:prune')->hourly();
 
         //$schedule->command('backup:clean')->daily()->at('01:00');
         //$schedule->command('backup:run')->daily()->at('02:00');
 
-        //$schedule->command('test:script')->everyMinute();
         $schedule->command('queue:restart')->everyMinute();
         $schedule->command('queue:retry all')->everyFifteenMinutes();
         $schedule->command('queue:work --queue=adviseremails,clientemails --timeout=60 --sleep=5 --tries=3')->withoutOverlapping()->everyMinute();
+
+        $schedule->command('portal_cache:calendars --account_id=1 --base_user_email=sam@tmblgroup.co.uk')->withoutOverlapping()->everyFifteenMinutes();
 
         //$schedule->command('inspire')->hourly();
     }
