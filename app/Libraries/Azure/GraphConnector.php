@@ -189,6 +189,40 @@ class GraphConnector
         return $statuses;
     }
 
+    /**
+     * Gets presence status of a current Azure users from microsoft
+     */
+    public function getMultipleUserSchedules($base_user_id, $user_emails, $start_datetime, $end_datetime, $interval=60, $timezone="GMT")
+    {
+        $data = $this->getAll('POST','/users/'.$base_user_id.'/calendar/getSchedule', [
+            'headers' => [
+                'Content-Type'  => 'application/json',
+                'Prefer' => 'outlook.timezone="'.$timezone.'"'
+            ],
+            'body' => json_encode([
+                'schedules' => $user_emails,
+                "startTime" => [
+                    "dateTime" => Carbon::parse($start_datetime)->toIso8601String(),
+                    "timeZone" => $timezone
+                ],
+                "endTime" => [
+                    "dateTime" => Carbon::parse($end_datetime)->toIso8601String(),
+                    "timeZone" => $timezone
+                ],
+                "availabilityViewInterval" => $interval
+            ])
+        ]);
+        $output = [];
+        foreach(($data ?? []) as $user){
+            $output[$user->scheduleId] = (object)[
+                "scheduleItems" => (object) ($user->scheduleItems ?? []),
+                "workingHours" => (object) ($user->workingHours ?? [])
+            ];
+
+        }
+        return $output;
+    }
+
     public function createOnlineMeeting(OnlineMeeting $online_meeting, $is_online_meeting = true) {
 
         //Reset the error flag,as the same object might be re-passed over and over
