@@ -45,4 +45,14 @@ class LeadController extends Controller
     {
         return view('admin.leads.sources');
     }
+
+    /**
+     * Show the lead sources editor.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function contact()
+    {
+        return view('admin.leads.contact');
+    }
 }

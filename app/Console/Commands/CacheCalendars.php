@@ -72,7 +72,8 @@ class CacheCalendars extends Command
             $calendars = array_merge($calendars,$graph->getMultipleUserSchedules($base_user->id,$chunk,\Carbon\Carbon::now()->addWeek()->startOfWeek(),\Carbon\Carbon::now()->addWeek()->endOfWeek()));
         }
 
-        if(!empty($calendars)){
+        //check calendars fetched = calendars requested - we don't want partials
+        if(!empty($calendars) && count($calendars) == count($fetch_users)){
             if(PortalCache::updateOrCreate(
                 [
                     'account_id' => $account_id,
@@ -81,7 +82,7 @@ class CacheCalendars extends Command
                 [
                     'uuid' => Str::uuid(),
                     'data' => json_encode($calendars),
-                    'expires_at' => Carbon::now()->addMinutes(30)->format("Y-m-d H:i:s")
+                    'expires_at' => Carbon::now()->addHours(3)->format("Y-m-d H:i:s")
                 ]
             )){
                 $this->info("Calendars updated");

@@ -83,11 +83,11 @@
                 <div class="card">
                     <div class="card-body bg-light d-flex align-items-center">
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input wire:click="$set('source_status','')" type="radio" id="source_status_all" wire:model="source_status" class="custom-control-input" value="">
+                            <input wire:click="$set('source_status','')" type="radio" id="source_status_all" class="custom-control-input" value="" {{checked($source_status,'')}}>
                             <label class="custom-control-label" for="source_status_all">All Sources</label>
                         </div>
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input wire:click="$set('source_status','{{\App\Models\ApiKey::ACTIVE}}')" type="radio" id="source_status_no" wire:model="source_status" class="custom-control-input" value="{{\App\Models\ApiKey::ACTIVE}}">
+                            <input wire:click="$set('source_status','{{\App\Models\ApiKey::ACTIVE}}')" type="radio" id="source_status_no" class="custom-control-input" value="{{\App\Models\ApiKey::ACTIVE}}" {{checked($source_status,\App\Models\ApiKey::ACTIVE)}}>
                             <label class="custom-control-label" for="source_status_no">Active Sources Only</label>
                         </div>
                     </div>
@@ -124,6 +124,28 @@
 
     </div>
 
+    <div class="card mb-4 bg-light p-3">
+        <div class="row">
+            <div class="col-6">
+                <strong>Guide:</strong><br />
+                <hr />
+                Send a POST request to endpoint: <strong class="cursor-pointer tip" title="Copy URL to clipboard" onclick="app.copyToClipboard('{{env('APP_URL')}}/api/leads/new')">{{env('APP_URL')}}/api/leads/new <i class="fal fa-copy"></i></strong>
+                <br />
+                Authentication is one of:
+                <ul>
+                    <li>Form input: 'api_token' with value of {token}</li>
+                    <li>Querystring variable: ?api_token={token}</li>
+                    <li>Header: 'x-api-token' with value of {token}</li>
+                </ul>
+            </div>
+            <div class="col-6">
+                <strong>Limits:</strong><br />
+                <hr />
+                100 requests within 1 minute.
+            </div>
+        </div>
+    </div>
+
     <div wire:loading.remove>
 
         <div class="card mb-4">
@@ -154,7 +176,12 @@
                             <tr class="">
                                 <td>{{ $item->id }}</td>
                                 <td>{{ $item->source }}</td>
-                                <td>{{ $item->api_token }}</td>
+                                <td>
+                                    <div onclick="app.copyToClipboard('{{env('APP_URL')}}/api/leads/new?api_token={{ $item->api_token }}')" class="w-100 d-flex align-items-center justify-content-between cursor-pointer tip" title="Copy full token URL to clipboard">
+                                        <span>{{ $item->api_token }}</span>
+                                        <i class="ml-auto fa fa-copy"></i>
+                                    </div>
+                                </td>
                                 <td>
                                     @if(!is_null($item->last_login_at))
                                         {{\Carbon\Carbon::parse($item->last_login_at)->format('d/m/Y H:i')}}

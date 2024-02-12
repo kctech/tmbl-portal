@@ -24,4 +24,9 @@ class PortalCache extends Model
     protected $fillable = [
         'uuid', 'account_id', 'cache_key', 'data', 'expires_at',
     ];
+
+    public function newQuery()
+    {
+        return parent::newQuery()->where('account_id', session('account_id'));
+    }
 }
