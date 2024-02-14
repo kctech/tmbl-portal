@@ -14,6 +14,9 @@
 @import '~sweetalert2/src/sweetalert2';
 @import '~bootstrap-datepicker/dist/css/bootstrap-datepicker.css';
 
+@import 'plugins/select2/core.scss';
+@import 'plugins/select2/select2-bs4-theme.scss';
+
 .select2-container {
   background-color: #fff;
 }
@@ -61,8 +64,8 @@
 
 // transition
 @mixin transition($property: all, $duration: 300ms, $animate: linear, $delay:0s){
-    transition: $property $duration $animate $delay; 
-}  
+    transition: $property $duration $animate $delay;
+}
 
 // Placeholder Mixins
 @mixin placeholder {
@@ -217,7 +220,7 @@
       p {
           font-weight: $headings-font-weight;
           color: $white !important;
-          
+
           &:last-of-type {
               margin-bottom: 0;
           }
@@ -294,7 +297,7 @@
 .scroll-box {
     height: 500px;
     overflow-y: scroll;
-} 
+}
 .multi_step_form{
     display: block;
     overflow: hidden;
@@ -303,9 +306,9 @@
         position: relative;
         padding-top: 50px;
         margin: 0 auto;
-        z-index: 1; 
+        z-index: 1;
 
-        fieldset { 
+        fieldset {
             border: 0;
             position: relative;
             width: 100%;
@@ -315,30 +318,30 @@
                 display: none;
             }
         }
-        
+
         #progressbar {
-            overflow: hidden;  
+            overflow: hidden;
             li {
                 list-style-type: none;
-                color: #99a2a8; 
+                color: #99a2a8;
                 font-size: 9px;
                 //width: calc(100%/4);
                 float: left;
-                position: relative; 
+                position: relative;
                 text-align: center;
-                font: 500 13px/1 $font-family-sans-serif; 
- 
+                font: 500 13px/1 $font-family-sans-serif;
+
                 &:before {
                     content: "";
                     width: 50px;
                     height: 50px;
                     line-height: 50px;
-                    display: block; 
+                    display: block;
                     background: #eaf0f4;
                     border-radius: 50%;
                     margin: 0 auto 10px auto;
                 }
-                
+
                 &:after {
                     content: '';
                     width: 100%;
@@ -347,7 +350,7 @@
                     position: absolute;
                     left: -50%;
                     top: 21px;
-                    z-index: -1; 
+                    z-index: -1;
                 }
 
                 .icon {
@@ -361,7 +364,7 @@
                     position: absolute;
                     top: 10px;
                     left: 50%;
-                } 
+                }
 
                 &:last-child{
                     &:after{
@@ -376,7 +379,6 @@
                     }
                 }
             }
-        } 
-    } 
+        }
+    }
 }
- 

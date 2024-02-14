@@ -7,9 +7,9 @@
 
 require('./bootstrap');
 
-/*import Vue from 'vue';
-import VueRouter from 'vue-router';
-import routes from './routes';*/
+import Alpine from 'alpinejs';
+//import 'bootstrap-datepicker';
+//require('bootstrap-datepicker');
 
 /*fontawesome*/
 import { library, dom } from '@fortawesome/fontawesome-svg-core';
@@ -22,24 +22,12 @@ library.add(far, fas, fal, faFacebookF);
 /* Kicks off the process of finding <i> tags and replacing with <svg>*/
 dom.watch();
 
-/*window.$ = window.jQuery = require('jquery');*/
+window.Alpine = Alpine;
+//window.$ = window.jQuery = require('jquery'); //<-- added via bootstrap.js
 window.Select2 = window.select2 = require('select2');
 window.LazyLoad = require('vanilla-lazyload');
-window.datepicker = require('bootstrap-datepicker');
+//window.datepicker = require('bootstrap-datepicker');
 window.Swal = window.swal = require('sweetalert2');
 window.accounting = require('accounting-js');
 
-/*window.Vue = require('vue');
-window.VueRouter = require('vue-router');
-Vue.use(VueRouter);*/
-
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
-
-/*const app = new Vue({
-   el: '#app',
-    router: new VueRouter(routes)
-});*/
+Alpine.start();

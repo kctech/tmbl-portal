@@ -34,25 +34,50 @@ class Interpret {
         }
     }
 
-        //TEAMS GRAPH CREATION ERROR
-        public static function LeadStatus($type, $returnType = "key")
-        {
-            $typesArray = array(
-                0 => 'Prospect',
-                1 => 'Claimed',
-                2 => 'Contacted',
-                3 => 'Transferred',
-                4 => 'Cold',
-                5 => 'Dead',
-            );
+    //TEAMS GRAPH CREATION ERROR
+    public static function LeadStatus($type, $returnType = "key")
+    {
+        $typesArray = array(
+            0 => 'Prospect',
+            1 => 'Claimed',
+            2 => 'Contacted',
+            3 => 'Transferred',
+            4 => 'Cold',
+            5 => 'Dead',
+        );
 
-            if ($returnType != "key") return $typesArray;
+        if ($returnType != "key") return $typesArray;
 
-            if (array_key_exists($type, $typesArray)) {
-                return $typesArray[$type];
-            } else {
-                return "UNKNOWN (" . $type . ")";
-            }
+        if (array_key_exists($type, $typesArray)) {
+            return $typesArray[$type];
+        } else {
+            return "UNKNOWN (" . $type . ")";
         }
+    }
 
+    //TEAMS GRAPH CREATION ERROR
+    public static function AzureStatus($type, $returnType = "key")
+    {
+        $typesArray = array(
+            'Available' => 'Available',
+            'Busy' => 'Busy',
+            'InAMeeting' => 'In a Meeting',
+            'InACall' => 'In a Call',
+            'InAConferenceCall' => 'In a Conference Call',
+            'Away' => 'Away',
+            'DoNotDisturb' => 'Do Not Disturb',
+            'Presenting' => 'Presenting',
+            'Offline' => 'Offline',
+            'OutOfOffice' => 'Out of Office',
+            'PresenceUnknown' => 'Unknown',
+        );
+
+        if ($returnType != "key") return $typesArray;
+
+        if (array_key_exists($type, $typesArray)) {
+            return $typesArray[$type];
+        } else {
+            return "UNKNOWN (" . $type . ")";
+        }
+    }
 }

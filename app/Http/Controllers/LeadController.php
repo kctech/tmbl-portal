@@ -27,7 +27,7 @@ class LeadController extends Controller
     }
 
     /**
-     * Show the lead sources editor.
+     * Show the leads table.
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
@@ -47,12 +47,12 @@ class LeadController extends Controller
     }
 
     /**
-     * Show the lead sources editor.
+     * Show the adviser availability calendar.
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function contact()
+    public function adviserAvailability()
     {
-        return view('admin.leads.contact');
+        return view('admin.leads.adviser-availability');
     }
 }

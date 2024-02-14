@@ -50,19 +50,20 @@ class Dev extends Command
         }
         $graph = new \App\Libraries\Azure\GraphConnector($azure);
         //$users = $graph->getUsers('sam@tmblgroup.co.uk');
-        //$users = $graph->getUsers();
+        $users = $graph->getUsers('@tmblgroup.co.uk',['headers'=>['ConsistencyLevel'=>'eventual']]);
         //$users = $graph->getUsersWithPresence();
+        dd($users);
 
         $calendars = [];
         $fetch_users = [];
         foreach($graph->getUsers() as $user){
             $fetch_users[] = $user->mail;
         }
-        $base_user = (object) ($graph->getUsers('sam@tmblgroup.co.uk')[0] ?? []);
-        foreach(array_chunk($fetch_users,100) as $chunk){
-            dump($chunk);
-            $calendars = array_merge($calendars,$graph->getMultipleUserSchedules($base_user->id,$chunk,\Carbon\Carbon::now()->addWeek()->startOfWeek(),\Carbon\Carbon::now()->addWeek()->endOfWeek()));
-        }
-        dump($calendars);
+        //$base_user = (object) ($graph->getUsers('sam@tmblgroup.co.uk')[0] ?? []);
+        //foreach(array_chunk($fetch_users,100) as $chunk){
+        //    dump($chunk);
+        //    $calendars = array_merge($calendars,$graph->getMultipleUserSchedules($base_user->id,$chunk,\Carbon\Carbon::now()->addWeek()->startOfWeek(),\Carbon\Carbon::now()->addWeek()->endOfWeek()));
+        //}
+        //dump($calendars);
     }
 }

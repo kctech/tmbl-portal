@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <!-- Mobile viewport optimized: j.mp/bplateviewport -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
-    
+
     <!-- standard meta information -->
     <meta name="designer" content="Perpetual https://perpetual.pro" />
     <meta name="author" content="Perpetual https://perpetual.pro" />
@@ -49,10 +49,10 @@
                             </li>
                         </ul>
                     </div>
-                @endif 
+                @endif
 
             </div>
-        </nav> 
+        </nav>
 
         <!-- HERO -->
         <div class="section hero short lazy-force mb-3" data-src="{{asset('img/'.Session::get('viewset','default').'/background.jpg')}}">
@@ -62,7 +62,7 @@
                         <h1 class="hero__title">
                             <span class="no-highlight text-white">
                                 <span>@yield('pagetitle', 'The Mortage Broker Client Portal')</span>
-                            </span>   
+                            </span>
                         </h1>
                         <!--<div class="hero__content">
                             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque risus lorem,
@@ -90,8 +90,8 @@
     </div>
 
     <!-- Scripts -->
-    
-    <script src="{{ mix('/js/default.js') }}"></script>
+
+    <script src="{{ mix('/js/portal.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js" ></script>
     @stack('js')
 </body>

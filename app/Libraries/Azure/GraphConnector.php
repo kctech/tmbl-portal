@@ -74,7 +74,7 @@ class GraphConnector
      * Gets all of the current Azure users from microsoft
      * Can be called optionally to set a specific filter on the resultset to cut out non required user accounts
      */
-    public function getUsers($filter='')
+    public function getUsers($filter='',$options=[])
     {
         $email_filter = $this->_email ?? $filter;
 
@@ -83,12 +83,13 @@ class GraphConnector
             //https://stackoverflow.com/questions/41491222/single-quote-escaping-in-microsoft-graph
             //http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/abnf/odata-abnf-construction-rules.txt
             //SQUOTE-in-string = SQUOTE SQUOTE ; two consecutive single quotes represent one within a string literal
-            $url = 'users?$select=mail,id&$filter=startswith(mail,\'' . str_replace("'", "''", $email_filter) . '\')';
+            //$url = 'users?$select=mail,id&$filter=startswith(mail,\'' . str_replace("'", "''", $email_filter) . '\')';
+            $url = 'users?$select=mail,id&$count=true&$filter=endswith(mail,\'' . str_replace("'", "''", $email_filter) . '\')';
         }else{
             $url = 'users?$select=mail,id';
         }
 
-        $data = $this->getAll('GET',$url,[],[],"value");
+        $data = $this->getAll('GET',$url,$options,[],"value");
         foreach($data as $user) {
             if(is_null($user->mail)) continue;
             if(!empty($filter)){
@@ -152,7 +153,7 @@ class GraphConnector
         return $output;
     }
 
-    public function getUsersWithPresence(){
+    public function getUsersWithPresence($filter='',$options=[]){
 
         //vars
         $ids = $statuses = [];
@@ -165,12 +166,12 @@ class GraphConnector
             "BeRightBack" => 6,
             "Away" => 7,
             "Offline" => 8,
-            "PresenceUnknown" => 9,
-            "OutOfOffice" => 10,
+            "OutOfOffice" => 9,
+            "PresenceUnknown" => 10,
         ];
 
         //get users and an array of theirs ids
-        $users = $this->getUsers();
+        $users = $this->getUsers($filter,$options);
         foreach($users as $user){
             $ids[] = $user->id;
         }
@@ -355,6 +356,10 @@ class GraphConnector
             //return $response;
             return json_decode($response?->getBody()?->getContents() ?? '');
 
+        } catch (\GuzzleHttp\Exception\RequestException $exception) {
+            dd($exception->getResponse()->getBody()->getContents());
+            Log::critical($exception->getMessage(),['tenant_id' => $this->provider->getTenantId()]);
+            return null;
         } catch (\Exception $exception) {
             Log::critical($exception->getMessage(),['tenant_id' => $this->provider->getTenantId()]);
             return null;

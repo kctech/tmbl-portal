@@ -15,7 +15,7 @@ mix.js([
       'resources/js/app.js'
       ,'resources/js/default.js'
    ],
-   'public/js/default.js')
+   'public/js/portal.js')
    .sass('resources/sass/app.scss', 'public/css/default.css')
    .sass('resources/sass/pdf.scss', 'public/css');
 

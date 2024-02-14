@@ -101,8 +101,12 @@ app.uiElements = function (report=false) {
 
 app.formElementsDestroy = function () {
     /* destroy to prevent duplicates */
-    $('select.select2.select2-hidden-accessible').select2('destroy');
-    $(".component_datepicker, .component_future_datepicker, .component_past_datepicker, .component_month_datepicker").datepicker("destroy");
+    if($('select.select2.select2-hidden-accessible').length > 0){
+        $('select.select2.select2-hidden-accessible').select2('destroy');
+    }
+    if($(".component_datepicker, .component_future_datepicker, .component_past_datepicker, .component_month_datepicker").length > 0){
+        $(".component_datepicker, .component_future_datepicker, .component_past_datepicker, .component_month_datepicker").datepicker("destroy");
+    }
 }
 
 app.formElementsCreate = function() {

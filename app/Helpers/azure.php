@@ -16,8 +16,8 @@ function buildAdvisersList(){
         dd("No teams meeting support for account: 1");
     }
     $graph = new \App\Libraries\Azure\GraphConnector($azure);
-    //$users = $graph->getUsers();
-    $azure_user_presence = $graph->getUsersWithPresence();
+    //$users = $graph->getUsers('@tmblgroup.co.uk',['headers'=>['ConsistencyLevel'=>'eventual']]);
+    $azure_user_presence = $graph->getUsersWithPresence('@tmblgroup.co.uk',['headers'=>['ConsistencyLevel'=>'eventual']]);
 
     //Preserve presence order and show Portal users only
     foreach($system_users as $user){

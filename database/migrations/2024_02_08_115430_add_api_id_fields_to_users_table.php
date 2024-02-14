@@ -14,7 +14,7 @@ class AddApiIdFieldsToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->timestamp('azure_id')->nullable()->after('password');
+            $table->string('azure_id')->nullable()->after('password');
             $table->string('mab_id')->nullable()->after('azure_id');
         });
     }

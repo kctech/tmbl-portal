@@ -58,7 +58,7 @@ Route::prefix('admin')->group(function () {
         Route::get('/leads/dashboard', 'LeadController@index')->name('leads.index');
         Route::get('/leads/manage', 'LeadController@manage')->name('leads.manage');
         Route::get('/leads/sources', 'LeadController@sources')->name('leads.sources');
-        Route::get('/leads/contact', 'LeadController@contact')->name('leads.contact');
+        Route::get('/leads/adviser-availability', 'LeadController@adviserAvailability')->name('leads.adviser-availability');
 
         //USERS
         Route::post('/users/search', 'UserController@index')->name('users.search');

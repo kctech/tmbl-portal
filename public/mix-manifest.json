@@ -1,6 +1,5 @@
 {
-    "/js/default.js": "/js/default.js?id=cda11574720ae13f4ea2",
-    "/css/default.css": "/css/default.css?id=cae31258559a995a8a97",
-    "/css/pdf.css": "/css/pdf.css?id=e3b069bad4655bb1b3a8",
-    "/js/default.js.map": "/js/default.js.map?id=a14cb16100d1ff4d8c74"
+    "/js/portal.js": "/js/portal.js",
+    "/css/default.css": "/css/default.css",
+    "/css/pdf.css": "/css/pdf.css"
 }
