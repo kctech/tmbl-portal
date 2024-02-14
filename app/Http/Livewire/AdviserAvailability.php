@@ -33,7 +33,7 @@ class AdviserAvailability extends Component
 
     public function mount()
     {
-        $this->advisers = session(self::$session_prefix . 'advisers') ?? '';
+        $this->advisers = session(self::$session_prefix . 'advisers') ?? [];
         $this->adviser_list = buildAdvisersList();
     }
 
