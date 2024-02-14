@@ -75,9 +75,16 @@
                                     <div class="col-5 text-truncate">
                                         {{$adviser->first_name ?? '?'}} {{$adviser->last_name ?? '?'}}
                                     </div>
-                                    <div class="col-2 text-right">
+                                    <div class="col-1 text-right">
                                         @if(!is_null($adviser->mab_id))
-                                            MAB Onboarded
+                                            MAB <i class="fas fa-check"></i>
+                                        @else
+                                            -
+                                        @endif
+                                    </div>
+                                    <div class="col-1 text-right">
+                                        @if(!is_null($adviser->azure_id))
+                                            Azure <i class="fas fa-check"></i>
                                         @else
                                             -
                                         @endif
