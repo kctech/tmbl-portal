@@ -15,7 +15,8 @@ class AdviserAvailability extends Component
     private static $session_prefix = '_adviser_availability_';
     protected $calendar = [];
     protected $availability = [];
-    private $isLoaded = false;
+    protected $cache_date = null;
+    protected $isLoaded = false;
 
     //deferred loading
     public $readyToLoad = false;
@@ -86,8 +87,9 @@ class AdviserAvailability extends Component
 
         if($this->readyToLoad){
 
-            $cache = PortalCache::where('cache_key','azure_calendars')->first()->data;
-            $adviser_availability = (array) json_decode($cache);
+            $cache = PortalCache::where('cache_key','azure_calendars')->orderBy('updated_at','desc')->first();
+            $this->cache_date = $cache->updated_at;
+            $adviser_availability = (array) json_decode($cache->data);
             $this->availability = $adviser_availability;
             $calendar = $this->buildCalendar();
 
@@ -169,6 +171,7 @@ class AdviserAvailability extends Component
     {
         $this->data();
         return view('livewire.adviser-availability',[
+            'cache_date' => $this->cache_date,
             'calendar' => $this->calendar,
             'availability' => $this->availability,
             'isLoaded' => $this->isLoaded

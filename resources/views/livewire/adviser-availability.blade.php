@@ -108,7 +108,7 @@
                 </div>
             </div>
 
-            <h2>Weekly Availabilty</h2>
+            <h2>Weekly Availabilty <small class="float-right badge badge-primary">Updated {{$cache_date ?? 'Unknown'}}</small></h2>
 
             @foreach($calendar as $week_number => $week)
                 <div class="card mb-3 p-3">
