@@ -112,6 +112,8 @@
                                                                         <i class="fas fa-check-circle text-success"></i>
                                                                         @break
                                                                     @case('Busy')
+                                                                    @case('Presenting')
+                                                                    @case('DoNotDisturb')
                                                                         <i class="fas fa-circle text-danger"></i>
                                                                         @break
                                                                     @case('Away')

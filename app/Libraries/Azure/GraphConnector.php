@@ -164,10 +164,11 @@ class GraphConnector
             "InACall" => 4,
             "DoNotDisturb" => 5,
             "BeRightBack" => 6,
-            "Away" => 7,
-            "Offline" => 8,
-            "OutOfOffice" => 9,
-            "PresenceUnknown" => 10,
+            "Presenting" => 7,
+            "Away" => 8,
+            "Offline" => 9,
+            "OutOfOffice" => 10,
+            "PresenceUnknown" => 11,
         ];
 
         //get users and an array of theirs ids

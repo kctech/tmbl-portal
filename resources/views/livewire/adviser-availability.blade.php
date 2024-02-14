@@ -41,8 +41,8 @@
         @if($isLoaded)
 
             <h2>Live Availability</h2>
-            <div class="w-100 h-100 position-relative mb-3" style="min-height: @if(!empty($advisers)) 100px; @else 50vh; @endif">
-                <div class="position-absolute overflow-auto" style="top:0; bottom:0; left:0; right:0;">
+            <div class="card p-0 w-100 h-100 position-relative mb-3" style="min-height: @if(!empty($advisers)) 100px; @else 50vh; @endif">
+                <div class="card-body p-0 position-absolute overflow-auto" style="top:0; bottom:0; left:0; right:0;">
                     <div class="list-group list-group-flush">
                         @foreach($adviser_list as $adviser)
                             @php
@@ -59,6 +59,8 @@
                                                     <i class="fas fa-check-circle text-success"></i>
                                                     @break
                                                 @case('Busy')
+                                                @case('Presenting')
+                                                @case('DoNotDisturb')
                                                     <i class="fas fa-circle text-danger"></i>
                                                     @break
                                                 @case('Away')
