@@ -57,11 +57,12 @@ class CacheCalendars extends Command
         $graph = new \App\Libraries\Azure\GraphConnector($azure);
         $calendars = [];
         $fetch_users = [];
-        foreach($graph->getUsers() as $user){
+        $users = $graph->getUsers('@tmblgroup.co.uk',['headers'=>['ConsistencyLevel'=>'eventual']]);
+        foreach($users as $user){
             $fetch_users[] = $user->mail;
         }
         $this->info("Updating " .count($fetch_users). " user calendars");
-        $base_user = (object) ($graph->getUsers($base_user_email)[0] ?? []);
+        $base_user = (object) ($graph->getUsers($base_user_email,['headers'=>['ConsistencyLevel'=>'eventual']])[0] ?? []);
 
         if(empty($base_user)){
             $this->error("No azure user found for base user");
@@ -73,19 +74,27 @@ class CacheCalendars extends Command
         }
 
         //check calendars fetched = calendars requested - we don't want partials
-        if(!empty($calendars) && count($calendars) == count($fetch_users)){
-            if(PortalCache::updateOrCreate(
-                [
-                    'account_id' => $account_id,
-                    'cache_key' => 'azure_calendars'
-                ],
-                [
-                    'uuid' => Str::uuid(),
-                    'data' => json_encode($calendars),
-                    'expires_at' => Carbon::now()->addHours(3)->format("Y-m-d H:i:s")
-                ]
-            )){
-                $this->info("Calendars updated");
+        if(!empty($calendars)){
+            if(count($calendars) == count($fetch_users)){
+                session()->put('account_id', ($account_id ?? 0));
+                if(PortalCache::updateOrCreate(
+                    [
+                        'account_id' => $account_id,
+                        'cache_key' => 'azure_calendars'
+                    ],
+                    [
+                        'uuid' => Str::uuid(),
+                        'data' => json_encode($calendars),
+                        'expires_at' => Carbon::now()->addHours(3)->format("Y-m-d H:i:s")
+                    ]
+                )){
+                    $this->info("Calendars updated");
+                }else{
+                    $this->error("Unable to update cache");
+                }
+                session()->forget(['account_id']);
+            }else{
+                $this->error("Cache only partially fetched: ".count($calendars). " / " .count($fetch_users));
             }
         }else{
             $this->error("Calendars empty");
