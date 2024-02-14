@@ -10,7 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
-class Adviseravailability extends Component
+class AdviserAvailability extends Component
 {
     private static $session_prefix = '_adviser_availability_';
     protected $calendar = [];
@@ -45,6 +45,12 @@ class Adviseravailability extends Component
     {
         session()->put(self::$session_prefix . $prop, $value);
         $this->message_bar = '';
+    }
+
+    public function select_slot($prop, $value)
+    {
+        $this->skipRender();
+        $this->emit('updated',['message'=>'Todo...']);
     }
 
     public function updatedAdvisers($value)

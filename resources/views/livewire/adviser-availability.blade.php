@@ -116,7 +116,7 @@
 
                                 @foreach($hour['hours'] as $hour_number => $availability)
                                     @if($availability['availability'] > 0)
-                                        <div class="card bg-light px-1 mb-1 w-100 @if($availability['is_past']) text-muted @else cursor-pointer @endif" @if($availability['is_past']) style="opacity:0.5;" @endif @if(!$availability['is_past']) wire:click="select('{{$hour['date']}}','{{$hour_number}}')" @endif>
+                                        <div class="card bg-light px-1 mb-1 w-100 @if($availability['is_past']) text-muted @else cursor-pointer @endif" @if($availability['is_past']) style="opacity:0.5;" @endif @if(!$availability['is_past']) wire:click="select_slot('{{$hour['date']}}','{{$hour_number}}')" @endif>
                                             <div class="row">
                                                 <div class="col-7">{{ str_pad($hour_number,  2, "0", STR_PAD_LEFT) }}:00</div>
                                                 <div class="col-5 text-right">{{$availability['availability']}}</div>
@@ -156,7 +156,6 @@
         });
 
         Livewire.on('error', data => {
-            console.log("message");
             if(typeof data.message != 'undefined'){
                 app.alerts.toast(data.message,'error');
             }else{
