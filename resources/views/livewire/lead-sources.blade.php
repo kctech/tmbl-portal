@@ -77,8 +77,6 @@
 
     <div class="card mb-4">
         <div class="card-body">
-            <h3>Filters</h3>
-
             <div class="d-flex align-self-center">
                 <div class="card">
                     <div class="card-body bg-light d-flex align-items-center">

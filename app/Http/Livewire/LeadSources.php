@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class LeadSources extends Component
 {
@@ -160,7 +161,7 @@ class LeadSources extends Component
         $this->save_mode = 'create';
 
         $this->source = null;
-        $this->api_token = null;
+        $this->api_token = Str::random(64);
         $this->status = 0;
 
         $this->view = 'form';
@@ -202,9 +203,9 @@ class LeadSources extends Component
     public function save()
     {
         if($this->save_mode == 'update'){
-            $api_token_validation = 'required|alpha_num|min:50|max:60';
+            $api_token_validation = 'required|alpha_num|min:64|max:128';
         }else{
-            $api_token_validation = 'required|alpha_num|min:50|max:60|unique:\App\Models\ApiKey,api_token';
+            $api_token_validation = 'required|alpha_num|min:64|max:128|unique:\App\Models\ApiKey,api_token';
         }
         $validatedData = Validator::make(
             [

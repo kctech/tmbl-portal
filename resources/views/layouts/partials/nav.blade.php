@@ -27,7 +27,7 @@
                         Dashboard
                     </a>
                 </li>
-                @can('leads')
+                @can('lead_admin')
                     <li class="nav-item">
                         <a class="nav-link {{ isActive('admin/leads/dashboard') }}" href="{{ route('leads.index') }}">
                             <i class="fas fa-tachometer-alt-slow"></i>
@@ -35,9 +35,17 @@
                         </a>
                     </li>
                 @endcan
+                @can('lead_admin')
+                    <li class="nav-item">
+                        <a class="nav-link {{ isActive('admin/leads/manager') }}" href="{{ route('leads.manager') }}">
+                            <i class="fa fa-folders"></i>
+                            Leads Manager
+                        </a>
+                    </li>
+                @endcan
                 @can('leads')
                     <li class="nav-item">
-                        <a class="nav-link {{ isActive('admin/leads/manage') }}" href="{{ route('leads.manage') }}">
+                        <a class="nav-link {{ isActive('admin/leads/table') }}" href="{{ route('leads.table') }}">
                             <i class="fa fa-inbox"></i>
                             Leads
                         </a>

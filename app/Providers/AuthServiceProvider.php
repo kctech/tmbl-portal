@@ -58,8 +58,16 @@ class AuthServiceProvider extends ServiceProvider
             //return checkModulePermission($user, 'users');
         });
         Gate::define('leads', function ($user) {
-            return $user->role->level <= 1;
-            //return checkModulePermission($user, 'leads');
+            //return $user->role->level <= 1;
+            return checkModulePermission($user, 'leads');
+        });
+        Gate::define('lead_admin', function ($user) {
+            //return $user->role->level <= 1;
+            return checkModulePermission($user, 'lead_admin');
+        });
+        Gate::define('sources', function ($user) {
+            //return $user->role->level <= 1;
+            return checkModulePermission($user, 'sources');
         });
         Gate::define('clients', function ($user) {
             return checkModulePermission($user, 'clients');

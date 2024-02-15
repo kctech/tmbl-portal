@@ -55,10 +55,15 @@ Route::prefix('admin')->group(function () {
         Route::get('/dashboard', 'DashboardController@index')->name('admin.dashboard');
 
         //LEADS
-        Route::get('/leads/dashboard', 'LeadController@index')->name('leads.index');
-        Route::get('/leads/manage', 'LeadController@manage')->name('leads.manage');
-        Route::get('/leads/sources', 'LeadController@sources')->name('leads.sources');
-        Route::get('/leads/adviser-availability', 'LeadController@adviserAvailability')->name('leads.adviser-availability');
+        Route::group(['middleware' => 'can:lead_admin'], function() {
+            Route::get('/leads/dashboard', 'LeadController@index')->name('leads.index');
+            Route::get('/leads/manager', 'LeadController@manager')->name('leads.manager');
+            Route::get('/leads/adviser-availability', 'LeadController@adviserAvailability')->name('leads.adviser-availability');
+        });
+        Route::group(['middleware' => 'can:leads'], function() {
+            Route::get('/leads/table', 'LeadController@table')->name('leads.table');
+            Route::get('/leads/sources', 'LeadController@sources')->name('leads.sources');
+        });
 
         //USERS
         Route::post('/users/search', 'UserController@index')->name('users.search');

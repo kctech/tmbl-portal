@@ -6,6 +6,12 @@
 
     <div class="btn-toolbar mb-2 mb-md-0">
         {{ Breadcrumbs::render('leads') }}
+        @can('lead_admin')
+            <a href="{{ route('leads.adviser-availability') }}" class="btn btn-lg btn-primary ml-3 mb-3"><i class="fa fa-users"></i> Adviser Availability</a>
+        @endcan
+        @can('sources')
+            <a href="{{ route('leads.sources') }}" class="btn btn-lg btn-primary ml-3 mb-3"><i class="fa fa-inbox-in"></i> Lead Sources</a>
+        @endcan
     </div>
 </div>
 
@@ -47,6 +53,8 @@
                             <option value="recent" {{selected('recent', $sort_order)}}>Recently Updated</option>
                             <option value="newest_first" {{selected('newest_first', $sort_order)}} {{selected('default', $sort_order)}}>Newset First</option>
                             <option value="oldest_first" {{selected('oldest_first', $sort_order)}}>Oldest First</option>
+                            <option value="surname_az" {{selected('surname_az', $sort_order)}}>Surname A-Z</option>
+                            <option value="surname_za" {{selected('surname_za', $sort_order)}}>Surname Z-A</option>
                         </select>
                     </div>
                 </div>
@@ -67,22 +75,16 @@
 
         @if(!is_null($lead_id))
             <div class="card">
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col-6">
-                            <h2 class="m-0">{{$lead->first_name}} {{$lead->last_name}}</h2>
-                        </div>
-                        <div class="col-6 d-flex align-items-center justify-content-end">
-                            <button class="btn btn-sm btn-secondary btn-blockX" wire:click="close()">Close</button>
-                        </div>
-                    </div>
+                <div class="card-header d-flex flex-row justify-content-center align-items-center">
+                    <h2 class="mb-0 mr-auto">{{$lead->first_name}} {{$lead->last_name}}</h2>
+                    @if($lead->status == \App\Models\Lead::PROSPECT)<button class="btn btn-primary" wire:click="assign({{$lead_id}})">Send to MAB Distribution Group</button>@endif
+                    <button class="ml-3 btn btn-secondary" wire:click="close()">Close</button>
                 </div>
                 <div class="card-body p-1">
                     <div class="row">
                         <div class="col-md-6">
                             <ul class="list-group">
                             @foreach(json_decode($lead->data) as $d_key => $d_val)
-                                @if(in_array($d_key,['full_name','first_name','last_name'])) @continue @endif
                                 <li class="list-group-item">
                                     <div class="row">
                                         <div class="col-md-4">
@@ -97,24 +99,81 @@
                             </ul>
                         </div>
                         <div class="col-md-6">
-                            <div class="p-3">
-                                @if($lead->status == \App\Models\Lead::PROSPECT)
-                                    <button class="btn btn-sm btn-secondary btn-blockX" wire:click="allocate({{$lead->id}})">Claim</button>
-                                @elseif($lead->status == \App\Models\Lead::CLAIMED)
-                                    <button class="ml-2 btn btn-sm btn-primary btn-blockX" wire:click="transfer({{$lead->id}})">Transfer</button>
-                                    @if(\Carbon\Carbon::parse($lead->allocated_at)->diff(\Carbon\Carbon::now())->days > 7)
-                                        <button class="btn btn-sm btn-danger btn-blockX" wire:click="deallocate({{$lead->id}})">Release Claim</button>
-                                    @endif
-                                @elseif($lead->status == \App\Models\Lead::TRANSFERRED)
-                                    {{ \App\Libraries\Interpret::LeadStatus($lead->status) }}
-                                @else
-                                    {{ \App\Libraries\Interpret::LeadStatus($lead->status) }}
-                                @endif
+
+                            <div class="w-100 h-100 position-relative">
+                                <div class="list_{{$lead_id}} position-absolute overflow-auto" style="top:0; bottom:0; left:0; right:0;">
+                                    <div class="list-group list-group-flush">
+                                        @if($lead->status == \App\Models\Lead::PROSPECT)
+                                            @foreach($advisers as $adviser)
+                                                <div class="list-group-item p-1">
+                                                    <div class="row">
+                                                        <div class="col-1 text-right">
+                                                            <span class="tip" title="{{$adviser->presence->activity ?? 'unknown'}}">
+                                                                @switch(($adviser->presence->availability ?? 'unknown'))
+                                                                    @case('Available')
+                                                                        <i class="fas fa-check-circle text-success"></i>
+                                                                        @break
+                                                                    @case('Busy')
+                                                                    @case('Presenting')
+                                                                    @case('DoNotDisturb')
+                                                                        <i class="fas fa-circle text-danger"></i>
+                                                                        @break
+                                                                    @case('Away')
+                                                                        <i class="fas fa-circle text-warning"></i>
+                                                                        @break
+                                                                    @case('Offline')
+                                                                        <i class="fas fa-times-circle text-muted"></i>
+                                                                        @break
+                                                                    @default
+                                                                        <i class="fas fa-question-circle text-muted"></i>
+                                                                @endswitch
+                                                            </span>
+                                                        </div>
+                                                        <div class="col-5 text-truncate">
+                                                            {{$adviser->first_name}} {{$adviser->last_name}}
+                                                        </div>
+                                                        <div class="col-2 text-right">
+                                                            {{$adviser->leads_this_month->count()}} this mo.
+                                                        </div>
+                                                        <div class="col-4 text-right">
+                                                            @if($lead->status == \App\Models\Lead::PROSPECT)
+                                                                <button class="btn btn-sm btn-secondary btn-blockX" wire:click="allocate({{$lead_id}},'{{$adviser->id}}')">Allocate</button>
+                                                                <button class="ml-2 btn btn-sm btn-primary btn-blockX" wire:click="transfer({{$lead_id}},'{{$adviser->email}}')">Transfer</button>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        @elseif($lead->status == \App\Models\Lead::CLAIMED)
+                                            Claimed by {{$lead->owner->full_name()}}
+                                            <button class="ml-2 btn btn-sm btn-primary btn-blockX" wire:click="transfer({{$lead_id}},'{{$lead->owner->email}}')">Transfer to MAB</button>
+                                            <br />
+                                            <button class="btn btn-sm btn-danger btn-blockX" wire:click="deallocate({{$lead_id}})">Remove {{$lead->owner->full_name()}} from lead</button>
+                                        @elseif($lead->status == \App\Models\Lead::TRANSFERRED)
+                                            {{ \App\Libraries\Interpret::LeadStatus($lead->status) }} to {{$lead->owner->full_name()}}
+                                        @else
+                                            {{ \App\Libraries\Interpret::LeadStatus($lead->status) }}
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="overflow-msg overflow-msg-scroll d-none position-absolute text-muted text-center" style="bottom:0; left:0; right:0; background-image: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,1));">
+                                    <small>scroll to see more</small>
+                                </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
             </div>
+            <script>
+                $('.list_{{$lead_id}}').each(function(index, value) {
+                    if(this.offsetHeight < this.scrollHeight){
+                        $(this).parent().find('.overflow-msg').each(function(index, value) {
+                            $(this).removeClass('d-none');
+                        });
+                    }
+                });
+            </script>
 
         @else
 
@@ -128,6 +187,7 @@
                             <th>Email Address</th>
                             <th>Contact Number</th>
                             <th>Recieved</th>
+                            <th>Source</th>
                             <th>Status</th>
                             <th></th>
                         </tr>
@@ -143,38 +203,27 @@
 
                             <tr class="">
                                 <td>{{ $item->id }}</td>
-                                @if($item->status == \App\Models\Lead::PROSPECT)
-                                    <td>{{ __('***') }}</td>
-                                    <td>{{ __('***') }}</td>
-                                    <td>{{ __('***') }}</td>
-                                    <td>{{ __('***') }}</td>
-                                @else
-                                    <td>{{ $item->first_name }}</td>
-                                    <td>{{ $item->last_name }}</td>
-                                    <td>{{ $item->email_address }}</td>
-                                    <td>{{ $item->contact_number }}</td>
-                                @endif
+                                <td>{{ $item->first_name }}</td>
+                                <td>{{ $item->last_name }}</td>
+                                <td>{{ $item->email_address }}</td>
+                                <td>{{ $item->contact_number }}</td>
                                 <td>
                                     {{\Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i')}}
                                     <span class="badge badge-primary">{{\Carbon\Carbon::parse($item->created_at)->diffForHumans()}}</span>
                                 </td>
+                                <td>{{ $item->source->source ?? 'Unknown' }}</td>
                                 <td>
                                     {{ \App\Libraries\Interpret::LeadStatus($item->status) }}
-                                    @if($item->status == \App\Models\Lead::CLAIMED)
-                                        <span class="badge badge-primary">{{\Carbon\Carbon::parse($item->allocated_at)->diffForHumans()}}</span>
+                                    @if(is_numeric($item->user_id))
+                                        <br /><span class="badge badge-primary">{{$item->owner->full_name() ?? 'Unknown User'}}</span>
+                                        @if($item->status == \App\Models\Lead::CLAIMED)
+                                            <span class="badge badge-primary">{{\Carbon\Carbon::parse($item->allocated_at)->diffForHumans()}}</span>
+                                        @endif
                                     @endif
                                 </td>
                                 <td class="text-right">
                                     @if($item->status == \App\Models\Lead::PROSPECT)
-                                        <button class="btn btn-sm btn-secondary btn-blockX" wire:click="allocate({{$item->id}})">Claim</button>
-                                    @elseif($item->status == \App\Models\Lead::CLAIMED)
-                                        <button class="btn btn-sm btn-secondary" wire:click="info({{$item->id}})">Info</button>
-                                        <button class="ml-2 btn btn-sm btn-primary btn-blockX" wire:click="transfer({{$item->id}})">Transfer</button>
-                                        @if(\Carbon\Carbon::parse($item->allocated_at)->diff(\Carbon\Carbon::now())->days > 7)
-                                            <button class="btn btn-sm btn-danger btn-blockX" wire:click="deallocate({{$item->id}})">Release Claim</button>
-                                        @endif
-                                    @elseif($item->status == \App\Models\Lead::TRANSFERRED)
-                                        {{ \App\Libraries\Interpret::LeadStatus($item->status) }}
+                                        <button class="btn btn-sm btn-primary" wire:click="info({{$item->id}})">Actions</button>
                                     @else
                                         <button class="btn btn-sm btn-secondary" wire:click="info({{$item->id}})">Info</button>
                                     @endif

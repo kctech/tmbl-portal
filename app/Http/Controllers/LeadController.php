@@ -27,13 +27,23 @@ class LeadController extends Controller
     }
 
     /**
+     * Show the leads manager.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function manager()
+    {
+        return view('admin.leads.manager');
+    }
+
+    /**
      * Show the leads table.
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function manage()
+    public function table()
     {
-        return view('admin.leads.manage');
+        return view('admin.leads.table');
     }
 
     /**
