@@ -37,7 +37,19 @@ class LeadDashboard extends Component
         $data = [];
 
         //totals
-        $lead_totals = ['TODAY','YESTERDAY','THIS_WEEK','LAST_WEEK','LAST_MONTH','YTD'];
+        $data['Totals'][] = (object) [
+            'link' => route('leads.manager',['lead_status' => Lead::PROSPECT]),
+            'tpl' => 'total',
+            'size' => "col-md-2",
+            'colour' => "danger",
+            'title' => "Leads Waiting",
+            'date' => null,
+            'icon' => "far fa-alarm-clock text-danger",
+            'data'  => (object) [
+                'current' => Lead::where('status',Lead::PROSPECT)->count()
+            ]
+        ];
+        $lead_totals = ['TODAY','THIS_WEEK','LAST_WEEK','LAST_MONTH','YTD']; //YESTERDAY
         foreach($lead_totals as $total) {
             $data['Totals'][] = (object) [
                 'tpl' => 'total',

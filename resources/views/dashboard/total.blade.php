@@ -1,4 +1,4 @@
-<div class="{{$stat->size}}">
+<div class="{{$stat->size}} @if(!is_null($stat->link ?? null)) cursor-pointer @endif" @if(!is_null($stat->link ?? null)) onclick="window.location.href='{{$stat->link}}';" @endif>
     <div class="card {{--border-left-{{$stat->colour}}--}} shadow h-100 w-100">
         <div class="card-body">
             <div class="row h-100 no-gutters align-items-center">
