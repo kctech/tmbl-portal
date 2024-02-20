@@ -41,7 +41,7 @@ class LeadManager extends Component
     public function mount()
     {
         $this->user_id = session('user_id');
-        $this->lead_status = session(self::$session_prefix . 'lead_status') ?? '';
+        $this->lead_status = request()->get('lead_status') ?? session(self::$session_prefix . 'lead_status') ?? '';
         $this->search_filter = session(self::$session_prefix . 'search_filter') ?? '';
         $this->sort_order = session(self::$session_prefix . 'sort_order') ?? '';
     }
@@ -130,6 +130,17 @@ class LeadManager extends Component
         */
     }
 
+    public function update_status($lead_id,$status){
+        $lead = Lead::find($lead_id);
+        if($lead){
+            $lead->status = $status;
+            $lead->save();
+            $this->emit('updated', ['message' => "Lead status updated [" . $lead_id . "]"]);
+        }else{
+            $this->emit('error', ['message' => "Cant find lead [" . $lead_id . "]"]);
+        }
+    }
+
     public function deallocate($lead_id){
         $lead = Lead::find($lead_id);
         if($lead){
@@ -137,6 +148,7 @@ class LeadManager extends Component
             $lead->user_id = null;
             $lead->allocated_at = null;
             $lead->save();
+            $this->emit('updated', ['message' => "Lead released into pool [" . $lead_id . "]"]);
         }else{
             $this->emit('error', ['message' => "Cant find lead [" . $lead_id . "]"]);
         }
@@ -149,6 +161,7 @@ class LeadManager extends Component
             $lead->user_id = $adviser_id;
             $lead->allocated_at = date('Y-m-d H:i:s');
             $lead->save();
+            $this->emit('updated', ['message' => "Lead allocated [" . $lead_id . "]"]);
         }else{
             $this->emit('error', ['message' => "Cant find lead [" . $lead_id . "]"]);
         }
@@ -327,18 +340,19 @@ class LeadManager extends Component
 
     public function delete($id)
     {
-        $account_Lead  = Lead::find($id);
-        if ($account_Lead ) {
-
-            if ($account_Lead ->delete() !== false) {
-                $this->emit('updated', ['message' => 'Lead [' . $account_Lead ->tag . '] has been deleted']);
-                $this->message_bar = 'Lead [' . $account_Lead ->tag . '] has been deleted.';
+        $lead  = Lead::find($id);
+        if ($lead ) {
+            $lead ->status = Lead::ARCHIVED;
+            $lead->save();
+            if ($lead ->delete() !== false) {
+                $this->emit('updated', ['message' => 'Lead ' . $lead ->id . ' has been deleted']);
+                $this->message_bar = 'Lead ' . $lead ->id . ' has been deleted.';
                 $this->search_filter = '';
                 session()->forget(self::$session_prefix . 'search_filter');
                 return true;
             }
         }
-        $this->emit('updated', ['message' => "Lead [" . $account_Lead ->tag . "] couldn't be deleted."]);
+        $this->emit('updated', ['message' => "Lead " . $lead ->id . " couldn't be deleted."]);
     }
 
     public function render()

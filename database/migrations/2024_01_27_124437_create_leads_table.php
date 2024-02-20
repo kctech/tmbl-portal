@@ -26,7 +26,10 @@ class CreateLeadsTable extends Migration
             $table->string('contact_number')->nullable();
             $table->json('data')->nullable();
             $table->tinyInteger('status')->default(\App\Models\Lead::PROSPECT);
+            $table->tinyInteger('contact_count')->default(0);
+            $table->timestamp('last_contacted_at')->nullable();
             $table->timestamp('allocated_at')->nullable();
+            $table->timestamp('transferred_at')->nullable();
             $table->timestamps();
 
             $table->index('source_id');

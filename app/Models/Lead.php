@@ -14,7 +14,7 @@ class Lead extends Model
     const CONTACTED = 2;
     const TRANSFERRED = 3;
     const COLD = 4;
-    const DEAD = 5;
+    const ARCHIVED = 5;
 
     /**
      * The table associated with the model.
@@ -29,7 +29,7 @@ class Lead extends Model
      * @var array
      */
     protected $fillable = [
-        'uuid','source_id','account_id','user_id','client_id','first_name','last_name','email_address','contact_number','data','options','status','allocated_at'
+        'uuid','source_id','account_id','user_id','client_id','first_name','last_name','email_address','contact_number','data','options','status','allocated_at','transferred_at','contact_count','last_contacted_at'
     ];
 
     public function newQuery()
@@ -40,13 +40,21 @@ class Lead extends Model
     /**
      * Get the client that owns the consent is related to.
      */
+    public function full_name()
+    {
+        return $this->first_name." ".$this->last_name;
+    }
+
+    /**
+     * Get the source that the lead is related to.
+     */
     public function source()
     {
         return $this->belongsTo(\App\Models\ApiKey::class);
     }
 
     /**
-     * Get the client that owns the consent is related to.
+     * Get the allocated user that the lead is related to.
      */
     public function owner()
     {

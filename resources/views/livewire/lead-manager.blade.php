@@ -145,14 +145,15 @@
                                                 </div>
                                             @endforeach
                                         @elseif($lead->status == \App\Models\Lead::CLAIMED)
-                                            Claimed by {{$lead->owner->full_name()}}
-                                            <button class="ml-2 btn btn-sm btn-primary btn-blockX" wire:click="transfer({{$lead_id}},'{{$lead->owner->email}}')">Transfer to MAB</button>
-                                            <br />
-                                            <button class="btn btn-sm btn-danger btn-blockX" wire:click="deallocate({{$lead_id}})">Remove {{$lead->owner->full_name()}} from lead</button>
+                                            <p>Claimed by {{$lead->owner->full_name()}} at {{$lead->allocated_at}}</p>
+                                            <p>
+                                                <button class="ml-2 btn btn-sm btn-primary btn-blockX" wire:click="transfer({{$lead_id}},'{{$lead->owner->email}}')">Transfer to MAB</button>
+                                                <button class="btn btn-sm btn-danger btn-blockX" wire:click="deallocate({{$lead_id}})">Remove {{$lead->owner->full_name()}} from lead</button>
+                                            </p>
                                         @elseif($lead->status == \App\Models\Lead::TRANSFERRED)
-                                            {{ \App\Libraries\Interpret::LeadStatus($lead->status) }} to {{$lead->owner->full_name()}}
+                                            <p>{{ \App\Libraries\Interpret::LeadStatus($lead->status) }} to {{$lead->owner->full_name()}} at {{$lead->transferred_at}}</p>
                                         @else
-                                            {{ \App\Libraries\Interpret::LeadStatus($lead->status) }}
+                                            <p>{{ \App\Libraries\Interpret::LeadStatus($lead->status) }}</p>
                                         @endif
                                     </div>
                                 </div>
@@ -182,12 +183,12 @@
                     <thead class="thead-dark text-center">
                         <tr>
                             <th>ID</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
+                            <th>Name</th>
                             <th>Email Address</th>
                             <th>Contact Number</th>
                             <th>Recieved</th>
                             <th>Source</th>
+                            <th>Contact</th>
                             <th>Status</th>
                             <th></th>
                         </tr>
@@ -203,8 +204,7 @@
 
                             <tr class="">
                                 <td>{{ $item->id }}</td>
-                                <td>{{ $item->first_name }}</td>
-                                <td>{{ $item->last_name }}</td>
+                                <td>{{ $item->full_name() }}</td>
                                 <td>{{ $item->email_address }}</td>
                                 <td>{{ $item->contact_number }}</td>
                                 <td>
@@ -213,20 +213,41 @@
                                 </td>
                                 <td>{{ $item->source->source ?? 'Unknown' }}</td>
                                 <td>
+                                    {{ $item->contact_count }} times
+                                    @if(!empty($item->contacted_at))
+                                        <br /><span class="badge badge-primary">{{\Carbon\Carbon::parse($item->contacted_at)->diffForHumans()}}</span>
+                                    @endif
+                                </td>
+                                <td>
                                     {{ \App\Libraries\Interpret::LeadStatus($item->status) }}
                                     @if(is_numeric($item->user_id))
                                         <br /><span class="badge badge-primary">{{$item->owner->full_name() ?? 'Unknown User'}}</span>
                                         @if($item->status == \App\Models\Lead::CLAIMED)
                                             <span class="badge badge-primary">{{\Carbon\Carbon::parse($item->allocated_at)->diffForHumans()}}</span>
                                         @endif
+                                        @if($item->status == \App\Models\Lead::TRANSFERRED)
+                                        <span class="badge badge-primary">{{\Carbon\Carbon::parse($item->transferred_at)->diffForHumans()}}</span>
+                                    @endif
                                     @endif
                                 </td>
                                 <td class="text-right">
-                                    @if($item->status == \App\Models\Lead::PROSPECT)
-                                        <button class="btn btn-sm btn-primary" wire:click="info({{$item->id}})">Actions</button>
-                                    @else
-                                        <button class="btn btn-sm btn-secondary" wire:click="info({{$item->id}})">Info</button>
-                                    @endif
+                                    <div class="d-flex flex-row align-items-center justify-content-end">
+                                        @if($item->status == \App\Models\Lead::PROSPECT)
+                                            <button class="btn btn-sm btn-primary" wire:click="info({{$item->id}})">Actions</button>
+                                        @else
+                                            <button class="btn btn-sm btn-secondary" wire:click="info({{$item->id}})">Info</button>
+                                        @endif
+                                        <div class="dropdown ml-1">
+                                            <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false" data-boundary="viewport">
+                                                <i class="fa fa-cog"></i>
+                                            </button>
+                                            <div class="dropdown-menu">
+                                                @foreach(App\Libraries\Interpret::LeadStatus(null,'arr') as $type => $label)
+                                                    <a class="dropdown-item" href="#" wire:click="update_status({{$item->id}},{{$type}})">Mark as "{{$label}}"</a>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
 

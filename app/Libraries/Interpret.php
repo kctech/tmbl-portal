@@ -43,7 +43,7 @@ class Interpret {
             2 => 'Contacted',
             3 => 'Transferred',
             4 => 'Cold',
-            5 => 'Dead',
+            5 => 'Archived',
         );
 
         if ($returnType != "key") return $typesArray;

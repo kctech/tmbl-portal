@@ -90,6 +90,16 @@ class DatabaseSeeder extends Seeder
             'module' => 'businesstermsprotection',
             'access' => '1',
         ]);
+        DB::table('account_modules')->insert([
+            'account_id' => '1',
+            'module' => 'leads',
+            'access' => '3',
+        ]);
+        DB::table('account_modules')->insert([
+            'account_id' => '1',
+            'module' => 'lead_admin',
+            'access' => '1',
+        ]);
 
         DB::table('account_modules')->insert([
             'account_id' => '2',
@@ -136,6 +146,16 @@ class DatabaseSeeder extends Seeder
             'module' => 'businesstermsprotection',
             'access' => '1',
         ]);
+        DB::table('account_modules')->insert([
+            'account_id' => '2',
+            'module' => 'leads',
+            'access' => '3',
+        ]);
+        DB::table('account_modules')->insert([
+            'account_id' => '2',
+            'module' => 'lead_admin',
+            'access' => '1',
+        ]);
 
         DB::table('account_modules')->insert([
             'account_id' => '3',
@@ -180,6 +200,16 @@ class DatabaseSeeder extends Seeder
         DB::table('account_modules')->insert([
             'account_id' => '3',
             'module' => 'businesstermsprotection',
+            'access' => '1',
+        ]);
+        DB::table('account_modules')->insert([
+            'account_id' => '3',
+            'module' => 'leads',
+            'access' => '3',
+        ]);
+        DB::table('account_modules')->insert([
+            'account_id' => '3',
+            'module' => 'lead_admin',
             'access' => '1',
         ]);
 

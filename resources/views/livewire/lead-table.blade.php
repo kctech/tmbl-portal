@@ -99,11 +99,15 @@
                         <div class="col-md-6">
                             <div class="p-3">
                                 @if($lead->status == \App\Models\Lead::PROSPECT)
+                                    <p>If you would like to cleam this clead and reveal the contact details, click the button below. Please note once claimed you will not be able to release it back into the pool until after 7 days.</p>
                                     <button class="btn btn-sm btn-secondary btn-blockX" wire:click="allocate({{$lead->id}})">Claim</button>
                                 @elseif($lead->status == \App\Models\Lead::CLAIMED)
+                                    <p>Transfer the lead into MAB</p>
                                     <button class="ml-2 btn btn-sm btn-primary btn-blockX" wire:click="transfer({{$lead->id}})">Transfer</button>
                                     @if(\Carbon\Carbon::parse($lead->allocated_at)->diff(\Carbon\Carbon::now())->days > 7)
                                         <button class="btn btn-sm btn-danger btn-blockX" wire:click="deallocate({{$lead->id}})">Release Claim</button>
+                                    @else
+                                        <br /><br /><p>You can release this lead back into the general pool after 7 days.</p>
                                     @endif
                                 @elseif($lead->status == \App\Models\Lead::TRANSFERRED)
                                     {{ \App\Libraries\Interpret::LeadStatus($lead->status) }}
