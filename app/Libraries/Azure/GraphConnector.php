@@ -74,7 +74,7 @@ class GraphConnector
      * Gets all of the current Azure users from microsoft
      * Can be called optionally to set a specific filter on the resultset to cut out non required user accounts
      */
-    public function getUsers($filter='',$options=[])
+    public function getUsers($filter='',$options=[],$filter_method='endswith')
     {
         $email_filter = $this->_email ?? $filter;
 
@@ -83,11 +83,16 @@ class GraphConnector
             //https://stackoverflow.com/questions/41491222/single-quote-escaping-in-microsoft-graph
             //http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/abnf/odata-abnf-construction-rules.txt
             //SQUOTE-in-string = SQUOTE SQUOTE ; two consecutive single quotes represent one within a string literal
-            //$url = 'users?$select=mail,id&$filter=startswith(mail,\'' . str_replace("'", "''", $email_filter) . '\')';
-            $url = 'users?$select=mail,id&$count=true&$filter=endswith(mail,\'' . str_replace("'", "''", $email_filter) . '\')';
+            if($filter_method == 'endswith'){
+                $url = 'users?$select=mail,id&$count=true&$filter=endswith(mail,\'' . str_replace("'", "''", $email_filter) . '\')';
+            }else{
+                $url = 'users?$select=mail,id&$filter=startswith(mail,\'' . str_replace("'", "''", $email_filter) . '\')';
+            }
         }else{
             $url = 'users?$select=mail,id';
         }
+
+        //dd($url,$email_filter,$filter_method);
 
         $data = $this->getAll('GET',$url,$options,[],"value");
         foreach($data as $user) {
@@ -107,10 +112,10 @@ class GraphConnector
      * simple lookup to get the object id for a user from the results of the getUsers() call
      * Can be used on a case by case basis as it's use is automatic
      */
-    public function getIdentifierByEmail(string $email) {
+    public function getIdentifierByEmail(string $email,$filter_method='startswith') {
         $this->_email = $email;
         if(count($this->users)==0){
-            $this->getUsers();
+            $this->getUsers($email,[],$filter_method);
         }
         $email = Str::lower($email);
 
@@ -153,7 +158,7 @@ class GraphConnector
         return $output;
     }
 
-    public function getUsersWithPresence($filter='',$options=[]){
+    public function getUsersWithPresence($filter='',$options=[],$filter_method='endswith'){
 
         //vars
         $ids = $statuses = [];
@@ -172,7 +177,7 @@ class GraphConnector
         ];
 
         //get users and an array of theirs ids
-        $users = $this->getUsers($filter,$options);
+        $users = $this->getUsers($filter,$options,$filter_method);
         foreach($users as $user){
             $ids[] = $user->id;
         }
@@ -322,7 +327,7 @@ class GraphConnector
 
         } catch (\Exception $exception) {
             $online_meeting->error = self::MEETING_CREATION_FAILED;
-            Log::critical($exception->getMessage(),['tenant_id' => $this->provider->getTenantId()]);
+            Log::critical($exception->getMessage(),['tenant_id' => $this->provider->getTenantId()],json_encode($online_meeting));
         }
 
         return $online_meeting;

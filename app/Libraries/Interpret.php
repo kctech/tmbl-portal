@@ -39,8 +39,8 @@ class Interpret {
     {
         $typesArray = array(
             0 => 'Prospect',
-            1 => 'Claimed',
             2 => 'Contacted',
+            1 => 'Claimed',
             3 => 'Transferred',
             4 => 'Cold',
             5 => 'Archived',

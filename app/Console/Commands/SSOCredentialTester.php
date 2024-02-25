@@ -74,8 +74,8 @@ class SSOCredentialTester extends Command
 
         $graph = new GraphConnector($azure);
 
-        $users = $graph->getUsers($client_email_address);
-        dump($users);
+        //$users = $graph->getUsers($client_email_address);
+        //dump($users);
 
         //TEAMS
         $meeting = new OnlineMeeting($client_email_address);

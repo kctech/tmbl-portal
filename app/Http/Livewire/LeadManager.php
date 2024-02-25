@@ -231,6 +231,7 @@ class LeadManager extends Component
                 if($mab_lead_response->status){
                     $this->emit('updated', ['message' => "Lead allocated [" . $lead_id . "]"]);
                     $lead->status = Lead::TRANSFERRED;
+                    $this->lead->transferred_at = date("Y-m-d H:i:s");
                     $lead->user_id = 0;
                     $lead->allocated_at = date('Y-m-d H:i:s');
                     $lead->save();
@@ -315,6 +316,8 @@ class LeadManager extends Component
                 if($mab_lead_response->status){
                     $this->emit('updated', ['message' => "Lead allocated [" . $lead_id . "]"]);
                     $lead->status = Lead::TRANSFERRED;
+                    $this->lead->allocated_at = date("Y-m-d H:i:s");
+                    $this->lead->transferred_at = date("Y-m-d H:i:s");
                     $lead->user_id = $adviser->id;
                     $lead->save();
                 }else{

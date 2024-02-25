@@ -61,6 +61,14 @@ class Lead extends Model
         return $this->belongsTo(\App\Models\User::class,'user_id','id');
     }
 
+    /**
+     * Get the allocated user that the lead is related to.
+     */
+    public function events()
+    {
+        return $this->hasMany(\App\Models\LeadEvent::class,'lead_id','id');
+    }
+
     //date query filter maker
     public static function date_filter_prev_period($limits, $currentYear=true){
         $date = null;

@@ -36,7 +36,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('queue:retry all')->everyFifteenMinutes();
         $schedule->command('queue:work --queue=adviseremails,clientemails --timeout=60 --sleep=5 --tries=3')->withoutOverlapping()->everyMinute();
 
-        $schedule->command('portal_cache:calendars --account_id=1 --base_user_email=sam@tmblgroup.co.uk')->withoutOverlapping()->everyThirtyMinutes();
+        $schedule->command('portal_cache:calendars --account_id=1 --base_user_email=sam@tmblgroup.co.uk --weeks=4')->withoutOverlapping()->everyThirtyMinutes();
 
         //$schedule->command('inspire')->hourly();
     }

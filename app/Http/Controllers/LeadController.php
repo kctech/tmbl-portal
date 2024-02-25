@@ -37,6 +37,16 @@ class LeadController extends Controller
     }
 
     /**
+     * Show the leads manager.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function contact($id)
+    {
+        return view('admin.leads.contact')->with('id', $id);
+    }
+
+    /**
      * Show the leads table.
      *
      * @return \Illuminate\Contracts\Support\Renderable
@@ -54,6 +64,16 @@ class LeadController extends Controller
     public function sources()
     {
         return view('admin.leads.sources');
+    }
+
+    /**
+     * Show the lead sources editor.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function chasers()
+    {
+        return view('admin.leads.chasers');
     }
 
     /**

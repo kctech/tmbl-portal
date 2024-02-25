@@ -26,7 +26,7 @@ class AdviserAvailability extends Component
     public $advisers = [];
     public $adviser_list = [];
 
-    public $weeks = 3;
+    public $weeks = 4;
     public $days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
     public $start_hour = 6;
     public $end_hour = 23;
@@ -63,15 +63,27 @@ class AdviserAvailability extends Component
         $calendar = [];
         $comparison_datetime = Carbon::now()->startOfWeek()->startOfDay();
         for($w=1; $w<=$this->weeks; $w++){
-            $calendar['Week '. $w] = [];
+            $calendar[$w] = [];
+            switch($w){
+                case 1:
+                    $title = 'This Week';
+                    break;
+                case 2:
+                    $title = 'Next Week';
+                    break;
+                default:
+                    $title = 'Week '. $w;
+            }
+            $calendar[$w]['title'] = $title;
+            $calendar[$w]['start_date'] = $comparison_datetime->copy()->format("d/m/Y");
             foreach($this->days as $day){
-                $calendar['Week '. $w][$day] = [
+                $calendar[$w]['days'][$day] = [
                     'date' => $comparison_datetime->copy()->format("Y-m-d"),
                     'is_past' => $comparison_datetime->copy()->endOfDay()->isPast(),
                     'hours' => []
                 ];
                 for($h=$this->start_hour; $h<=$this->end_hour; $h++){
-                    $calendar['Week '. $w][$day]['hours'][$h] = [
+                    $calendar[$w]['days'][$day]['hours'][$h] = [
                         'availability' => 0,
                         'is_past' => $comparison_datetime->copy()->startOfDay()->addHours($h)->isPast()
                     ];
@@ -115,7 +127,7 @@ class AdviserAvailability extends Component
                     $comparison_datetime = Carbon::now()->startOfWeek()->startOfDay()->addHours($this->start_hour);
                     foreach($calendar as $week_number => $week){
                         //loop days
-                        foreach($week as $day => $date){
+                        foreach($week['days'] as $day => $date){
                             //if adviser works on these days
                             if(in_array(strtolower($day), $work_days)){
                                 //dump("working day:".$day);
@@ -128,10 +140,10 @@ class AdviserAvailability extends Component
                                         //dump("working hour:".$hour);
                                         //if no meetings - assume available
                                         if(empty($availability->scheduleItems)){
-                                            ++$calendar[$week_number][$day]['hours'][$hour]['availability'];
+                                            ++$calendar[$week_number]['days'][$day]['hours'][$hour]['availability'];
                                         }else{
                                             //assume available
-                                            ++$calendar[$week_number][$day]['hours'][$hour]['availability'];
+                                            ++$calendar[$week_number]['days'][$day]['hours'][$hour]['availability'];
                                             //loop meetings
                                             foreach($availability->scheduleItems as $meeting){
                                                 //if meeting is the current calendar day
@@ -145,8 +157,8 @@ class AdviserAvailability extends Component
                                                     if($compare->between($meeting_date_start,$meeting_date_end)){
                                                         //remove availability
                                                         //dump("clash:".$meeting_date_start->format('c'));
-                                                        if($calendar[$week_number][$day]['hours'][$hour]['availability'] > 0){
-                                                            --$calendar[$week_number][$day]['hours'][$hour]['availability'];
+                                                        if($calendar[$week_number]['days'][$day]['hours'][$hour]['availability'] > 0){
+                                                            --$calendar[$week_number]['days'][$day]['hours'][$hour]['availability'];
                                                         }
                                                     }
                                                 }

@@ -42,6 +42,7 @@ class SyncMABUserIds extends Command
      */
     public function handle()
     {
+        $failed = $success = [];
         $mab = new \App\Libraries\MABApi(false,'introducers:read:authorizedfirms',true);
         //dd($mab->getAdvisers());
         foreach(User::all() as $user){
@@ -50,9 +51,14 @@ class SyncMABUserIds extends Command
                 $user->mab_id = $mab_id;
                 $user->save();
                 dump($mab_id);
+                $success[$user->email] = $user->full_name();
             }else{
                 dump($user->email);
+                $failed[$user->email] = $user->full_name();
             }
         }
+
+        dump("success",json_encode($success));
+        dump("failed",json_encode($failed));
     }
 }

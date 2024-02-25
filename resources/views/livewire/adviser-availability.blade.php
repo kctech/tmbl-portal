@@ -115,8 +115,11 @@
             @foreach($calendar as $week_number => $week)
                 <div class="card mb-3 p-3">
                     <div class="row">
-                        <div class="col-2 d-flex align-items-center justify-content-center"><strong>{{$week_number}}</strong></div>
-                        @foreach($week as $day => $hour)
+                        <div class="col-2 d-flex flex-column align-items-center justify-content-center">
+                            <strong>{{$week['title']}}</strong>
+                            <div><span class="badge badge-primary">Starts {{$week['start_date']}}</span></div>
+                        </div>
+                        @foreach($week['days'] as $day => $hour)
                             <div class="col" @if($hour['is_past']) style="opacity:0.5;" @endif>
                                 <div class="mb-1">
                                     <h3 class="mb-0">{{$day}}</h3>

@@ -49,10 +49,12 @@ class Dev extends Command
             dd("No teams meeting support for account: 1");
         }
         $graph = new \App\Libraries\Azure\GraphConnector($azure);
+        $user = $graph->getIdentifierByEmail('sam@tmblgroup.co.uk','startswith');
+        dd($user);
         //$users = $graph->getUsers('sam@tmblgroup.co.uk');
-        $users = $graph->getUsers('@tmblgroup.co.uk',['headers'=>['ConsistencyLevel'=>'eventual']]);
+        //$users = $graph->getUsers('@tmblgroup.co.uk',['headers'=>['ConsistencyLevel'=>'eventual']]);
         //$users = $graph->getUsersWithPresence();
-        dd($users);
+        //dd($users);
 
         $calendars = [];
         $fetch_users = [];

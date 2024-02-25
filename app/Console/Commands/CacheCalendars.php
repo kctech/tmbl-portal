@@ -15,7 +15,7 @@ class CacheCalendars extends Command
      *
      * @var string
      */
-    protected $signature = 'portal_cache:calendars {--account_id=1} {--base_user_email=}';
+    protected $signature = 'portal_cache:calendars {--account_id=1} {--base_user_email=} {--weeks=4}';
 
     /**
      * The console command description.
@@ -44,6 +44,7 @@ class CacheCalendars extends Command
 
         $account_id = $this->option('account_id');
         $base_user_email = $this->option('base_user_email');
+        $weeks = $this->option('weeks');
 
         $this->info("Attempting Update of calendars for account " .$account_id. " using ".$base_user_email." as a base user");
 
@@ -70,7 +71,7 @@ class CacheCalendars extends Command
         }
 
         foreach(array_chunk($fetch_users,100) as $chunk){
-            $calendars = array_merge($calendars,$graph->getMultipleUserSchedules($base_user->id,$chunk,\Carbon\Carbon::now()->addWeek()->startOfWeek(),\Carbon\Carbon::now()->addWeek()->endOfWeek()));
+            $calendars = array_merge($calendars,$graph->getMultipleUserSchedules($base_user->id,$chunk,\Carbon\Carbon::now()->startOfWeek()->startOfDay(),\Carbon\Carbon::now()->addWeeks($weeks)->endOfWeek()->endOfDay()));
         }
 
         //check calendars fetched = calendars requested - we don't want partials

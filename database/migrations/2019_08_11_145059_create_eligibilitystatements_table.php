@@ -18,7 +18,7 @@ class CreateEligibilityStatementsTable extends Migration
             $table->bigInteger('user_id')->unsigned();
             $table->bigInteger('client_id')->unsigned();
             $table->string('statement_type')->nullable();
-            $table->text('infor')->nullable();
+            $table->text('information')->nullable();
             $table->json('options');
             $table->text('response_message')->nullable();
             $table->enum('responded', ['Y', 'N'])->default('N');
