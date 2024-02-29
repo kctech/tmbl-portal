@@ -3,7 +3,7 @@
         <div class="card-body">
             <div class="row h-100 no-gutters align-items-center">
                 <div class="col-12">
-                    <div class="text-xs font-weight-bold text-{{$stat->colour}} text-uppercase mb-1">{{$stat->title}} {{widget_title(@$stat->date)}}</div>
+                    <div class="text-xs font-weight-bold text-{{$stat->colour ?? 'primary'}} text-uppercase mb-1">{{$stat->title}} {{widget_title(@$stat->date)}}</div>
                 </div>
                 <div class="col mr-2">
                     <div>

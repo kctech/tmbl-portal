@@ -26,7 +26,7 @@ class LeadChaser extends Model
      * @var array
      */
     protected $fillable = [
-        'account_id', 'method', 'title', 'chase_status', 'subject', 'body', 'attachments', 'status'
+        'account_id', 'method', 'name', 'chase_duration', 'subject', 'body', 'attachments', 'status'
     ];
 
     /**
@@ -37,8 +37,8 @@ class LeadChaser extends Model
     protected $hidden = [];
 
 
-    /*public function newQuery()
+    public function newQuery()
     {
         return parent::newQuery()->where('account_id', session('account_id'));
-    }*/
+    }
 }

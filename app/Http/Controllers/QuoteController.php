@@ -7,7 +7,7 @@ use Storage;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
-use App\Jobs\QueueEmail;
+use App\Jobs\QueueTemplatedEmail;
 
 use App\Models\Quote;
 use App\Models\Client;
@@ -180,7 +180,7 @@ class QuoteController extends Controller
                     $client['attachments'] = array(
                         array('disk' => 'documents', 'view' => 'templated.'.$record->user->account->viewset.'.quote.pdf.quote', 'file' => $record->client->uid.'/'.$record->client->uid.'_'.$record->id.'_quote.pdf')
                     );
-                    dispatch(new QueueEmail($client))->onQueue('clientemails');
+                    dispatch(new QueueTemplatedEmail($client))->onQueue('clientemails');
 
                     //Adviser
                     $adviser['fields'] = $fields;
@@ -192,7 +192,7 @@ class QuoteController extends Controller
                     $adviser['attachments'] = array(
                         array('disk' => 'documents', 'view' => 'templated.'.$record->user->account->viewset.'.quote.pdf.quote_adviser', 'file' => $record->client->uid.'/'.$record->client->uid.'_'.$record->id.'_quote_adviser.pdf')
                     );
-                    dispatch(new QueueEmail($adviser))->onQueue('adviseremails');
+                    dispatch(new QueueTemplatedEmail($adviser))->onQueue('adviseremails');
 
                 } else {
                     $status = 1;
@@ -352,7 +352,7 @@ class QuoteController extends Controller
             $client['attachments'] = array(
                 array('disk' => 'documents', 'view' => 'templated.'.$record->user->account->viewset.'.quote.pdf.quote', 'file' => $record->client->uid.'/'.$record->client->uid.'_'.$record->id.'_quote.pdf'),
             );
-            dispatch(new QueueEmail($client))->onQueue('clientemails');
+            dispatch(new QueueTemplatedEmail($client))->onQueue('clientemails');
 
             //Adviser
             $adviser['fields'] = $fields;
@@ -364,7 +364,7 @@ class QuoteController extends Controller
             $adviser['attachments'] = array(
                 array('disk' => 'documents', 'view' => 'templated.'.$record->user->account->viewset.'.quote.pdf.quote_adviser', 'file' => $record->client->uid.'/'.$record->client->uid.'_'.$record->id.'_quote_adviser.pdf')
             );
-            dispatch(new QueueEmail($adviser))->onQueue('adviseremails');
+            dispatch(new QueueTemplatedEmail($adviser))->onQueue('adviseremails');
 
         } else {
             Session::flash('alert-danger', 'Task was unsuccessful!');
@@ -453,7 +453,7 @@ class QuoteController extends Controller
                 $client['attachments'] = array(
                     array('disk' => 'documents', 'view' => 'templated.'.$record->user->account->viewset.'.quote.pdf.quote', 'file' => $record->client->uid.'/'.$record->client->uid.'_'.$record->id.'_quote.pdf')
                 );
-                dispatch(new QueueEmail($client))->onQueue('clientemails');
+                dispatch(new QueueTemplatedEmail($client))->onQueue('clientemails');
 
                 return response()->json([
                     'status' => 'success',

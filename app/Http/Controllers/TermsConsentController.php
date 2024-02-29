@@ -7,7 +7,7 @@ use Storage;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
-use App\Jobs\QueueEmail;
+use App\Jobs\QueueTemplatedEmail;
 
 use App\Models\TermsConsent;
 use App\Models\Client;
@@ -214,7 +214,7 @@ class TermsConsentController extends Controller
                         array('disk' => 'documents', 'view' => 'templated.'.$record->user->account->viewset.'.terms.pdf.promise', 'file' => $record->client->uid.'/'.$record->client->uid.'_'.$record->id.'_promise.pdf'),
                         array('disk' => 'documents', 'view' => 'templated.'.$record->user->account->viewset.'.terms.pdf.privacy', 'file' => $record->client->uid.'/'.$record->client->uid.'_'.$record->id.'_privacy.pdf')
                     );
-                    dispatch(new QueueEmail($client))->onQueue('clientemails');
+                    dispatch(new QueueTemplatedEmail($client))->onQueue('clientemails');
 
                     //Adviser
                     $adviser['fields'] = $fields;
@@ -223,7 +223,7 @@ class TermsConsentController extends Controller
                     $adviser['subject'] = $record->consent_type.' Business Terms Consent Request sent to: '.$record->client->first_name.' '.$record->client->last_name. ' ('.$record->client->email.')';
                     $adviser['fromName'] = Session::get('acronym') .' Adviser Portal';
                     $adviser['replyTo'] = $record->client->email;
-                    dispatch(new QueueEmail($adviser))->onQueue('clientemails');
+                    dispatch(new QueueTemplatedEmail($adviser))->onQueue('clientemails');
                 } else {
                     $status = 1;
                     $statusMsg[] = 'Task was unsuccessful for Client '. $counter . '!';
@@ -335,7 +335,7 @@ class TermsConsentController extends Controller
                 array('disk' => 'documents', 'view' => 'templated.'.$record->user->account->viewset.'.terms.pdf.promise', 'file' => $record->client->uid.'/'.$record->client->uid.'_'.$record->id.'_promise.pdf'),
                 array('disk' => 'documents', 'view' => 'templated.'.$record->user->account->viewset.'.terms.pdf.privacy', 'file' => $record->client->uid.'/'.$record->client->uid.'_'.$record->id.'_privacy.pdf')
             );
-            dispatch(new QueueEmail($client))->onQueue('clientemails');
+            dispatch(new QueueTemplatedEmail($client))->onQueue('clientemails');
 
             //Adviser
             $adviser['fields'] = $fields;
@@ -344,7 +344,7 @@ class TermsConsentController extends Controller
             $adviser['subject'] = 'Updated '.$record->consent_type.' Business Terms Consent Request sent to: '.$record->client->first_name.' '.$record->client->last_name. ' ('.$record->client->email.')';
             $adviser['fromName'] = Session::get('acronym') .' Adviser Portal';
             $adviser['replyTo'] = $record->client->email;
-            dispatch(new QueueEmail($adviser))->onQueue('clientemails');
+            dispatch(new QueueTemplatedEmail($adviser))->onQueue('clientemails');
 
         } else {
             Session::flash('alert-danger', 'Task was unsuccessful!');
@@ -456,7 +456,7 @@ class TermsConsentController extends Controller
                     array('disk' => 'documents', 'view' => 'templated.'.$record->user->account->viewset.'.terms.pdf.promise_completed', 'file' => $record->client->uid.'/'.$record->client->uid.'_'.$record->id.'_promise_completed.pdf'),
                     array('disk' => 'documents', 'view' => 'templated.'.$record->user->account->viewset.'.terms.pdf.privacy', 'file' => $record->client->uid.'/'.$record->client->uid.'_'.$record->id.'_privacy.pdf')
                 );
-                dispatch(new QueueEmail($client))->onQueue('clientemails');
+                dispatch(new QueueTemplatedEmail($client))->onQueue('clientemails');
 
                 //Adviser
                 $adviser['fields'] = $fields;
@@ -468,7 +468,7 @@ class TermsConsentController extends Controller
                 $adviser['attachments'] = array(
                     array('disk' => 'documents', 'view' => 'templated.'.$record->user->account->viewset.'.terms.pdf.promise_completed', 'file' => $record->client->uid.'/'.$record->client->uid.'_'.$record->id.'_promise_completed.pdf')
                 );
-                dispatch(new QueueEmail($adviser))->onQueue('adviseremails');
+                dispatch(new QueueTemplatedEmail($adviser))->onQueue('adviseremails');
 
                 return view('templated.'.$record->user->account->viewset.'.terms.thanks')->with('id', $record->id)->with('uid', $record->client->uid);
 
@@ -529,7 +529,7 @@ class TermsConsentController extends Controller
                     array('disk' => 'documents', 'view' => 'templated.'.$record->user->account->viewset.'.terms.pdf.promise', 'file' => $record->client->uid.'/'.$record->client->uid.'_'.$record->id.'_promise.pdf'),
                     array('disk' => 'documents', 'view' => 'templated.'.$record->user->account->viewset.'.terms.pdf.privacy', 'file' => $record->client->uid.'/'.$record->client->uid.'_'.$record->id.'_privacy.pdf')
                 );
-                dispatch(new QueueEmail($client))->onQueue('clientemails');
+                dispatch(new QueueTemplatedEmail($client))->onQueue('clientemails');
 
                 return response()->json([
                     'status' => 'success',
@@ -584,7 +584,7 @@ class TermsConsentController extends Controller
                 $adviser['attachments'] = array(
                     array('disk' => 'documents', 'view' => 'templated.'.$record->user->account->viewset.'.terms.pdf.promise_completed', 'file' => $record->client->uid.'/'.$record->client->uid.'_'.$record->id.'_promise_completed.pdf')
                 );
-                dispatch(new QueueEmail($adviser))->onQueue('adviseremails');
+                dispatch(new QueueTemplatedEmail($adviser))->onQueue('adviseremails');
 
                 return response()->json([
                     'status' => 'success',

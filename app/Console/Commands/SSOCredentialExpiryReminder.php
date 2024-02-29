@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 
 use App\Models\SSOCredentials;
 
-use App\Jobs\QueueEmail;
+use App\Jobs\QueueTemplatedEmail;
 
 Use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -77,7 +77,7 @@ class SSOCredentialExpiryReminder extends Command
 
         //send email
         try {
-            dispatch(new QueueEmail($emailVars))->onQueue('clientemails');
+            dispatch(new QueueTemplatedEmail($emailVars))->onQueue('clientemails');
             return __("SUCCESS: Email send reminding for " . $data->credential->id . "(" . $data->credential->account_id . ")");
         } catch (\Exception $e) {
             Log::error($e);

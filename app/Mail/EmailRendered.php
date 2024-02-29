@@ -10,12 +10,12 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class EmailTemplated extends Mailable
+class EmailRendered extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $details;
-    public $ident = "Generic Templated Email";
+    public $ident = "Pre-Rendered Email";
 
     /**
      * Create a new message instance.
@@ -39,7 +39,7 @@ class EmailTemplated extends Mailable
      */
     public function build()
     {
-        $email = $this->view($this->details['view'])
+        $email = $this->view('email.rendered', $this->details)
             ->from('noreply@tmblgroup.co.uk')
             ->subject($this->details['subject']);
 

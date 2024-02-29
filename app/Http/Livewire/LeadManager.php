@@ -6,6 +6,8 @@ use Livewire\Component;
 use Livewire\WithPagination;
 
 use App\Models\Lead;
+use App\Models\LeadEvent;
+use App\Models\LeadChaser;
 
 use App\Libraries\MABApi;
 
@@ -37,6 +39,7 @@ class LeadManager extends Component
     public $lead_id = null;
     public $lead = null;
     public $advisers = [];
+    public $contact_schedule = [];
 
     public function mount()
     {
@@ -44,6 +47,8 @@ class LeadManager extends Component
         $this->lead_status = request()->get('lead_status') ?? session(self::$session_prefix . 'lead_status') ?? '';
         $this->search_filter = session(self::$session_prefix . 'search_filter') ?? '';
         $this->sort_order = session(self::$session_prefix . 'sort_order') ?? '';
+
+        $this->contact_schedule = LeadChaser::where('method','email')->where('status',LeadChaser::ACTIVE)->get();
     }
 
     public function updated($prop, $value)
@@ -75,8 +80,10 @@ class LeadManager extends Component
             $query = $query->orderBy('id', 'asc');
         }
 
-        if ($this->lead_status != '') {
-            $query = $query->where('status', $this->lead_status);
+        if ($this->lead_status == 'not_contacted') {
+            $query = $query->whereIn('status',[Lead::PROSPECT,Lead::CONTACTED])->whereDoesntHave('events', function($q){ $q->where('event_id', LeadEvent::MANUAL_CONTACTED); });
+        }elseif ($this->lead_status != '') {
+            $query = $query->where('status',$this->lead_status);
         }
 
         if (!empty(trim($this->search_filter))) {
@@ -134,7 +141,26 @@ class LeadManager extends Component
         $lead = Lead::find($lead_id);
         if($lead){
             $lead->status = $status;
-            $lead->save();
+            if($lead->save()){
+                switch($status){
+                    case (Lead::TRANSFERRED):
+                        $event_id = LeadEvent::TRANSFERRED_TO_MAB;
+                        break;
+                    case (Lead::CONTACTED):
+                        $event_id = LeadEvent::MANUAL_CONTACTED;
+                        break;
+                    default:
+                        $event_id = null;
+                }
+                if(!is_null($event_id)){
+                    $this->lead->events()->create([
+                        'account_id' => $this->lead->account_id,
+                        'user_id' => session('user_id'),
+                        'event_id' => $event_id,
+                        'information' => $this->lead_notes
+                    ]);
+                }
+            }
             $this->emit('updated', ['message' => "Lead status updated [" . $lead_id . "]"]);
         }else{
             $this->emit('error', ['message' => "Cant find lead [" . $lead_id . "]"]);

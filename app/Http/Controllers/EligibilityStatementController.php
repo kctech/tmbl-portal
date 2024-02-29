@@ -6,7 +6,7 @@ use Validator;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
-use App\Jobs\QueueEmail;
+use App\Jobs\QueueTemplatedEmail;
 
 use App\Models\EligibilityStatement;
 use App\Models\Client;
@@ -158,7 +158,7 @@ class EligibilityStatementController extends Controller
                     $client['from'] = $record->user->email;
                     $client['fromName'] = $record->user->first_name.' '.$record->user->last_name;
                     $client['replyTo'] = $record->user->email;
-                    dispatch(new QueueEmail($client))->onQueue('clientemails');
+                    dispatch(new QueueTemplatedEmail($client))->onQueue('clientemails');
 
                     //Adviser
                     $adviser['fields'] = $fields;
@@ -167,7 +167,7 @@ class EligibilityStatementController extends Controller
                     $adviser['subject'] = $record->statement_type.' Consent Request sent to: '.$record->client->first_name.' '.$record->client->last_name. ' ('.$record->client->email.')';
                     $adviser['fromName'] = Session::get('acronym') .' Adviser Portal';
                     $adviser['replyTo'] = $record->client->email;
-                    dispatch(new QueueEmail($adviser))->onQueue('clientemails');
+                    dispatch(new QueueTemplatedEmail($adviser))->onQueue('clientemails');
                 } else {
                     $status = 1;
                     $statusMsg[] = 'Task was unsuccessful for Client '. $counter . '!';
@@ -261,7 +261,7 @@ class EligibilityStatementController extends Controller
             $client['from'] = $record->user->email;
             $client['fromName'] = $record->user->first_name.' '.$record->user->last_name;
             $client['replyTo'] = $record->user->email;
-            dispatch(new QueueEmail($client))->onQueue('clientemails');
+            dispatch(new QueueTemplatedEmail($client))->onQueue('clientemails');
 
             //Adviser
             $adviser['fields'] = $fields;
@@ -270,7 +270,7 @@ class EligibilityStatementController extends Controller
             $adviser['subject'] = 'Updated '.$record->statement_type.' Consent Request sent to: '.$record->client->first_name.' '.$record->client->last_name. ' ('.$record->client->email.')';
             $adviser['fromName'] = Session::get('acronym') .' Adviser Portal';
             $adviser['replyTo'] = $record->client->email;
-            dispatch(new QueueEmail($adviser))->onQueue('clientemails');
+            dispatch(new QueueTemplatedEmail($adviser))->onQueue('clientemails');
 
         } else {
             Session::flash('alert-danger', 'Task was unsuccessful!');
@@ -348,7 +348,7 @@ class EligibilityStatementController extends Controller
                 $adviser['subject'] = 'Response from '.$record->client->first_name.' '.$record->client->last_name. ' ('.$record->client->email.') to '.$record->statement_type.' Consent Request';
                 $adviser['fromName'] = Session::get('acronym') .' Adviser Portal';
                 $adviser['replyTo'] = $record->client->email;
-                dispatch(new QueueEmail($adviser))->onQueue('adviseremails');
+                dispatch(new QueueTemplatedEmail($adviser))->onQueue('adviseremails');
 
                 return view('templated.'.$record->user->account->viewset.'.eligibilitystatement.type.'.$record->statement_type.'.thanks');
 
@@ -403,7 +403,7 @@ class EligibilityStatementController extends Controller
                 $client['from'] = $record->user->email;
                 $client['fromName'] = $record->user->first_name.' '.$record->user->last_name;
                 $client['replyTo'] = $record->user->email;
-                dispatch(new QueueEmail($client))->onQueue('clientemails');
+                dispatch(new QueueTemplatedEmail($client))->onQueue('clientemails');
 
                 return response()->json([
                     'status' => 'success',
@@ -454,7 +454,7 @@ class EligibilityStatementController extends Controller
                 $adviser['subject'] = 'Response from '.$record->client->first_name.' '.$record->client->last_name. ' ('.$record->client->email.') to '.$record->statement_type.' Consent Request';
                 $adviser['fromName'] = Session::get('acronym') .' Adviser Portal';
                 $adviser['replyTo'] = $record->client->email;
-                dispatch(new QueueEmail($adviser))->onQueue('adviseremails');
+                dispatch(new QueueTemplatedEmail($adviser))->onQueue('adviseremails');
 
                 return response()->json([
                     'status' => 'success',

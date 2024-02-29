@@ -14,13 +14,14 @@ class CreateLeadChasersTable extends Migration
     public function up()
     {
         Schema::create('lead_chasers', function (Blueprint $table) {
+            $table->id();
             $table->bigInteger('account_id')->unsigned();
             $table->string('method');
-            $table->string('title');
+            $table->string('name');
             $table->string('chase_duration');
             $table->string('subject');
             $table->text('body');
-            $table->text('attachments');
+            $table->text('attachments')->nullable();
             $table->tinyInteger('status')->default(\App\Models\LeadChaser::ACTIVE);
             $table->timestamps();
 

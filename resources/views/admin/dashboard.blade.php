@@ -32,7 +32,7 @@
                 </div>
             </div>
         @endcan
-        
+
         <!--
         @can('gdprconsents')
             <div class="col-md-4">
@@ -150,7 +150,32 @@
                 </div>
             </div>
         @endcan
-        
+
+        @can('lead_admin')
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-header text-white bg-dark"><i class="fa fa-folders"></i> Leads Manager</div>
+
+                    <div class="list-group">
+                        <a class="list-group-item" href="{{ route('leads.index') }}"><i class="fa fa-tachometer-alt-slow"></i> Dashboard</a>
+                        <a class="list-group-item list-group-item-light" href="{{ route('leads.manager') }}"><i class="fa fa-file-search"></i> View All</a>
+                    </div>
+                </div>
+            </div>
+        @endcan
+
+        @can('leads')
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-header text-white bg-dark"><i class="fa fa-inbox"></i> Leads</div>
+
+                    <div class="list-group">
+                        <a class="list-group-item list-group-item-light" href="{{ route('leads.table') }}"><i class="fa fa-file-search"></i> View All</a>
+                    </div>
+                </div>
+            </div>
+        @endcan
+
     </div>
 
 </div>

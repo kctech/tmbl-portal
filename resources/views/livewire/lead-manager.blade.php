@@ -189,7 +189,6 @@
                             <th>Contact Number</th>
                             <th>Recieved</th>
                             <th>Source</th>
-                            <th>Contact</th>
                             <th>Status</th>
                             <th></th>
                         </tr>
@@ -214,12 +213,6 @@
                                 </td>
                                 <td>{{ $item->source->source ?? 'Unknown' }}</td>
                                 <td>
-                                    {{ $item->contact_count }} times
-                                    @if(!empty($item->contacted_at))
-                                        <br /><span class="badge badge-primary">{{\Carbon\Carbon::parse($item->contacted_at)->diffForHumans()}}</span>
-                                    @endif
-                                </td>
-                                <td>
                                     {{ \App\Libraries\Interpret::LeadStatus($item->status) }}
                                     @if(is_numeric($item->user_id))
                                         <br /><span class="badge badge-primary">{{$item->owner->full_name() ?? 'Unknown User'}}</span>
@@ -229,15 +222,34 @@
                                         @if($item->status == \App\Models\Lead::TRANSFERRED && !empty($item->transferred_at))
                                             <span class="badge badge-primary tip" title="{{$item->transferred_at}}">{{\Carbon\Carbon::parse($item->transferred_at)->diffForHumans()}}</span>
                                         @endif
-                                    @endif
-                                    @if($item->status == \App\Models\Lead::CONTACTED && !empty($item->last_contacted_at))
-                                        <br /><span class="badge badge-primary tip" title="{{$item->last_contacted_at}}">{{\Carbon\Carbon::parse($item->last_contacted_at)->diffForHumans()}}</span>
+                                    @else
+                                        @if(in_array($item->status,[\App\Models\Lead::PROSPECT,\App\Models\Lead::CONTACTED]) && !empty($item->last_contacted_at))
+                                            <span class="badge badge-primary tip" title="contacted {{ $item->contact_count }} times, last contacted {{$item->last_contacted_at}}">{{\Carbon\Carbon::parse($item->last_contacted_at)->diffForHumans()}}</span>
+                                        @endif
+                                        <div class="d-block w-100">
+                                            <i class="fa fa-envelope"></i>
+                                            @foreach($contact_schedule as $chaser)
+                                                @if(in_array($chaser->id, $item->events()->where('event_id',\App\Models\LeadEvent::AUTO_CONTACTED)->pluck('information')->toArray()))
+                                                    <i class="fas fa-check-circle text-success tip" title="Chaser {{$chaser->name}} sent {{$item->events()->where('event_id',\App\Models\LeadEvent::AUTO_CONTACTED)->where('information',$chaser->id)->first()->created_at}}"></i>
+                                                @else
+                                                    <i class="fas fa-times-circle text-muted tip" title="Chaser {{$chaser->name}} not sent yet"></i>
+                                                @endif
+                                            @endforeach
+                                        </div>
+                                        @if($item->events()->where('event_id',\App\Models\LeadEvent::MANUAL_CONTACTED)->count() != 0)
+                                            <div class="d-block w-100">
+                                                <i class="fa fa-phone"></i>
+                                                @foreach($item->events()->where('event_id',\App\Models\LeadEvent::MANUAL_CONTACTED)->get() as $contact)
+                                                    <i class="fas fa-phone-square text-success tip" title="Contacted at {{$contact->created_at}}"></i>
+                                                @endforeach
+                                            </div>
+                                        @endif
                                     @endif
                                 </td>
                                 <td class="text-right">
                                     <div class="d-flex flex-row align-items-center justify-content-end">
                                         @if($item->status == \App\Models\Lead::PROSPECT || $item->status == \App\Models\Lead::CONTACTED)
-                                            <a class="btn btn-sm btn-primary ml-2" href="{{route('leads.contact', $item->id)}}">Contact</a>
+                                            <a class="btn btn-sm btn-primary ml-2" href="{{route('leads.manager-contact', $item->id)}}">Contact</a>
                                             <button class="btn btn-sm btn-secondary ml-2" wire:click="info({{$item->id}})">Actions</button>
                                         @else
                                             <button class="btn btn-sm btn-secondary" wire:click="info({{$item->id}})">Info</button>

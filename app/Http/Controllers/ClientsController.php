@@ -280,7 +280,7 @@ class ClientsController extends Controller
                 $client['from'] = $record->user->email;
                 $client['fromName'] = $record->user->first_name.' '.$record->user->last_name;
                 $client['replyTo'] = $record->user->email;
-                dispatch(new QueueEmail($client))->onQueue('clientemails');
+                dispatch(new QueueTemplatedEmail($client))->onQueue('clientemails');
 
                 return response()->json([
                     'status' => 'success',

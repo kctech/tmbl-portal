@@ -6,7 +6,7 @@
 
         <div class="btn-toolbar mb-2 mb-md-0">
             {{ Breadcrumbs::render('leads') }}
-            <a href="{{ route('leads.table') }}" class="btn btn-lg btn-primary ml-3 mb-3"><i class="fa fa-inbox-in"></i> Leads</a>
+            <a href="{{ route('leads.manager') }}" class="btn btn-lg btn-primary ml-3 mb-3"><i class="fa fa-inbox-in"></i> Leads</a>
         </div>
     </div>
 
@@ -68,12 +68,92 @@
         </div>
     </div>
 
+    <div class="card mb-3 p-3">
+        <div class="row">
+            <div class="col-2 d-flex align-items-center justify-content-center"><strong>Filter Adviser List</strong></div>
+            <div class="col-10">
+                <x-select2-tags wire:model="advisers" id="advisers" class="form-control select2-tags" placeholder="Select adviser(s). Showing All by default.">
+                    @foreach($adviser_list as $adv)
+                        @php $adv = (object) $adv @endphp
+                        @if($adv->email)
+                            <option value="{{$adv->email}}">
+                                {{$adv->first_name}} {{$adv->last_name}} [{{$adv->presence->availability ?? 'Unknown'}}]
+                            </option>
+                        @endif
+                    @endforeach
+                </x-select2-tags>
+            </div>
+        </div>
+    </div>
+
     <div wire:loading.remove>
 
         @if($isLoaded)
 
             <div class="row">
-                <div class="col-md-12 mb-3">
+                <div class="col-md-4  d-flex flex-column">
+                    <h2>Availabile Advisers</h2>
+                    <div class="card p-0 w-100 h-100 position-relative mb-3 flex-grow-1" style="min-height: @if(!empty($advisers)) 100px; @else 300px; @endif">
+                        <div class="card-body p-0 position-absolute overflow-auto" style="top:0; bottom:0; left:0; right:0;">
+                            <div class="list-group list-group-flush">
+                                @foreach($adviser_list as $adviser)
+                                    @php
+                                        $adviser = (object) $adviser;
+                                        $adviser->presence = (object) $adviser->presence;
+                                    @endphp
+                                    @if(
+                                        (!in_array($adviser->email,$advisers) && !empty($advisers))
+                                        ||
+                                        (in_array(($adviser->presence->activity ?? 'PresenceUnknown'),['PresenceUnknown','Unknown','Offline','OutOfOffice']) && empty($advisers))
+                                    )
+                                        @continue
+                                    @endif
+                                    <div class="list-group-item p-1">
+                                        <div onclick="@this.set('selected_adviser','{{$adviser->email}}')" class="cursor-pointer row @if($adviser->email == $selected_adviser)) bg-primary text-white @endif">
+                                            <div class="col-1 text-right">
+                                                <span class="tip" title="
+                                                    {{\App\Libraries\Interpret::AzureStatus(($adviser->presence->activity ?? 'Unknown'))}}
+                                                    @if(!is_null(($adviser->presence->statusMessage->message->content ?? null)))
+                                                        - {{$adviser->presence->statusMessage->message->content ?? 'Blank Message'}}
+                                                    @endif
+                                                ">
+                                                    @switch(($adviser->presence->availability ?? 'unknown'))
+                                                        @case('Available')
+                                                            <i class="fas fa-check-circle text-success"></i>
+                                                            @break
+                                                        @case('Busy')
+                                                        @case('Presenting')
+                                                        @case('DoNotDisturb')
+                                                            <i class="fas fa-circle text-danger"></i>
+                                                            @break
+                                                        @case('Away')
+                                                            <i class="fas fa-circle text-warning"></i>
+                                                            @break
+                                                        @case('Offline')
+                                                            <i class="fas fa-times-circle text-muted"></i>
+                                                            @break
+                                                        @default
+                                                            <i class="fas fa-question-circle text-muted"></i>
+                                                    @endswitch
+                                                </span>
+                                            </div>
+                                            <div class="col-7 text-truncate">
+                                                {{$adviser->first_name ?? '?'}} {{$adviser->last_name ?? '?'}}
+                                            </div>
+                                            <div class="col-4 text-right">
+                                                {{$adviser->leads_count ?? 0 }} this mo.
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        <div class="overflow-msg overflow-msg-scroll position-absolute text-muted text-center" style="bottom:0; left:0; right:0; background-image: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,1));">
+                            <small>scroll to see more</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8 mb-3">
                     <h2>Weekly Availabilty <small class="float-right badge badge-primary">Updated {{$cache_date ?? 'Unknown'}}</small></h2>
                     <div class="accordion" id="accordionWeeklyeAvailability">
                         @foreach($calendar as $week_number => $week)

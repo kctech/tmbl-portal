@@ -19,7 +19,7 @@ class LeadChasers extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
 
-    private static $session_prefix = '_account_chasers_editor_';
+    private static $session_prefix = '_lead_chasers_editor_';
     private $data;
     public $user_id = null;
 
@@ -29,9 +29,14 @@ class LeadChasers extends Component
     public $message_bar = '';
 
     //form vars
-    public $status = [0 => 'Inactive', 1 => 'Active'];
-    public $chaser = null;
-    public $api_token = null;
+    public $status = [LeadChaser::ACTIVE => 'Inactive', LeadChaser::INACTIVE => 'Active'];
+    public $method = 'email';
+    public $time_unit = 0;
+    public $time_amount = 'minutes';
+    public $name = null;
+    public $subject = null;
+    public $body = null;
+    public $attachments = null;
 
     //save vars
     public $save_mode = 'create';
@@ -54,10 +59,6 @@ class LeadChasers extends Component
         $this->chaser_status = session(self::$session_prefix . 'chaser_status') ?? LeadChaser::ACTIVE;
         $this->search_filter = session(self::$session_prefix . 'search_filter') ?? '';
         $this->sort_order = session(self::$session_prefix . 'sort_order') ?? '';
-
-        $this->chaser = session(self::$session_prefix . 'chaser') ?? '';
-        $this->api_token = session(self::$session_prefix . 'api_token') ?? '';
-        $this->status = session(self::$session_prefix . 'status') ?? '';
     }
 
     public function updated($prop, $value)
@@ -96,7 +97,7 @@ class LeadChasers extends Component
         if (!empty(trim($this->search_filter))) {
             ++$this->filtersActive;
             $query = $query->where(function($q){
-                $q->where('chaser', 'like', '%' . $this->search_filter . '%')->orWhere('api_token', 'like', '%' . $this->search_filter . '%');
+                $q->where('name', 'like', '%' . $this->search_filter . '%')->orWhere('subject', 'like', '%' . $this->search_filter . '%');
             });
         }
 
@@ -124,35 +125,35 @@ class LeadChasers extends Component
 
     public function delete($id)
     {
-        $account_chaser  = LeadChaser::find($id);
-        if ($account_chaser) {
-            $account_chaser->status = LeadChaser::INACTIVE;
-            $account_chaser->save();
-            if ($account_chaser->save() !== false) {
-                $this->emit('updated', ['message' => 'Source [' . $account_chaser ->chaser . '] has been deleted']);
-                $this->message_bar = 'Source [' . $account_chaser ->chaser . '] has been deleted.';
+        $lead_chaser = LeadChaser::find($id);
+        if ($lead_chaser) {
+            $lead_chaser->status = LeadChaser::INACTIVE;
+            $lead_chaser->save();
+            if ($lead_chaser->save() !== false) {
+                $this->emit('updated', ['message' => 'Chaser "' . $lead_chaser->name. '" has been deleted']);
+                $this->message_bar = 'Chaser "' . $lead_chaser->name. '" has been deleted.';
                 $this->search_filter = '';
                 session()->forget(self::$session_prefix . 'search_filter');
                 return true;
             }
         }
-        $this->emit('updated', ['message' => "Source [" . $account_chaser->chaser ?? 'unknown' . "] couldn't be deleted."]);
+        $this->emit('updated', ['message' => "Chaser [" . $lead_chaser->chaser ?? 'unknown' . "] couldn't be deleted."]);
     }
 
     public function restore($id)
     {
-        $account_chaser  = LeadChaser::find($id)->withTrashed();
-        if ($account_chaser ) {
-            $account_chaser->status = LeadChaser::ACTIVE;
-            if ($account_chaser->save() !== false && $account_chaser->restore()) {
-                $this->emit('updated', ['message' => 'Source [' . $account_chaser ->chaser . '] has been restored']);
-                $this->message_bar = 'Source [' . $account_chaser ->chaser . '] has been restored.';
+        $lead_chaser  = LeadChaser::find($id)->withTrashed();
+        if ($lead_chaser ) {
+            $lead_chaser->status = LeadChaser::ACTIVE;
+            if ($lead_chaser->save() !== false && $lead_chaser->restore()) {
+                $this->emit('updated', ['message' => 'Chaser "' . $lead_chaser->name. '" has been restored']);
+                $this->message_bar = 'Chaser "' . $lead_chaser->name. '" has been restored.';
                 $this->search_filter = '';
                 session()->forget(self::$session_prefix . 'search_filter');
                 return true;
             }
         }
-        $this->emit('updated', ['message' => "Source [" . $account_chaser ->chaser . "] couldn't be restored."]);
+        $this->emit('updated', ['message' => "Chaser [" . $lead_chaser ->chaser . "] couldn't be restored."]);
     }
 
     public function create()
@@ -160,9 +161,14 @@ class LeadChasers extends Component
         $this->message_bar = '';
         $this->save_mode = 'create';
 
-        $this->chaser = null;
-        $this->api_token = Str::random(64);
-        $this->status = 0;
+        $this->method = 'email';
+        $this->time_amount = 0;
+        $this->time_unit = 'minutes';
+        $this->name = null;
+        $this->subject = null;
+        $this->body = null;
+        $this->attachments = null;
+        $this->status = LeadChaser::ACTIVE;
 
         $this->view = 'form';
     }
@@ -174,8 +180,13 @@ class LeadChasers extends Component
         $this->save_mode = 'update';
         $base = LeadChaser::where('id', $id)->first();
         if ($base) {
-            $this->chaser = $base->chaser;
-            $this->api_token = $base->api_token;
+            $this->method = $base->method;
+            $this->name = $base->name;
+            $this->time_amount = explode(" ",$base->chase_duration)[0];
+            $this->time_unit = explode(" ",$base->chase_duration)[1] ?? 'minutes';
+            $this->subject = $base->subject;
+            $this->body = $base->body;
+            $this->attachments = $base->attachments;
             $this->status = $base->status;
 
             $this->view = 'form';
@@ -190,8 +201,13 @@ class LeadChasers extends Component
         $this->save_mode = 'create';
         $base = LeadChaser::where('id', $id)->first();
         if($base){
-            $this->chaser = $base->chaser;
-            $this->api_token = $base->api_token;
+            $this->method = $base->method;
+            $this->name = $base->name;
+            $this->time_amount = explode(" ",$base->chase_duration)[0];
+            $this->time_unit = explode(" ",$base->chase_duration)[1] ?? 'minutes';
+            $this->subject = $base->subject;
+            $this->body = $base->body;
+            $this->attachments = $base->attachments;
             $this->status = $base->status;
 
             $this->view = 'form';
@@ -202,22 +218,26 @@ class LeadChasers extends Component
 
     public function save()
     {
-        if($this->save_mode == 'update'){
-            $api_token_validation = 'required|alpha_num|min:64|max:128';
-        }else{
-            $api_token_validation = 'required|alpha_num|min:64|max:128|unique:\App\Models\LeadChaser,api_token';
-        }
+        $chase_duration = $this->time_amount." ".$this->time_unit;
         $validatedData = Validator::make(
             [
                 'account_id' => session('account_id'),
-                'chaser' => $this->chaser,
-                'api_token' => $this->api_token,
-                'status' => $this->status
+                'method' => $this->method,
+                'name' => $this->name,
+                'chase_duration' => $chase_duration,
+                'subject' => $this->subject,
+                'body' => $this->body,
+                'attachments' => $this->attachments,
+                'status' => $this->status,
             ],
             [
                 'account_id' => 'required|numeric',
-                'chaser' => 'required',
-                'api_token' => $api_token_validation,
+                'method' => 'required',
+                'name' => 'required',
+                'chase_duration' => 'required',
+                'subject' => 'required',
+                'body' => 'required',
+                'attachments' => '',
                 'status' => 'required|in:0,1'
             ]
         );
@@ -227,21 +247,21 @@ class LeadChasers extends Component
 
             if($this->save_mode == 'create'){
                 $save = LeadChaser::create($validatedData->validated());
-                $success_msg = 'New Source [' . $this->chaser . '] has been created.';
+                $success_msg = 'New Chaser "' . $this->name. '" has been created.';
             }else{
                 $save = LeadChaser::where('id', $this->update_id)->update($validatedData->validated());
-                $success_msg = 'Source [' . $this->chaser . '] has been edited.';
+                $success_msg = 'Chaser "' . $this->name. '" has been edited.';
             }
 
             if ($save) {
-                $this->emit('updated', ['message' => 'Source [' . $this->chaser . '] Saved']);
+                $this->emit('updated', ['message' => 'Chaser "' . $this->name. '" Saved']);
                 $this->message_bar = $success_msg;
                 $this->save_mode = 'create';
                 $this->update_id = null;
                 session()->forget(self::$session_prefix . 'update_id');
                 $this->view = 'list';
             } else {
-                $this->emit('error', ['message' => "Source [" . $this->chaser . "] couldn't be saved"]);
+                $this->emit('error', ['message' => "Chaser \"" . $this->name . "\" couldn't be saved"]);
             }
         }
     }

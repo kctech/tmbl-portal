@@ -10,10 +10,10 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
-use App\Mail\EmailTemplated as EmailTemplated;
-use Mail;
+use App\Mail\EmailRendered as EmailRendered;
+use Illuminate\Support\Facades\Mail;
 
-class QueueEmail implements ShouldQueue
+class QueueRenderedEmail implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -35,6 +35,6 @@ class QueueEmail implements ShouldQueue
     public function handle()
     {
         Mail::to($this->details['to'])
-            ->send(new EmailTemplated($this->details));
+            ->send(new EmailRendered($this->details));
     }
 }

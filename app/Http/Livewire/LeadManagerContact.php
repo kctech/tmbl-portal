@@ -12,13 +12,12 @@ use App\Libraries\Azure\OnlineMeeting;
 use App\Models\Lead;
 use App\Models\LeadEvent;
 use App\Models\PortalCache;
-use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class LeadContact extends Component
+class LeadManagerContact extends Component
 {
     private static $session_prefix = '_lead_contact_';
     protected $calendar = [];
@@ -31,6 +30,8 @@ class LeadContact extends Component
 
     //general list vars
     public $message_bar = '';
+    public $advisers = [];
+    public $adviser_list = [];
     public $lead_id = null;
     public $lead = null;
 
@@ -47,18 +48,23 @@ class LeadContact extends Component
 
     public function mount($lead_id)
     {
+        $this->advisers = session(self::$session_prefix . 'advisers') ?? [];
         $this->lead_id = $lead_id;
         $this->lead = Lead::where('id',$lead_id)->first();
 
         if(is_null($this->lead)){
             $this->skipRender();
             session()->flash('alert-danger','Unable to load lead ID '.$this->lead_id);
-            return $this->redirectRoute('leads.table');
+            return $this->redirectRoute('leads.manager');
         }
 
         $this->lead_notes = json_decode($this->lead->data)->contact_notes ?? '';
 
-        $this->selected_adviser = User::where('id',session('user_id'))->first()->emailAddress;
+        $adviser_list = [];
+        foreach(buildAdvisersList() as $adv){
+            $adviser_list[$adv->email] = $adv;
+        }
+        $this->adviser_list = $adviser_list;
     }
 
     public function loadData()
@@ -79,6 +85,11 @@ class LeadContact extends Component
         $this->selected_time = $hour;
         //Carbon::createFromFormat("Y-m-d H:i", $date." ".$hour)->format("d-m-Y H:i");
         $this->emit('updated',['message'=>'Selected: '.$this->selected_date .' '. $this->selected_time]);
+    }
+
+    public function updatedAdvisers($value)
+    {
+        //dump($this->advisers);
     }
 
     private function buildCalendar(){
@@ -131,8 +142,26 @@ class LeadContact extends Component
 
             foreach($adviser_availability as $adviser => $availability){
 
+                //if($adviser == 'Marc.Finch@tmblgroup.co.uk'){dd($this->selected_adviser,$availability);}
+
                 //remove adviser from list if no current status info
-                if(strtolower($this->selected_adviser) != strtolower($adviser)){
+                /*
+                    ignore if
+                    adviser not selected and not in list of selected advisers and is available
+                    or
+                    adviser isnt selected
+                */
+                if(
+                    (
+                        empty($this->selected_adviser)
+                        &&
+                        (
+                            (!in_array(strtolower($adviser),$this->advisers) && !empty($this->advisers))
+                            || (in_array(($this->adviser_list[$adviser]['presence']['availability'] ?? 'PresenceUnknown'),['PresenceUnknown','Unknown','Offline','OutOfOffice']) && empty($this->advisers))
+                        )
+                    )
+                    || (strtolower($this->selected_adviser) != strtolower($adviser) && !empty($this->selected_adviser))
+                ){
                     continue;
                 }
 
@@ -428,7 +457,7 @@ class LeadContact extends Component
     public function render()
     {
         $this->data();
-        return view('livewire.lead-contact',[
+        return view('livewire.lead-manager-contact',[
             'cache_date' => $this->cache_date,
             'calendar' => $this->calendar,
             'availability' => $this->availability,

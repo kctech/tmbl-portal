@@ -37,13 +37,13 @@ class LeadController extends Controller
     }
 
     /**
-     * Show the leads manager.
+     * Show the leads manager contact.
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function contact($id)
+    public function managerContact($id)
     {
-        return view('admin.leads.contact')->with('id', $id);
+        return view('admin.leads.manager-contact')->with('id', $id);
     }
 
     /**
@@ -84,5 +84,15 @@ class LeadController extends Controller
     public function adviserAvailability()
     {
         return view('admin.leads.adviser-availability');
+    }
+
+    /**
+     * Show the leads manager.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function contact($id)
+    {
+        return view('admin.leads.contact')->with('id', $id);
     }
 }

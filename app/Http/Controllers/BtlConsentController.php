@@ -6,7 +6,7 @@ use Validator;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
-use App\Jobs\QueueEmail;
+use App\Jobs\QueueTemplatedEmail;
 
 use App\Models\BtlConsent;
 use App\Models\Client;
@@ -159,7 +159,7 @@ class BtlConsentController extends Controller
                     $client['from'] = $record->user->email;
                     $client['fromName'] = $record->user->first_name.' '.$record->user->last_name;
                     $client['replyTo'] = $record->user->email;
-                    dispatch(new QueueEmail($client))->onQueue('clientemails');
+                    dispatch(new QueueTemplatedEmail($client))->onQueue('clientemails');
 
                     //Adviser
                     $adviser['fields'] = $fields;
@@ -168,7 +168,7 @@ class BtlConsentController extends Controller
                     $adviser['subject'] = $record->consent_type.' Confirmation sent to: '.$record->client->first_name.' '.$record->client->last_name. ' ('.$record->client->email.')';
                     $adviser['fromName'] = Session::get('acronym') .' Adviser Portal';
                     $adviser['replyTo'] = $record->client->email;
-                    dispatch(new QueueEmail($adviser))->onQueue('clientemails');
+                    dispatch(new QueueTemplatedEmail($adviser))->onQueue('clientemails');
                 } else {
                     $status = 1;
                     $statusMsg[] = 'Task was unsuccessful for Client '. $counter . '!';
@@ -262,7 +262,7 @@ class BtlConsentController extends Controller
             $client['from'] = $record->user->email;
             $client['fromName'] = $record->user->first_name.' '.$record->user->last_name;
             $client['replyTo'] = $record->user->email;
-            dispatch(new QueueEmail($client))->onQueue('clientemails');
+            dispatch(new QueueTemplatedEmail($client))->onQueue('clientemails');
 
             //Adviser
             $adviser['fields'] = $fields;
@@ -271,7 +271,7 @@ class BtlConsentController extends Controller
             $adviser['subject'] = 'Updated '.$record->consent_type.' Confirmation sent to: '.$record->client->first_name.' '.$record->client->last_name. ' ('.$record->client->email.')';
             $adviser['fromName'] = Session::get('acronym') .' Adviser Portal';
             $adviser['replyTo'] = $record->client->email;
-            dispatch(new QueueEmail($adviser))->onQueue('clientemails');
+            dispatch(new QueueTemplatedEmail($adviser))->onQueue('clientemails');
 
         } else {
             Session::flash('alert-danger', 'Task was unsuccessful!');
@@ -349,7 +349,7 @@ class BtlConsentController extends Controller
                 $adviser['subject'] = 'Response from '.$record->client->first_name.' '.$record->client->last_name. ' ('.$record->client->email.') to '.$record->consent_type.' Confirmation';
                 $adviser['fromName'] = Session::get('acronym') .' Adviser Portal';
                 $adviser['replyTo'] = $record->client->email;
-                dispatch(new QueueEmail($adviser))->onQueue('adviseremails');
+                dispatch(new QueueTemplatedEmail($adviser))->onQueue('adviseremails');
 
                 return view('templated.'.$record->user->account->viewset.'.btl.thanks');
 
@@ -404,7 +404,7 @@ class BtlConsentController extends Controller
                 $client['from'] = $record->user->email;
                 $client['fromName'] = $record->user->first_name.' '.$record->user->last_name;
                 $client['replyTo'] = $record->user->email;
-                dispatch(new QueueEmail($client))->onQueue('clientemails');
+                dispatch(new QueueTemplatedEmail($client))->onQueue('clientemails');
 
                 return response()->json([
                     'status' => 'success',
@@ -455,7 +455,7 @@ class BtlConsentController extends Controller
                 $adviser['subject'] = 'Response from '.$record->client->first_name.' '.$record->client->last_name. ' ('.$record->client->email.') to '.$record->consent_type.' Confirmation';
                 $adviser['fromName'] = Session::get('acronym') .' Adviser Portal';
                 $adviser['replyTo'] = $record->client->email;
-                dispatch(new QueueEmail($adviser))->onQueue('adviseremails');
+                dispatch(new QueueTemplatedEmail($adviser))->onQueue('adviseremails');
 
                 return response()->json([
                     'status' => 'success',

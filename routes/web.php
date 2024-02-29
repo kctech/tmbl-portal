@@ -58,13 +58,14 @@ Route::prefix('admin')->group(function () {
         Route::group(['middleware' => 'can:lead_admin'], function() {
             Route::get('/leads/dashboard', 'LeadController@index')->name('leads.index');
             Route::get('/leads/manager', 'LeadController@manager')->name('leads.manager');
-            Route::get('/leads/contact/{id}', 'LeadController@contact')->name('leads.contact')->where('id', '[0-9]+');
+            Route::get('/leads/manager/contact/{id}', 'LeadController@managerContact')->name('leads.manager-contact')->where('id', '[0-9]+');
             Route::get('/leads/adviser-availability', 'LeadController@adviserAvailability')->name('leads.adviser-availability');
         });
         Route::group(['middleware' => 'can:leads'], function() {
             Route::get('/leads/table', 'LeadController@table')->name('leads.table');
             Route::get('/leads/sources', 'LeadController@sources')->name('leads.sources');
             Route::get('/leads/chasers', 'LeadController@chasers')->name('leads.chasers');
+            Route::get('/leads/contact/{id}', 'LeadController@contact')->name('leads.contact')->where('id', '[0-9]+');
         });
 
         //USERS

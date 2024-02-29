@@ -5,7 +5,7 @@
 
     <div class="btn-toolbar mb-2 mb-md-0">
         {{ Breadcrumbs::render('leads') }}
-        <button wire:click="create()" class="btn btn-lg btn-primary ml-3 mb-3"><i class="fa fa-plus"></i> Add Source </button>
+        <button wire:click="create()" class="btn btn-lg btn-primary ml-3 mb-3"><i class="fa fa-plus"></i> Add Chaser </button>
     </div>
 </div>
 
@@ -20,39 +20,131 @@
 
 @if($view == 'form')
 
+    @if($errors->count()>0)
+        <div class="alert alert-danger">
+            <i class="fa fa-info-circle"></i>
+            Some problems occurred saving your form. Please address the issues below:
+            {{--dump($questions[0])--}}
+            @foreach($errors->getMessages() as $q => $err)
+                <br /><span id="question_text_{{$q}}">{{$q}}</span> - {{ preg_replace("/(The c \d+ \d+)/i","This", $err[0]) }}
+                <script>
+                    if(typeof document.getElementById('{$q}}') != 'undefined'){
+                        document.getElementById('question_text_{{$q}}').innerHTML = (document.getElementById("{{$q}}").textContent ?? '{{$q}}');
+                    }else{
+                        document.getElementById('question_text_{{$q}}').innerHTML = 'required field \'{{$q}}\' is missing';
+                    }
+                </script>
+                @if($loop->iteration >= 3 && $errors->count() > 3)
+                    <br /> And others, see form below.
+                    @break
+                @endif
+            @endforeach
+        </div>
+    @endif
+
     <div class="form-group row">
-        <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Source Name') }}</label>
+        <label for="method" class="col-md-4 col-form-label text-md-right">{{ __('Method') }}</label>
         <div class="col-md-6">
-            <input type="text" class="form-control{{ $errors->has('chaser') ? ' is-invalid' : '' }}" wire:model.defer="chaser">
-            @if ($errors->has('chaser'))
+            <div class="form-control{{ $errors->has('method') ? ' is-invalid' : '' }}" style="height:auto;">
+                <div class="custom-control custom-radio mb-2">
+                    <input type="radio" id="chaser_method_email" wire:model="method" class="custom-control-input" value="email" />
+                    <label class="custom-control-label" for="chaser_method_email">Email</label>
+                </div>
+                <div class="custom-control custom-radio mb-2">
+                    <input type="radio" id="chaser_method_sms" wire:model="method" class="custom-control-input" value="sms" disabled />
+                    <label class="custom-control-label" for="chaser_method_sms">SMS (coming soon)</label>
+                </div>
+                <div class="custom-control custom-radio">
+                    <input type="radio" id="chaser_method_whatsapp" wire:model="method" class="custom-control-input" value="whatsapp" disabled />
+                    <label class="custom-control-label" for="chaser_method_whatsapp">WhatsApp (coming soon)</label>
+                </div>
+            </div>
+            @if ($errors->has('method'))
                 <span class="invalid-feedback" role="alert">
-                    <strong>{{ $errors->first('chaser') }}</strong>
+                    <strong>{{ $errors->first('method') }}</strong>
                 </span>
             @endif
         </div>
     </div>
     <div class="form-group row">
-        <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('API Token') }}</label>
+        <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>
         <div class="col-md-6">
-            <input type="text" class="form-control{{ $errors->has('api_token') ? ' is-invalid' : '' }}" wire:model.defer="api_token">
-            @if ($errors->has('api_token'))
+            <input type="text" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" wire:model.defer="name">
+            @if ($errors->has('name'))
                 <span class="invalid-feedback" role="alert">
-                    <strong>{{ $errors->first('api_token') }}</strong>
+                    <strong>{{ $errors->first('name') }}</strong>
                 </span>
             @endif
         </div>
     </div>
     <div class="form-group row">
-        <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Status') }}</label>
+        <label for="time_amount" class="col-md-4 col-form-label text-md-right">{{ __('Chase Frequency') }}</label>
+        <div class="col-md-3">
+            <label for="time_amount" class="">{{ __('Time Amount') }}</label>
+            <select wire:model.defer="time_amount" id="time_amount" class="form-control{{ $errors->has('time_amount') ? ' is-invalid' : '' }}">
+                @for($amount=0; $amount<=60; $amount++)
+                    <option value="{{$amount}}" {{selected($amount, $time_amount)}}>{{$amount}}</option>
+                @endfor
+            </select>
+            @if ($errors->has('time_amount'))
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $errors->first('time_amount') }}</strong>
+                </span>
+            @endif
+        </div>
+        <div class="col-md-3">
+            <label for="time_unit" class="">{{ __('Time Unit') }}</label>
+            <select wire:model.defer="time_unit" id="time_unit" class="form-control{{ $errors->has('time_amount') ? ' is-invalid' : '' }}">
+                <option value="minutes" {{selected('minutes', $time_unit)}} {{selected('minutes', $time_unit)}}>Minutes</option>
+                <option value="hours" {{selected('hours', $time_unit)}}>Hours</option>
+                <option value="days" {{selected('days', $time_unit)}}>Days</option>
+                <option value="weeks" {{selected('weeks', $time_unit)}}>Weeks</option>
+            </select>
+            @if ($errors->has('time_unit'))
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $errors->first('time_unit') }}</strong>
+                </span>
+            @endif
+        </div>
+        @if ($errors->has('chase_duration'))
+            <span class="invalid-feedback" role="alert">
+                <strong>{{ $errors->first('chase_duration') }}</strong>
+            </span>
+        @endif
+    </div>
+    <div class="form-group row">
+        <label for="subject" class="col-md-4 col-form-label text-md-right">{{ __('Subject') }}</label>
+        <div class="col-md-6">
+            <input type="text" class="form-control{{ $errors->has('subject') ? ' is-invalid' : '' }}" wire:model.defer="subject">
+            @if ($errors->has('subject'))
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $errors->first('subject') }}</strong>
+                </span>
+            @endif
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="body" class="col-md-4 col-form-label text-md-right">{{ __('Body Content') }}</label>
+        <div class="col-md-6">
+            <textarea class="form-control{{ $errors->has('body') ? ' is-invalid' : '' }}" wire:model.defer="body" rows="10"></textarea>
+            @if ($errors->has('body'))
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $errors->first('body') }}</strong>
+                </span>
+            @endif
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="status" class="col-md-4 col-form-label text-md-right">{{ __('Status') }}</label>
         <div class="col-md-6">
             <div class="form-control{{ $errors->has('status') ? ' is-invalid' : '' }}" style="height:auto;">
                 <div class="custom-control custom-radio mb-2">
-                    <input type="radio" id="stage_event_{{\App\Models\ApiKey::ACTIVE}}" wire:model="status" class="custom-control-input" value="{{\App\Models\ApiKey::ACTIVE}}" />
-                    <label class="custom-control-label" for="stage_event_{{\App\Models\ApiKey::ACTIVE}}">Active</label>
+                    <input type="radio" id="chaser_status_{{\App\Models\LeadChaser::ACTIVE}}" wire:model="status" class="custom-control-input" value="{{\App\Models\LeadChaser::ACTIVE}}" />
+                    <label class="custom-control-label" for="chaser_status_{{\App\Models\LeadChaser::ACTIVE}}">Active</label>
                 </div>
                 <div class="custom-control custom-radio">
-                    <input type="radio" id="stage_event_{{\App\Models\ApiKey::INACTIVE}}" wire:model="status" class="custom-control-input" value="{{\App\Models\ApiKey::INACTIVE}}" />
-                    <label class="custom-control-label" for="stage_event_{{\App\Models\ApiKey::INACTIVE}}">Inactive</label>
+                    <input type="radio" id="chaser_status_{{\App\Models\LeadChaser::INACTIVE}}" wire:model="status" class="custom-control-input" value="{{\App\Models\LeadChaser::INACTIVE}}" />
+                    <label class="custom-control-label" for="chaser_status_{{\App\Models\LeadChaser::INACTIVE}}">Inactive</label>
                 </div>
             </div>
             @if ($errors->has('status'))
@@ -82,17 +174,17 @@
                     <div class="card-body bg-light d-flex align-items-center">
                         <div class="custom-control custom-radio custom-control-inline">
                             <input wire:click="$set('chaser_status','')" type="radio" id="chaser_status_all" class="custom-control-input" value="" {{checked($chaser_status,'')}}>
-                            <label class="custom-control-label" for="chaser_status_all">All Sources</label>
+                            <label class="custom-control-label" for="chaser_status_all">All Chasers</label>
                         </div>
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input wire:click="$set('chaser_status','{{\App\Models\ApiKey::ACTIVE}}')" type="radio" id="chaser_status_no" class="custom-control-input" value="{{\App\Models\ApiKey::ACTIVE}}" {{checked($chaser_status,\App\Models\ApiKey::ACTIVE)}}>
-                            <label class="custom-control-label" for="chaser_status_no">Active Sources Only</label>
+                            <input wire:click="$set('chaser_status','{{\App\Models\LeadChaser::ACTIVE}}')" type="radio" id="chaser_status_no" class="custom-control-input" value="{{\App\Models\LeadChaser::ACTIVE}}" {{checked($chaser_status,\App\Models\LeadChaser::ACTIVE)}}>
+                            <label class="custom-control-label" for="chaser_status_no">Active Chasers Only</label>
                         </div>
                     </div>
                 </div>
                 <div class="card ml-3">
                     <div class="card-body bg-light">
-                        <input class="form-control" placeholder="Source Search" wire:model="search_filter" value="{{$search_filter}}" />
+                        <input class="form-control" placeholder="Chaser Search" wire:model="search_filter" value="{{$search_filter}}" />
                     </div>
                 </div>
                 <div class="card ml-3">
@@ -122,28 +214,6 @@
 
     </div>
 
-    <div class="card mb-4 bg-light p-3">
-        <div class="row">
-            <div class="col-6">
-                <strong>Guide:</strong><br />
-                <hr />
-                Send a POST request to endpoint: <strong class="cursor-pointer tip" title="Copy URL to clipboard" onclick="app.copyToClipboard('{{env('APP_URL')}}/api/leads/new')">{{env('APP_URL')}}/api/leads/new <i class="fal fa-copy"></i></strong>
-                <br />
-                Authentication is one of:
-                <ul>
-                    <li>Form input: 'api_token' with value of {token}</li>
-                    <li>Querystring variable: ?api_token={token}</li>
-                    <li>Header: 'x-api-token' with value of {token}</li>
-                </ul>
-            </div>
-            <div class="col-6">
-                <strong>Limits:</strong><br />
-                <hr />
-                100 requests within 1 minute.
-            </div>
-        </div>
-    </div>
-
     <div wire:loading.remove>
 
         <div class="card mb-4">
@@ -153,11 +223,10 @@
                     <thead class="thead-dark text-center">
                         <tr>
                             <th>ID</th>
-                            <th>Source</th>
-                            <th>API Key</th>
-                            <th>Last Use</th>
-                            <th>Created</th>
-                            <th>Leads</th>
+                            <th>Method</th>
+                            <th>Name</th>
+                            <th>Chase Duration</th>
+                            <th>Last Updated</th>
                             <th>Status</th>
                             <th></th>
                         </tr>
@@ -173,30 +242,17 @@
 
                             <tr class="">
                                 <td>{{ $item->id }}</td>
-                                <td>{{ $item->chaser }}</td>
+                                <td>{{ $item->method }}</td>
+                                <td>{{ $item->name }}</td>
+                                <td>{{ $item->chase_duration }}</td>
                                 <td>
-                                    <div onclick="app.copyToClipboard('{{env('APP_URL')}}/api/leads/new?api_token={{ $item->api_token }}')" class="w-100 d-flex align-items-center justify-content-between cursor-pointer tip" title="Copy full token URL to clipboard">
-                                        <span>{{ $item->api_token }}</span>
-                                        <i class="ml-auto fa fa-copy"></i>
-                                    </div>
+                                    {{\Carbon\Carbon::parse($item->updated_at)->format('d/m/Y H:i')}}
+                                    <span class="badge badge-primary">{{\Carbon\Carbon::parse($item->updated_at)->diffForHumans()}}</span>
                                 </td>
                                 <td>
-                                    @if(!is_null($item->last_login_at))
-                                        {{\Carbon\Carbon::parse($item->last_login_at)->format('d/m/Y H:i')}}
-                                        <span class="badge badge-primary">{{\Carbon\Carbon::parse($item->last_login_at)->diffForHumans()}}</span>
-                                    @else
-                                        Never
-                                    @endif
-                                </td>
-                                <td>
-                                    {{\Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i')}}
-                                    <span class="badge badge-primary">{{\Carbon\Carbon::parse($item->created_at)->diffForHumans()}}</span>
-                                </td>
-                                <td>{{ $item->leads->count() }}</td>
-                                <td>
-                                    @if($item->status == \App\Models\ApiKey::ACTIVE)
+                                    @if($item->status == \App\Models\LeadChaser::ACTIVE)
                                         Active
-                                    @elseif($item->status == \App\Models\ApiKey::INACTIVE)
+                                    @elseif($item->status == \App\Models\LeadChaser::INACTIVE)
                                         Inactive
                                     @else
                                         Unknown
@@ -204,7 +260,7 @@
                                 </td>
                                 <td class="text-right">
                                     <div class="btn-group">
-                                        <button class="btn @if($item->status == \App\Models\ApiKey::ACTIVE) btn-success @else btn-danger @endif px-2 btn-sm dropdown-toggle" type="button" id="dropdownMenuButtonCog{{$item->id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <button class="btn @if($item->status == \App\Models\LeadChaser::ACTIVE) btn-success @else btn-danger @endif px-2 btn-sm dropdown-toggle" type="button" id="dropdownMenuButtonCog{{$item->id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-boundary="viewport">
                                             <i class="fas fa-cog text-light"></i>
                                         </button>
                                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonCog{{$item->id}}" id="dropdownMenuContents{{$item->id}}">
@@ -215,7 +271,7 @@
                                                 <i class="fa fa-fw fa-copy"></i> Copy
                                             </span>
                                             <div class="dropdown-divider"></div>
-                                            @if($item->status == \App\Models\ApiKey::ACTIVE)
+                                            @if($item->status == \App\Models\LeadChaser::ACTIVE)
                                                 <span class="dropdown-item text-danger" onclick="confirm('Are you sure you want to remove the API Key??') || event.stopImmediatePropagation()" wire:click="delete({{$item->id}})">
                                                     <i class="fa fa-fw fa-times"></i> Delete
                                                 </span>
@@ -253,7 +309,7 @@
 @endif
 
 <div id="topbar_title_content" class="d-none">
-    <h1 class="h2">Lead Sources</h1>
+    <h1 class="h2">Lead Chasers</h1>
 </div>
 
 </div>

@@ -204,7 +204,7 @@
                                 </td>
                                 <td class="text-right">
                                     <div class="btn-group">
-                                        <button class="btn @if($item->status == \App\Models\ApiKey::ACTIVE) btn-success @else btn-danger @endif px-2 btn-sm dropdown-toggle" type="button" id="dropdownMenuButtonCog{{$item->id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <button class="btn @if($item->status == \App\Models\ApiKey::ACTIVE) btn-success @else btn-danger @endif px-2 btn-sm dropdown-toggle" type="button" id="dropdownMenuButtonCog{{$item->id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-boundary="viewport">
                                             <i class="fas fa-cog text-light"></i>
                                         </button>
                                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonCog{{$item->id}}" id="dropdownMenuContents{{$item->id}}">

@@ -47,6 +47,7 @@ class LeadDashboard extends Component
             'icon' => "far fa-alarm-clock text-danger",
             'data'  => (object) [
                 'current' => Lead::where('status',Lead::PROSPECT)->count()
+                //'current' => Lead::whereIn('status',[Lead::PROSPECT,Lead::CONTACTED])->whereDoesntHave('events', function($q){ $q->where('event_id', LeadEvent::MANUAL_CONTACTED); })->count()
             ]
         ];
         $lead_totals = ['TODAY','THIS_WEEK','LAST_WEEK','LAST_MONTH','YTD']; //YESTERDAY

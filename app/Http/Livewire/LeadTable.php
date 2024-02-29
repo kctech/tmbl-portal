@@ -6,6 +6,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 
 use App\Models\Lead;
+use App\Models\LeadChaser;
 
 use App\Libraries\MABApi;
 
@@ -22,6 +23,7 @@ class LeadTable extends Component
 
     private static $session_prefix = '_leads_list_';
     private $data;
+    public $stats = [];
 
     //general list vars
     public $view = 'list';
@@ -35,12 +37,17 @@ class LeadTable extends Component
 
     public $lead_id = null;
     public $lead = null;
+    public $contact_schedule = [];
 
     public function mount()
     {
         $this->lead_status = session(self::$session_prefix . 'lead_status') ?? '';
         $this->search_filter = session(self::$session_prefix . 'search_filter') ?? '';
         $this->sort_order = session(self::$session_prefix . 'sort_order') ?? '';
+
+        $this->contact_schedule = LeadChaser::where('method','email')->where('status',LeadChaser::ACTIVE)->get();
+
+        $this->stats();
     }
 
     public function updated($prop, $value)
@@ -86,6 +93,51 @@ class LeadTable extends Component
         }
 
         $this->data = $query;
+    }
+
+    public function stats (){
+        $stats = [];
+
+        //totals
+        $stats['Totals'][] = (object) [
+            'link' => route('leads.table',['lead_status' => Lead::PROSPECT]),
+            'tpl' => 'total',
+            'size' => "col-md-4",
+            'colour' => null,
+            'title' => "New Leads Available",
+            'date' => null,
+            'icon' => "far fa-alarm-clock",
+            'data'  => (object) [
+                'current' => Lead::whereIn('status',[Lead::PROSPECT,Lead::CONTACTED])->whereNull('user_id')->count()
+                //'current' => Lead::whereIn('status',[Lead::PROSPECT,Lead::CONTACTED])->whereDoesntHave('events', function($q){ $q->where('event_id', LeadEvent::MANUAL_CONTACTED); })->count()
+            ]
+        ];
+
+        $stats['Totals'][] = (object) [
+            'tpl' => 'total',
+            'size' => "col-md-4",
+            'title' => "Contacted Leads",
+            'date' => null,
+            'icon' => "far fa-phone",
+            'data'  => (object) [
+                'current' => Lead::where('status',Lead::CONTACTED)->where('user_id',session('user_id'))->count()
+                //'current' => Lead::whereIn('status',[Lead::PROSPECT,Lead::CONTACTED])->whereDoesntHave('events', function($q){ $q->where('event_id', LeadEvent::MANUAL_CONTACTED); })->count()
+            ]
+        ];
+
+        $stats['Totals'][] = (object) [
+            'tpl' => 'total',
+            'size' => "col-md-4",
+            'title' => "Transferred Leads",
+            'date' => 'THIS_MONTH',
+            'icon' => "far fa-download",
+            'data'  => (object) [
+                'current' => Lead::whereRaw("1=1".Lead::date_filter_query('created_at','THIS_MONTH'))->where('status',Lead::TRANSFERRED)->where('user_id',session('user_id'))->count(),
+                'previous' => Lead::whereRaw("1=1".Lead::date_filter_query('created_at',Lead::date_filter_prev_period('THIS_MONTH')))->where('status',Lead::TRANSFERRED)->where('user_id',session('user_id'))->count()
+            ]
+        ];
+
+        $this->stats = $stats;
     }
 
     public function filter()
