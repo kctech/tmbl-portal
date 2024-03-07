@@ -48,13 +48,13 @@ class ContactLeads extends Command
     {
         session()->put('account_id',$this->option('account_id'));
         $contact_schedule = LeadChaser::where('method','email')->where('status',LeadChaser::ACTIVE)->get();
-        $prospects = Lead::whereIn('status',[Lead::PROSPECT,Lead::CONTACTED])->get();
+        $prospects = Lead::whereIn('status',[Lead::PROSPECT,Lead::CONTACT_ATTEMPTED])->get();
 
         foreach($prospects as $prospect){
             $this->info($prospect->id."|".$prospect->email_address."|".$prospect->created_at);
 
             $created_at = Carbon::parse($prospect->created_at);
-            $prospect_auto_comms = $prospect->events()->where('event_id',LeadEvent::AUTO_CONTACTED)->pluck('information')->toArray();
+            $prospect_auto_comms = $prospect->events()->where('event_id',LeadEvent::AUTO_CONTACT_ATTEMPTED)->pluck('information')->toArray();
 
             foreach($contact_schedule as $chaser){
                 if(!in_array($chaser->id, $prospect_auto_comms)){
@@ -74,14 +74,14 @@ class ContactLeads extends Command
                         dispatch(new QueueRenderedEmail($email))->onQueue('lead_chasers');
 
                         //record event
-                        //$prospect->status = Lead::CONTACTED;
+                        //$prospect->status = Lead::CONTACT_ATTEMPTED;
                         $prospect->last_contacted_at = date("Y-m-d H:i:s");
                         ++$prospect->contact_count;
                         $prospect->save();
                         $prospect->events()->create([
                             'account_id' => $prospect->account_id,
                             'user_id' => 0,
-                            'event_id' => LeadEvent::AUTO_CONTACTED,
+                            'event_id' => LeadEvent::AUTO_CONTACT_ATTEMPTED,
                             'information' => $chaser->id
                         ]);
                     }

@@ -9,8 +9,8 @@ use \Carbon\Carbon;
 class LeadEvent extends Model
 {
 
-    const AUTO_CONTACTED = 0;
-    const MANUAL_CONTACTED = 1;
+    const AUTO_CONTACT_ATTEMPTED = 0;
+    const MANUAL_CONTACT_ATTEMPTED = 1;
     const BOOKED_TEAMS_MEETING = 2;
     const TRANSFERRED_TO_MAB = 3;
 

@@ -57,6 +57,9 @@ class LeadApiController extends Controller
                 case 'contactnumber':
                 case 'phone_number':
                 case 'phonenumber':
+                case 'mobile':
+                case 'mobile_number':
+                case 'mobilenumber':
                     $new_lead['contact_number'] = trim($value);
                     break;
                 case 'first_name':

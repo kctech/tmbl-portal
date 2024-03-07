@@ -262,7 +262,7 @@ class LeadManagerContact extends Component
         $lead_data->contact_notes = $this->lead_notes;
         $this->lead->data = json_encode($lead_data);
         $this->lead->last_contacted_at = date("Y-m-d H:i:s");
-        $this->lead->status = Lead::CONTACTED;
+        $this->lead->status = Lead::CONTACT_ATTEMPTED;
         ++$this->lead->contact_count;
         $this->lead->save();
         //$this->emit('updated', ['message' => "Lead status updated [" . $this->lead_id . "]"]);
@@ -270,7 +270,7 @@ class LeadManagerContact extends Component
         $this->lead->events()->create([
             'account_id' => $this->lead->account_id,
             'user_id' => session('user_id'),
-            'event_id' => LeadEvent::MANUAL_CONTACTED,
+            'event_id' => LeadEvent::MANUAL_CONTACT_ATTEMPTED,
             'information' => $this->lead_notes
         ]);
 
@@ -285,14 +285,14 @@ class LeadManagerContact extends Component
         $lead_data->contact_notes = $this->lead_notes;
         $this->lead->data = json_encode($lead_data);
         $this->lead->last_contacted_at = date("Y-m-d H:i:s");
-        $this->lead->status = Lead::CONTACTED;
+        $this->lead->status = Lead::CONTACT_ATTEMPTED;
         ++$this->lead->contact_count;
         if($this->lead->save()){
 
             $this->lead->events()->create([
                 'account_id' => $this->lead->account_id,
                 'user_id' => session('user_id'),
-                'event_id' => LeadEvent::MANUAL_CONTACTED,
+                'event_id' => LeadEvent::MANUAL_CONTACT_ATTEMPTED,
                 'information' => $this->lead_notes
             ]);
 

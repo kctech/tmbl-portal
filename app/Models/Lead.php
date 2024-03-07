@@ -11,10 +11,11 @@ class Lead extends Model
 
     const PROSPECT = 0;
     const CLAIMED = 1;
-    const CONTACTED = 2;
-    const TRANSFERRED = 3;
-    const COLD = 4;
-    const ARCHIVED = 5;
+    const CONTACT_ATTEMPTED = 2;
+    const CONTACT_FAILED = 3;
+    const TRANSFERRED = 10;
+    const COLD = 50;
+    const ARCHIVED = 99;
 
     /**
      * The table associated with the model.

@@ -160,7 +160,7 @@
 
                             <tr class="">
                                 <td>{{ $item->id }}</td>
-                                @if(in_array($item->status,[\App\Models\Lead::PROSPECT,\App\Models\Lead::CONTACTED]) && empty($item->user_id))
+                                @if(in_array($item->status,[\App\Models\Lead::PROSPECT,\App\Models\Lead::CONTACT_ATTEMPTED]) && empty($item->user_id))
                                     <td>{{ __('***') }}</td>
                                     <td>{{ __('***') }}</td>
                                     <td>{{ __('***') }}</td>
@@ -182,7 +182,7 @@
                                             <span class="badge badge-primary">{{\Carbon\Carbon::parse($item->allocated_at)->diffForHumans()}}</span>
                                         @endif
                                     @else
-                                        @if(in_array($item->status,[\App\Models\Lead::PROSPECT,\App\Models\Lead::CONTACTED]) && !empty($item->last_contacted_at))
+                                        @if(in_array($item->status,[\App\Models\Lead::PROSPECT,\App\Models\Lead::CONTACT_ATTEMPTED]) && !empty($item->last_contacted_at))
                                             <span class="badge badge-primary tip" title="contacted {{ $item->contact_count }} times, last contacted {{$item->last_contacted_at}}">{{\Carbon\Carbon::parse($item->last_contacted_at)->diffForHumans()}}</span>
                                         @endif
                                     @endif
@@ -191,17 +191,17 @@
                                         <div class="d-block w-100">
                                             <i class="fa fa-envelope"></i>
                                             @foreach($contact_schedule as $chaser)
-                                                @if(in_array($chaser->id, $item->events()->where('event_id',\App\Models\LeadEvent::AUTO_CONTACTED)->pluck('information')->toArray()))
-                                                    <i class="fas fa-check-circle text-success tip" title="Chaser {{$chaser->name}} sent {{$item->events()->where('event_id',\App\Models\LeadEvent::AUTO_CONTACTED)->where('information',$chaser->id)->first()->created_at}}"></i>
+                                                @if(in_array($chaser->id, $item->events()->where('event_id',\App\Models\LeadEvent::AUTO_CONTACT_ATTEMPTED)->pluck('information')->toArray()))
+                                                    <i class="fas fa-check-circle text-success tip" title="Chaser {{$chaser->name}} sent {{$item->events()->where('event_id',\App\Models\LeadEvent::AUTO_CONTACT_ATTEMPTED)->where('information',$chaser->id)->first()->created_at}}"></i>
                                                 @else
                                                     <i class="fas fa-times-circle text-muted tip" title="Chaser {{$chaser->name}} not sent yet"></i>
                                                 @endif
                                             @endforeach
                                         </div>
-                                        @if($item->events()->where('event_id',\App\Models\LeadEvent::MANUAL_CONTACTED)->count() != 0)
+                                        @if($item->events()->where('event_id',\App\Models\LeadEvent::MANUAL_CONTACT_ATTEMPTED)->count() != 0)
                                             <div class="d-block w-100">
                                                 <i class="fa fa-phone"></i>
-                                                @foreach($item->events()->where('event_id',\App\Models\LeadEvent::MANUAL_CONTACTED)->get() as $contact)
+                                                @foreach($item->events()->where('event_id',\App\Models\LeadEvent::MANUAL_CONTACT_ATTEMPTED)->get() as $contact)
                                                     <i class="fas fa-phone-square text-success tip" title="Contacted at {{$contact->created_at}}"></i>
                                                 @endforeach
                                             </div>
@@ -209,7 +209,7 @@
                                     @endif
                                 </td>
                                 <td class="text-right">
-                                    @if(in_array($item->status,[\App\Models\Lead::PROSPECT,\App\Models\Lead::CONTACTED]) && empty($item->user_id))
+                                    @if(in_array($item->status,[\App\Models\Lead::PROSPECT,\App\Models\Lead::CONTACT_ATTEMPTED]) && empty($item->user_id))
                                         <button class="btn btn-sm btn-secondary btn-blockX" wire:click="allocate({{$item->id}})">Claim</button>
                                     @elseif($item->status == \App\Models\Lead::CLAIMED)
                                         <a class="btn btn-sm btn-primary" href="{{route('leads.contact', $item->id)}}">Contact</a>

@@ -81,7 +81,7 @@ class LeadManager extends Component
         }
 
         if ($this->lead_status == 'not_contacted') {
-            $query = $query->whereIn('status',[Lead::PROSPECT,Lead::CONTACTED])->whereDoesntHave('events', function($q){ $q->where('event_id', LeadEvent::MANUAL_CONTACTED); });
+            $query = $query->whereIn('status',[Lead::PROSPECT,Lead::CONTACT_ATTEMPTED])->whereDoesntHave('events', function($q){ $q->where('event_id', LeadEvent::MANUAL_CONTACT_ATTEMPTED); });
         }elseif ($this->lead_status != '') {
             $query = $query->where('status',$this->lead_status);
         }
@@ -146,8 +146,8 @@ class LeadManager extends Component
                     case (Lead::TRANSFERRED):
                         $event_id = LeadEvent::TRANSFERRED_TO_MAB;
                         break;
-                    case (Lead::CONTACTED):
-                        $event_id = LeadEvent::MANUAL_CONTACTED;
+                    case (Lead::CONTACT_ATTEMPTED):
+                        $event_id = LeadEvent::MANUAL_CONTACT_ATTEMPTED;
                         break;
                     default:
                         $event_id = null;

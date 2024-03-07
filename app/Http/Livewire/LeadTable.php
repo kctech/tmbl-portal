@@ -108,8 +108,8 @@ class LeadTable extends Component
             'date' => null,
             'icon' => "far fa-alarm-clock",
             'data'  => (object) [
-                'current' => Lead::whereIn('status',[Lead::PROSPECT,Lead::CONTACTED])->whereNull('user_id')->count()
-                //'current' => Lead::whereIn('status',[Lead::PROSPECT,Lead::CONTACTED])->whereDoesntHave('events', function($q){ $q->where('event_id', LeadEvent::MANUAL_CONTACTED); })->count()
+                'current' => Lead::whereIn('status',[Lead::PROSPECT,Lead::CONTACT_ATTEMPTED])->whereNull('user_id')->count()
+                //'current' => Lead::whereIn('status',[Lead::PROSPECT,Lead::CONTACT_ATTEMPTED])->whereDoesntHave('events', function($q){ $q->where('event_id', LeadEvent::MANUAL_CONTACT_ATTEMPTED); })->count()
             ]
         ];
 
@@ -120,8 +120,8 @@ class LeadTable extends Component
             'date' => null,
             'icon' => "far fa-phone",
             'data'  => (object) [
-                'current' => Lead::where('status',Lead::CONTACTED)->where('user_id',session('user_id'))->count()
-                //'current' => Lead::whereIn('status',[Lead::PROSPECT,Lead::CONTACTED])->whereDoesntHave('events', function($q){ $q->where('event_id', LeadEvent::MANUAL_CONTACTED); })->count()
+                'current' => Lead::where('status',Lead::CONTACT_ATTEMPTED)->where('user_id',session('user_id'))->count()
+                //'current' => Lead::whereIn('status',[Lead::PROSPECT,Lead::CONTACT_ATTEMPTED])->whereDoesntHave('events', function($q){ $q->where('event_id', LeadEvent::MANUAL_CONTACT_ATTEMPTED); })->count()
             ]
         ];
 
