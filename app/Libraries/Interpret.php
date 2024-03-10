@@ -40,10 +40,11 @@ class Interpret {
         $typesArray = array(
             0 => 'Prospect',
             2 => 'Contacted',
+            3 => 'Contacted',
             1 => 'Claimed',
-            3 => 'Transferred',
-            4 => 'Cold',
-            5 => 'Archived',
+            10 => 'Transferred',
+            50 => 'Cold',
+            99 => 'Archived',
         );
 
         if ($returnType != "key") return $typesArray;
