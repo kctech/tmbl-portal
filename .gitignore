@@ -21,7 +21,9 @@ storage/*.key
 package-lock.json
 .env
 .env-live
+.env-dev
 Homestead.yaml
 Homestead.json
 /.vagrant
 .phpunit.result.cache
+*.DS_Store
