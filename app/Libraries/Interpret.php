@@ -39,7 +39,7 @@ class Interpret {
     {
         $typesArray = array(
             0 => 'Prospect',
-            2 => 'Contacted',
+            2 => 'Contact Attempted',
             1 => 'Claimed',
             3 => 'Pause auto-contacting',
             10 => 'Transferred',
