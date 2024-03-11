@@ -1,5 +1,8 @@
 <?php
 
+use \Illuminate\Support\Facades\Auth;
+use \Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -25,20 +28,20 @@ Route::delete('/things/{id}', 'ThingsController@destroy');
 
 /*use Illuminate\Support\Facades\Hash;*/
 Route::get('/mkpw', function() {
-    return Hash::make('qwerty1234');
+    return \Illuminate\Support\Facades\Hash::make('qwerty1234');
 });
 
 Route::get('/', 'HomeController@index')->name('home');
 Route::get('/unverified', 'HomeController@unverified')->name('unverified');
 
 Route::get('/cron', function () {
-    Artisan::call('queue:work --queue=adviseremails,clientemails --tries=1 --timeout=30 --sleep=5');
+    \Illuminate\Support\Facades\Artisan::call('queue:work --queue=adviseremails,clientemails --tries=1 --timeout=30 --sleep=5');
     abort(200);
     return "Queue started";
 });
 
 Route::get('/clear-cache', function() {
-    Artisan::call('cache:clear');
+    \Illuminate\Support\Facades\Artisan::call('cache:clear');
     return "Cache is cleared";
 });
 

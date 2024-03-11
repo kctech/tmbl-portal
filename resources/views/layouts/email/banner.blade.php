@@ -20,7 +20,7 @@
         img{border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none;}
         table{border-collapse: collapse !important;}
         body{height: 100% !important; margin: 0 !important; padding: 0 !important; width: 100% !important;background-color:#f2f2f2;}
-        a{color:#2e96d8;}
+        a{color:#233c7c;}
 
         /* iOS BLUE LINKS */
         a[x-apple-data-detectors] {
@@ -90,7 +90,7 @@
                                                         @yield('header')
                                                         <br />
                                                         <br />
-                                                        <a href="@yield('link','https://themortgagebroker.co.uk')" style="color: #2e96d8; text-decoration:underline; font-weight:bold; display: block;">
+                                                        <a href="@yield('link','https://themortgagebroker.co.uk')" style="color: #233c7c; text-decoration:underline; font-weight:bold; display: block;">
                                                             View email in browser
                                                         </a>
                                                     </td>
@@ -112,7 +112,7 @@
                                                 @yield('header')
                                                 <br />
                                                 <br />
-                                                <a href="@yield('link','https://themortgagebroker.co.uk')" style="color: #2e96d8; text-decoration:underline; font-weight:bold; display: block;">
+                                                <a href="@yield('link','https://themortgagebroker.co.uk')" style="color: #233c7c; text-decoration:underline; font-weight:bold; display: block;">
                                                     View email in browser
                                                 </a>
                                             </td>
@@ -137,7 +137,7 @@
                             <td height="15" style="font-size:15px; line-height:15px;">&nbsp;</td>
                         </tr>
                         <tr>
-                            <td height="3" style="font-size:3px; line-height:3px;" bgcolor="#2e96d8">&nbsp;</td>
+                            <td height="3" style="font-size:3px; line-height:3px;" bgcolor="#233c7c">&nbsp;</td>
                         </tr>
                     </table>
                     <!--END HEADER-->
@@ -214,7 +214,7 @@
                                     @yield('footer')
                                 @else
                                     Trouble displaying this email? <a href="@yield('link','https://themortgagebroker.co.uk')" target="_blank" style="color: #666666; text-decoration: none;">View it in your browser</a>
-                                @endif 
+                                @endif
                             </td>
                         </tr>
                     </table>

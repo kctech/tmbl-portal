@@ -7,6 +7,7 @@
     <div class="btn-toolbar mb-2 mb-md-0">
         {{ Breadcrumbs::render('leads') }}
         @can('lead_admin')
+        <a href="{{ route('leads.sources') }}" class="btn btn-lg btn-primary ml-3 mb-3"><i class="fa fa-inbox-in"></i> Lead Sources</a>
         <a href="{{ route('leads.chasers') }}" class="btn btn-lg btn-primary ml-3 mb-3"><i class="fa fa-share-alt"></i> Lead Chasers</a>
         <a href="{{ route('leads.adviser-availability') }}" class="btn btn-lg btn-primary ml-3 mb-3"><i class="fa fa-users"></i> Adviser Availability</a>
         @endcan
@@ -34,7 +35,7 @@
                         <label class="custom-control-label" for="lead_status_all">All Leads</label>
                     </div>
                     <div class="custom-control custom-radio custom-control-inline">
-                        <input wire:click="$set('lead_status','{{\App\Models\Lead::PROSPECT}}')" type="radio" id="lead_status_no" name="lead_status" class="custom-control-input" value="{{\App\Models\Lead::PROSPECT}}" {{checked(\App\Models\Lead::PROSPECT, $lead_status)}}>
+                        <input wire:click="$set('lead_status','{{\App\Models\Lead::PROSPECT}},{{\App\Models\Lead::PAUSE_CONTACTING}}')" type="radio" id="lead_status_no" name="lead_status" class="custom-control-input" value="{{\App\Models\Lead::PROSPECT}}" {{checked(\App\Models\Lead::PROSPECT, $lead_status)}}>
                         <label class="custom-control-label" for="lead_status_no">New Leads Only</label>
                     </div>
                 </div>
@@ -214,7 +215,12 @@
                                 <td>{{ $item->source->source ?? 'Unknown' }}</td>
                                 <td>
                                     {{ \App\Libraries\Interpret::LeadStatus($item->status) }}
-                                    @if(is_numeric($item->user_id))
+
+                                    @if(in_array($item->status,[\App\Models\Lead::PROSPECT,\App\Models\Lead::CONTACT_ATTEMPTED,\App\Models\Lead::CLAIMED]) && !empty($item->last_contacted_at))
+                                        <span class="badge badge-primary tip" title="contacted {{ $item->contact_count }} times, last contacted {{$item->last_contacted_at}}"><i class="fas fa-id-badge"></i> {{\Carbon\Carbon::parse($item->last_contacted_at)->diffForHumans()}}</span>
+                                    @endif
+
+                                    @if($item->owner)
                                         <br /><span class="badge badge-primary">{{$item->owner->full_name() ?? 'Unknown User'}}</span>
                                         @if($item->status == \App\Models\Lead::CLAIMED && !empty($item->allocated_at))
                                             <span class="badge badge-primary tip" title="{{$item->allocated_at}}">{{\Carbon\Carbon::parse($item->allocated_at)->diffForHumans()}}</span>
@@ -222,10 +228,9 @@
                                         @if($item->status == \App\Models\Lead::TRANSFERRED && !empty($item->transferred_at))
                                             <span class="badge badge-primary tip" title="{{$item->transferred_at}}">{{\Carbon\Carbon::parse($item->transferred_at)->diffForHumans()}}</span>
                                         @endif
-                                    @else
-                                        @if(in_array($item->status,[\App\Models\Lead::PROSPECT,\App\Models\Lead::CONTACT_ATTEMPTED]) && !empty($item->last_contacted_at))
-                                            <span class="badge badge-primary tip" title="contacted {{ $item->contact_count }} times, last contacted {{$item->last_contacted_at}}">{{\Carbon\Carbon::parse($item->last_contacted_at)->diffForHumans()}}</span>
-                                        @endif
+                                    @endif
+
+                                    @if($item->status != \App\Models\Lead::TRANSFERRED)
                                         <div class="d-block w-100">
                                             <i class="fa fa-envelope"></i>
                                             @foreach($contact_schedule as $chaser)

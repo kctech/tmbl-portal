@@ -220,7 +220,8 @@
 
             <div class="row">
                 <div class="col ml-auto text-right">
-                    <button class="btn btn-secondary" wire:click="mark_as_contacted()">Mark as contacted</button>
+                    <button class="btn btn-secondary" wire:click="mark_as_pause_contacting()">Pause auto-contacting</button>
+                    <button class="ml-3 btn btn-secondary" wire:click="mark_as_contacted()">Mark as contacted</button>
                     @if(!empty($selected_adviser) && !empty($selected_date) && !empty($selected_time))
                         <button class="ml-3 btn btn-primary" wire:click="allocate_and_transfer()">Allocate and Transfer Lead</button>
                     @endif

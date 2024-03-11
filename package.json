@@ -10,6 +10,7 @@
         "production": "mix --production"
     },
     "dependencies": {
+        "@awesome.me/kit-2762277c30": "^1.0.7",
         "@fortawesome/fontawesome-pro": "^5.10.1",
         "@fortawesome/fontawesome-pro-light": "^5.0.13",
         "@fortawesome/fontawesome-pro-regular": "^5.0.13",

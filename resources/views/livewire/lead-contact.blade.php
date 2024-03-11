@@ -43,6 +43,24 @@
                     @if(!empty($lead->contacted_at))
                         <br /><span class="badge badge-primary">{{\Carbon\Carbon::parse($lead->contacted_at)->diffForHumans()}}</span>
                     @endif
+                    <div class="d-block w-100">
+                        <i class="fa fa-envelope"></i>
+                        @foreach($contact_schedule as $chaser)
+                            @if(in_array($chaser->id, $lead->events()->where('event_id',\App\Models\LeadEvent::AUTO_CONTACT_ATTEMPTED)->pluck('information')->toArray()))
+                                <i class="fas fa-check-circle text-success tip" title="Chaser {{$chaser->name}} sent {{$lead->events()->where('event_id',\App\Models\LeadEvent::AUTO_CONTACT_ATTEMPTED)->where('information',$chaser->id)->first()->created_at}}"></i>
+                            @else
+                                <i class="fas fa-times-circle text-muted tip" title="Chaser {{$chaser->name}} not sent yet"></i>
+                            @endif
+                        @endforeach
+                    </div>
+                    @if($lead->events()->where('event_id',\App\Models\LeadEvent::MANUAL_CONTACT_ATTEMPTED)->count() != 0)
+                        <div class="d-block w-100">
+                            <i class="fa fa-phone"></i>
+                            @foreach($lead->events()->where('event_id',\App\Models\LeadEvent::MANUAL_CONTACT_ATTEMPTED)->get() as $contact)
+                                <i class="fas fa-phone-square text-success tip" title="Contacted at {{$contact->created_at}}"></i>
+                            @endforeach
+                        </div>
+                    @endif
                 </div>
             </div>
             <div class="row">
@@ -140,7 +158,8 @@
 
             <div class="row">
                 <div class="col ml-auto text-right">
-                    <button class="btn btn-secondary" wire:click="mark_as_contacted()">Mark as contacted</button>
+                    <button class="btn btn-secondary" wire:click="mark_as_pause_contacting()">Pause auto-contacting</button>
+                    <button class="ml-3 btn btn-secondary" wire:click="mark_as_contacted()">Mark as contacted</button>
                     @if(!empty($selected_adviser) && !empty($selected_date) && !empty($selected_time))
                         <button class="ml-3 btn btn-primary" wire:click="allocate_and_transfer()">Allocate and Transfer Lead</button>
                     @endif

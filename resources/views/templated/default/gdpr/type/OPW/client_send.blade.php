@@ -22,13 +22,13 @@
 
     <p>Due to Data Protection Laws changing on 25th May our network Openwork have issued a new data protection policy.
     <a href="https://themortgagebroker.co.uk/assets/content/files/Openwork_GDPR-Privacy.pdf" target="_blank">Please click here to view</a>.</p>
-    
+
     <p>Please follow the link below to consent to the processing of sensitive personal data as far as it
     is necessary for the services of mortgage and protection.</p>
 
     <table align="center" width="50%">
         <tr>
-            <td style="background-color: #2e96d8; border-radius: 5px 5px 5px 5px; padding: 10px; color: #ffffff; text-decoration: none; text-align: center; font-family: 'Verdana', sans-serif;font-size: 12px;" class="button">
+            <td style="background-color: #233c7c; border-radius: 5px 5px 5px 5px; padding: 10px; color: #ffffff; text-decoration: none; text-align: center; font-family: 'Verdana', sans-serif;font-size: 12px;" class="button">
                 <a href="{{signedRoute('gdpr-consent.respond',['code'=>$details['fields']['client']->uid, 'id'=>$details['fields']['record']->id])}}" style="color: #ffffff; text-decoration:none; font-weight:bold; display: block;">
                     Click here to give us consent
                 </a>

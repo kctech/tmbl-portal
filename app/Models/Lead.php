@@ -12,7 +12,7 @@ class Lead extends Model
     const PROSPECT = 0;
     const CLAIMED = 1;
     const CONTACT_ATTEMPTED = 2;
-    const CONTACT_FAILED = 3;
+    const PAUSE_CONTACTING = 3;
     const TRANSFERRED = 10;
     const COLD = 50;
     const ARCHIVED = 99;

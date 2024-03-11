@@ -23,7 +23,11 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        if(config('app.status') == 'live'){
+            return view('home');
+        }else{
+            return view('maintenance');
+        }
     }
 
     /**

@@ -81,9 +81,9 @@ class LeadManager extends Component
         }
 
         if ($this->lead_status == 'not_contacted') {
-            $query = $query->whereIn('status',[Lead::PROSPECT,Lead::CONTACT_ATTEMPTED])->whereDoesntHave('events', function($q){ $q->where('event_id', LeadEvent::MANUAL_CONTACT_ATTEMPTED); });
+            $query = $query->whereIn('status',[Lead::PROSPECT,Lead::CONTACT_ATTEMPTED,Lead::PAUSE_CONTACTING])->whereDoesntHave('events', function($q){ $q->where('event_id', LeadEvent::MANUAL_CONTACT_ATTEMPTED); });
         }elseif ($this->lead_status != '') {
-            $query = $query->where('status',$this->lead_status);
+            $query = $query->whereIn('status',explode(",",$this->lead_status));
         }
 
         if (!empty(trim($this->search_filter))) {

@@ -114,7 +114,7 @@
                                 @if($lead->status == \App\Models\Lead::PROSPECT)
                                     <p>If you would like to cleam this clead and reveal the contact details, click the button below. Please note once claimed you will not be able to release it back into the pool until after 7 days.</p>
                                     <button class="btn btn-sm btn-secondary btn-blockX" wire:click="allocate({{$lead->id}})">Claim</button>
-                                @elseif($lead->status == \App\Models\Lead::CLAIMED)
+                                @elseif($lead->status == \App\Models\Lead::CLAIMED || ($lead->status == \App\Models\Lead::PAUSE_CONTACTING && $lead->user_id == session('user_id')))
                                     <p>Transfer the lead into MAB</p>
                                     <button class="ml-2 btn btn-sm btn-primary btn-blockX" wire:click="transfer({{$lead->id}})">Transfer</button>
                                     @if(\Carbon\Carbon::parse($lead->allocated_at)->diff(\Carbon\Carbon::now())->days > 7)
@@ -178,7 +178,7 @@
                                 <td>
                                     {{ \App\Libraries\Interpret::LeadStatus($item->status) }}
                                     @if(is_numeric($item->user_id))
-                                        @if($item->status == \App\Models\Lead::CLAIMED)
+                                        @if($item->status == \App\Models\Lead::CLAIMED || ($item->status == \App\Models\Lead::PAUSE_CONTACTING && $item->user_id == session('user_id')))
                                             <span class="badge badge-primary">{{\Carbon\Carbon::parse($item->allocated_at)->diffForHumans()}}</span>
                                         @endif
                                     @else
@@ -211,9 +211,9 @@
                                 <td class="text-right">
                                     @if(in_array($item->status,[\App\Models\Lead::PROSPECT,\App\Models\Lead::CONTACT_ATTEMPTED]) && empty($item->user_id))
                                         <button class="btn btn-sm btn-secondary btn-blockX" wire:click="allocate({{$item->id}})">Claim</button>
-                                    @elseif($item->status == \App\Models\Lead::CLAIMED)
+                                    @elseif($item->status == \App\Models\Lead::CLAIMED || ($item->status == \App\Models\Lead::PAUSE_CONTACTING && $item->user_id == session('user_id')))
                                         <a class="btn btn-sm btn-primary" href="{{route('leads.contact', $item->id)}}">Contact</a>
-                                        <button class="ml-2 btn btn-sm btn-secondary" wire:click="info({{$item->id}})">Info</button>
+                                        <button class="btn btn-sm btn-secondary" wire:click="info({{$item->id}})">Info</button>
                                         @if(\Carbon\Carbon::parse($item->allocated_at)->diff(\Carbon\Carbon::now())->days > 7)
                                             <button class="btn btn-sm btn-danger btn-blockX" wire:click="deallocate({{$item->id}})">Release Claim</button>
                                         @endif

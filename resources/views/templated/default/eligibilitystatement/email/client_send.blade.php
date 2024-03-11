@@ -21,14 +21,14 @@
     <p>Thanks you for letting us provide you with some new mortgage options ahead of your current mortgage deal coming to an end.
     With new GDPR & Data Protection rules we just need your consent for us to transfer your client data that we currently hold under
     The Mortgage Broker (St Neots) Ltd to The Mortgage Broker Group Ltd as we have had an internal restructuring of the group.</p>
-    
+
     <p>Transferring your data in this way will allow us to speed up the process of generating mortgage options for you. However
     if you do not wish us to transfer your data in this way, that is fine – we will just need to request additional details from you,
     and we will be in touch with you shortly to discuss this.</p>
 
     <table align="center" width="50%">
         <tr>
-            <td style="background-color: #2e96d8; border-radius: 5px 5px 5px 5px; padding: 10px; color: #ffffff; text-decoration: none; text-align: center; font-family: 'Verdana', sans-serif;font-size: 12px;" class="button">
+            <td style="background-color: #233c7c; border-radius: 5px 5px 5px 5px; padding: 10px; color: #ffffff; text-decoration: none; text-align: center; font-family: 'Verdana', sans-serif;font-size: 12px;" class="button">
                 <a href="{{signedRoute('transfer-request.respond',['code'=>$details['fields']['client']->uid, 'id'=>$details['fields']['record']->id])}}" style="color: #ffffff; text-decoration:none; font-weight:bold; display: block;">
                     Yes, Please provide me with new quotes
                 </a>

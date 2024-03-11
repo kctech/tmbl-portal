@@ -11,6 +11,7 @@ use App\Libraries\Azure\OnlineMeeting;
 
 use App\Models\Lead;
 use App\Models\LeadEvent;
+use App\Models\LeadChaser;
 use App\Models\PortalCache;
 use App\Models\User;
 use Carbon\Carbon;
@@ -45,6 +46,8 @@ class LeadContact extends Component
     public $selected_time = null;
     public $lead_notes = '';
 
+    public $contact_schedule = [];
+
     public function mount($lead_id)
     {
         $this->lead_id = $lead_id;
@@ -59,6 +62,8 @@ class LeadContact extends Component
         $this->lead_notes = json_decode($this->lead->data)->contact_notes ?? '';
 
         $this->selected_adviser = User::where('id',session('user_id'))->first()->emailAddress;
+
+        $this->contact_schedule = LeadChaser::where('method','email')->where('status',LeadChaser::ACTIVE)->get();
     }
 
     public function loadData()
@@ -233,7 +238,7 @@ class LeadContact extends Component
         $lead_data->contact_notes = $this->lead_notes;
         $this->lead->data = json_encode($lead_data);
         $this->lead->last_contacted_at = date("Y-m-d H:i:s");
-        $this->lead->status = Lead::CONTACT_ATTEMPTED;
+        //$this->lead->status = Lead::CONTACT_ATTEMPTED;
         ++$this->lead->contact_count;
         $this->lead->save();
         //$this->emit('updated', ['message' => "Lead status updated [" . $this->lead_id . "]"]);
@@ -247,7 +252,30 @@ class LeadContact extends Component
 
         $this->skipRender();
         session()->flash('alert-success','Marked lead ID '.$this->lead_id.' as contacted');
-        return $this->redirectRoute('leads.manager');
+        return $this->redirectRoute('leads.table');
+    }
+
+    public function mark_as_pause_contacting(){
+
+        $lead_data = json_decode($this->lead->data);
+        $lead_data->contact_notes = $this->lead_notes;
+        $this->lead->data = json_encode($lead_data);
+        $this->lead->last_contacted_at = date("Y-m-d H:i:s");
+        $this->lead->status = Lead::PAUSE_CONTACTING;
+        ++$this->lead->contact_count;
+        $this->lead->save();
+        //$this->emit('updated', ['message' => "Lead status updated [" . $this->lead_id . "]"]);
+
+        $this->lead->events()->create([
+            'account_id' => $this->lead->account_id,
+            'user_id' => session('user_id'),
+            'event_id' => LeadEvent::MANUAL_CONTACT_ATTEMPTED,
+            'information' => $this->lead_notes
+        ]);
+
+        $this->skipRender();
+        session()->flash('alert-success','Lead ID '.$this->lead_id.' will no longer recieve automatic messages');
+        return $this->redirectRoute('leads.table');
     }
 
     public function allocate_and_transfer(){
