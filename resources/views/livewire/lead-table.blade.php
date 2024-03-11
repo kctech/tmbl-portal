@@ -160,7 +160,7 @@
 
                             <tr class="">
                                 <td>{{ $item->id }}</td>
-                                @if(in_array($item->status,[\App\Models\Lead::PROSPECT,\App\Models\Lead::CONTACT_ATTEMPTED]) && empty($item->user_id))
+                                @if(in_array($item->status,[\App\Models\Lead::PROSPECT,\App\Models\Lead::CONTACT_ATTEMPTED,App\Models\Lead::PAUSE_CONTACTING]) || $item->user_id != session('user_id'))
                                     <td>{{ __('***') }}</td>
                                     <td>{{ __('***') }}</td>
                                     <td>{{ __('***') }}</td>
@@ -209,7 +209,7 @@
                                     @endif
                                 </td>
                                 <td class="text-right">
-                                    @if(in_array($item->status,[\App\Models\Lead::PROSPECT,\App\Models\Lead::CONTACT_ATTEMPTED]) && empty($item->user_id))
+                                    @if(in_array($item->status,[\App\Models\Lead::PROSPECT,\App\Models\Lead::CONTACT_ATTEMPTED,App\Models\Lead::PAUSE_CONTACTING]) || $item->user_id != session('user_id'))
                                         <button class="btn btn-sm btn-secondary btn-blockX" wire:click="allocate({{$item->id}})">Claim</button>
                                     @elseif($item->status == \App\Models\Lead::CLAIMED || ($item->status == \App\Models\Lead::PAUSE_CONTACTING && $item->user_id == session('user_id')))
                                         <a class="btn btn-sm btn-primary" href="{{route('leads.contact', $item->id)}}">Contact</a>
