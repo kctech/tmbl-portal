@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 
 use \App\Models\PortalCache;
+use \App\Models\User;
 use \Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
@@ -57,11 +58,16 @@ class CacheCalendars extends Command
         }
         $graph = new \App\Libraries\Azure\GraphConnector($azure);
         $calendars = [];
+
+        /*
+        ALL AZURE USERS
         $fetch_users = [];
         $users = $graph->getUsers('@tmblgroup.co.uk',['headers'=>['ConsistencyLevel'=>'eventual']]);
         foreach($users as $user){
             $fetch_users[] = $user->mail;
         }
+        */
+        $fetch_users = User::where('account_id',$account_id)->pluck('email')->toArray();
         $this->info("Updating " .count($fetch_users). " user calendars");
         $base_user = (object) ($graph->getUsers($base_user_email,['headers'=>['ConsistencyLevel'=>'eventual']])[0] ?? []);
 
