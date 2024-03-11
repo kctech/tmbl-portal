@@ -6,6 +6,7 @@ use Livewire\Component;
 
 use App\Models\Lead;
 use App\Models\PortalCache;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -34,7 +35,17 @@ class AdviserAvailability extends Component
     public function mount()
     {
         $this->advisers = session(self::$session_prefix . 'advisers') ?? [];
-        $this->adviser_list = buildAdvisersList();
+
+        //$this->adviser_list = buildAdvisersList();
+
+        $adviser_list = [];
+        $system_users = User::where('account_id',session('account_id'))->pluck('email')->toArray();
+        foreach(buildAdvisersList() as $adv){
+            if(in_array($adv->email, $system_users)){
+                $adviser_list[$adv->email] = $adv;
+            }
+        }
+        $this->adviser_list = $adviser_list;
     }
 
     public function loadData()
