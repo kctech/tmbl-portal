@@ -40,11 +40,12 @@ class EmailRendered extends Mailable
     public function build()
     {
         $email = $this->view('email.rendered', $this->details)
-            ->from('noreply@tmblgroup.co.uk')
             ->subject($this->details['subject']);
 
-        /*if (isset($this->details['from'])) {
-            if (!empty($this->details['from'])) {
+        /*
+        NOT ALLOWED USING TMBL's AZURE SMTP
+        if (isset($this->details['from'])) {
+            if (!empty($this->details['from']) && stripos($this->details['from'],'@tmblgroup.co.uk') !== false) {
                 $email->from($this->details['from'], $this->details['fromName']);
             } else {
                 $email->from('noreply@tmblgroup.co.uk');
