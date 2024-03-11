@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\User;
 use Illuminate\Console\Command;
 
 class Dev extends Command
@@ -37,6 +38,22 @@ class Dev extends Command
      */
     public function handle()
     {
+
+        $this->info("dev command"); return;
+
+        /*
+        $delete_users = ['Chris Evans','Elaine Swinney','Lisa Stratford','Robert Langley','Julian Girdler','Clare Cowie','John Taylor','Jonathan Saint','Rebecca Dingwall','Katrina Seward','Raj Jandu','Amber Strachan','Tmbl Admin','Jonathan Burridge','Peter Dowling','Rob Thomas','Kevin Appleton','Leila Ouchikh','Sarah Milthorp','Sunny Bhatia','Fiona Wright','Leigh McShane','Mark Wrennall','Steven Saunders','Phil Shearer','Jo Singh','Nigel Holt','Claire Welcher','Roz Higgs','Will Lambe','Glynn Rowe','Alastair Bowser','Kevin Gandy','Catherine Federer','Jack Scarff','Jenny Reeves','Louise Mcnab','Jordan Kay','Claire Harrington','Angela Butler','Nadine Hunter','Louise Mccaffery','Jo Smerdon','Liam Riley','Karl Christopher','Lee Gathercole','Kelly Dyer','Alison Souden','Didier Malo','Heidi Pettigrew','Caroline Bignell','Caroline Raxworthy','Neezam Romjon','Holly Jordan','Act Sales','Mandy Garnish','Oliver Whelan','Nasreen Holmes','Megan Mcknight','Ben Roberts','Gary Boyack','Paul Garvin','Anthony Moore','Mark Travell','Finlay Chandler','Kelly Pollard','Joy Ayres'];
+        $system_users = User::all();
+        foreach($system_users as $u){
+            if(in_array($u->first_name." ".$u->last_name, $delete_users)){
+                $u->delete();
+            }else{
+                $this->info($u->id." - ". $u->first_name." ".$u->last_name);
+            }
+        }
+        return;
+        */
+
         //$mab = new \App\Libraries\MABApi(false,'introducers:read:authorizedfirms',true);
         //dd($mab->getAdvisers());
         //dd($mab->getAdviser("Marc Finch"));
