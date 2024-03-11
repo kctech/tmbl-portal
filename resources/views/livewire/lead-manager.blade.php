@@ -253,7 +253,7 @@
                                 </td>
                                 <td class="text-right">
                                     <div class="d-flex flex-row align-items-center justify-content-end">
-                                        @if($item->status == \App\Models\Lead::PROSPECT || $item->status == \App\Models\Lead::CONTACT_ATTEMPTED)
+                                        @if($item->status == \App\Models\Lead::PROSPECT || $item->status == \App\Models\Lead::CONTACT_ATTEMPTED || $item->status == \App\Models\Lead::PAUSE_CONTACTING)
                                             <a class="btn btn-sm btn-primary ml-2" href="{{route('leads.manager-contact', $item->id)}}">Contact</a>
                                             <button class="btn btn-sm btn-secondary ml-2" wire:click="info({{$item->id}})">Actions</button>
                                         @else
