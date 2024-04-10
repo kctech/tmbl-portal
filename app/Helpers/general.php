@@ -3,6 +3,7 @@
 //Make signed routes in blade
 use \Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Request;
 
 //default all signed routes are active for 30 days
 function signedRoute($name,$vars=array()) {
