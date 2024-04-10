@@ -23,7 +23,7 @@
         <div class="row mb-4">
             {{--<div class="col-12"><h2>{{$section_title}}</h2></div>--}}
             @foreach($section as $stat)
-                @include('dashboard.'.($stat->tpl ?? 'total'), ['stat' => $stat])
+                @include('dashboard.'.($stat->tpl ?? 'total'), ['stat' => (object) $stat])
             @endforeach
         </div>
     @endforeach
@@ -230,9 +230,11 @@
                     </tbody>
                 </table>
             </div>
-            <div class="mt-3 d-flex justify-content-center">
-                {{ $list->links() }}
-            </div>
+            @if($list->count() > 0)
+                <div class="mt-3 d-flex justify-content-center">
+                    {{ $list->links() }}
+                </div>
+            @endif
 
         @endif
 

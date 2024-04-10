@@ -278,9 +278,11 @@
                     </tbody>
                 </table>
             </div>
-            <div class="mt-3 d-flex justify-content-center">
-                {{ $list->links() }}
-            </div>
+            @if($list->count() > 0)
+                <div class="mt-3 d-flex justify-content-center">
+                    {{ $list->links() }}
+                </div>
+            @endif
 
         @endif
 

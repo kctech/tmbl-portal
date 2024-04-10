@@ -7,6 +7,7 @@
                 </div>
                 <div class="col mr-2">
                     <div>
+                        @php $stat->data = (object) $stat->data; @endphp
                         <div class="h1 mb-0 font-weight-bold text-gray-800">{{$stat->data->current}}</div>
                         @if(!empty($stat->data->previous))
                             <div class="text-small mb-0 text-muted">

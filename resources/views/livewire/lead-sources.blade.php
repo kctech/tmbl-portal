@@ -205,29 +205,33 @@
                                     @endif
                                 </td>
                                 <td class="text-right">
-                                    <div class="btn-group">
-                                        <button class="btn @if($item->status == \App\Models\ApiKey::ACTIVE) btn-success @else btn-danger @endif px-2 btn-sm dropdown-toggle" type="button" id="dropdownMenuButtonCog{{$item->id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-boundary="viewport">
-                                            <i class="fas fa-cog text-light"></i>
-                                        </button>
-                                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonCog{{$item->id}}" id="dropdownMenuContents{{$item->id}}">
-                                            <span class="dropdown-item" wire:click="edit({{$item->id}})">
-                                                <i class="fa fa-fw fa-edit"></i> Edit
-                                            </span>
-                                            <span class="dropdown-item" wire:click="copy({{$item->id}})">
-                                                <i class="fa fa-fw fa-copy"></i> Copy
-                                            </span>
-                                            <div class="dropdown-divider"></div>
-                                            @if($item->status == \App\Models\ApiKey::ACTIVE)
-                                                <span class="dropdown-item text-danger" onclick="confirm('Are you sure you want to remove the API Key??') || event.stopImmediatePropagation()" wire:click="delete({{$item->id}})">
-                                                    <i class="fa fa-fw fa-times"></i> Delete
+                                    @if($item->id == 0 && auth()->user()->cannot('sudo'))
+                                        -
+                                    @else
+                                        <div class="btn-group">
+                                            <button class="btn @if($item->status == \App\Models\ApiKey::ACTIVE) btn-success @else btn-danger @endif px-2 btn-sm dropdown-toggle" type="button" id="dropdownMenuButtonCog{{$item->id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-boundary="viewport">
+                                                <i class="fas fa-cog text-light"></i>
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonCog{{$item->id}}" id="dropdownMenuContents{{$item->id}}">
+                                                <span class="dropdown-item" wire:click="edit({{$item->id}})">
+                                                    <i class="fa fa-fw fa-edit"></i> Edit
                                                 </span>
-                                            @else
-                                                <span class="dropdown-item text-success" onclick="confirm('Are you sure you want to restore the API Key?') || event.stopImmediatePropagation()" wire:click="restore({{$item->id}})">
-                                                    <i class="fa fa-fw fa-check"></i> Restore
+                                                <span class="dropdown-item" wire:click="copy({{$item->id}})">
+                                                    <i class="fa fa-fw fa-copy"></i> Copy
                                                 </span>
-                                            @endif
+                                                <div class="dropdown-divider"></div>
+                                                @if($item->status == \App\Models\ApiKey::ACTIVE)
+                                                    <span class="dropdown-item text-danger" onclick="confirm('Are you sure you want to remove the API Key??') || event.stopImmediatePropagation()" wire:click="delete({{$item->id}})">
+                                                        <i class="fa fa-fw fa-times"></i> Delete
+                                                    </span>
+                                                @else
+                                                    <span class="dropdown-item text-success" onclick="confirm('Are you sure you want to restore the API Key?') || event.stopImmediatePropagation()" wire:click="restore({{$item->id}})">
+                                                        <i class="fa fa-fw fa-check"></i> Restore
+                                                    </span>
+                                                @endif
+                                            </div>
                                         </div>
-                                    </div>
+                                    @endif
                                 </td>
                             </tr>
 

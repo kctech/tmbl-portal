@@ -37,7 +37,7 @@ class LeadApiController extends Controller
         //dump($full_request);
 
         if(empty($full_request)){
-            return response()->json("Error: Empty Request", 422);
+            return response()->json("Error: Empty request", 422);
         }
 
         //prepare new lead
@@ -83,20 +83,35 @@ class LeadApiController extends Controller
                     $new_lead['last_name'] = $full_request['last_name'] = trim($split_name->last_name);
                     break;
             }
-            //if all default data populated move on
-            if(isset($new_lead['email_address']) && isset($new_lead['contact_number']) && isset($new_lead['first_name']) && isset($new_lead['last_name'])){
-                break;
-            }
 
-            //remove empty variables from saved payload
-            if(trim($value) == ""){
-                unset($full_request[$key]);
+            //if all default data populated, move on
+            //if(isset($new_lead['email_address']) && isset($new_lead['contact_number']) && isset($new_lead['first_name']) && isset($new_lead['last_name'])){
+            //    break;
+            //}
+
+            //check for json so it can be parsed prperly below
+            if(is_json($value)){
+                $value = json_decode($value);
             }
 
             //stringify arrays
-            if(is_array($value)){
-                $full_request[$key] = implode(", ", $value);
+            if(is_array($value) || is_object($value)){
+                if(!empty(((array) $value))){
+                    $full_request[$key] = implode(", ", ((array) $value));
+                }else{
+                    unset($full_request[$key]);
+                }
+            }else{
+                //remove empty variables from saved payload
+                if(trim($value) == ""){
+                    unset($full_request[$key]);
+                }
             }
+        }
+
+        //check minimum required, return error
+        if((empty($new_lead['email_address']) || empty($new_lead['contact_number'])) || empty($new_lead['first_name']) || empty($new_lead['last_name'])){
+            return response()->json("Error: Missing minimum required variables", 406);
         }
 
         //remove misc data from payload

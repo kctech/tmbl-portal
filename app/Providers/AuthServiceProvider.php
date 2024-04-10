@@ -48,6 +48,12 @@ class AuthServiceProvider extends ServiceProvider
             }
         });
 
+        Gate::define('sudo', function ($user) {
+            if($user->role->permissions == 'sudo') {
+                return true;
+            }
+        });
+
         Gate::define('impersonate', function ($user) {
             return $user->role->level <= 1;
         });

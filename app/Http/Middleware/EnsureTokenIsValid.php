@@ -19,7 +19,17 @@ class EnsureTokenIsValid
     public function handle(Request $request, Closure $next)
     {
         $tokenValid = false;
-        $token = $request->input('api_token') ?? $request->get('api_token') ?? $request->header('x-api-token') ?? null;
+
+        //get first non-empty source - allows for x-api-token to be always sent as an auth, and then overridden by form post vars for specific source assignment
+        //$token = $request->input('api_token') ?? $request->get('api_token') ?? $request->header('x-api-token') ?? null;
+        $token = null;
+        if(!empty(trim($request->input('api_token')))){
+            $token = trim($request->input('api_token'));
+        }elseif(!empty(trim($request->get('api_token')))){
+            $token = trim($request->get('api_token'));
+        }elseif(!empty(trim($request->header('x-api-token')))){
+            $token = trim($request->header('x-api-token'));
+        }
 
         if(!is_null($token)){
             $tokenValid = ApiKey::where('api_token', $token)->where('status', ApiKey::ACTIVE)->first();
