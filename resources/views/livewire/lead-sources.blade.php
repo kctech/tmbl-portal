@@ -175,9 +175,11 @@
                                 <td>{{ $item->id }}</td>
                                 <td>{{ $item->source }}</td>
                                 <td>
-                                    <div onclick="app.copyToClipboard('{{env('APP_URL')}}/api/leads/new?api_token={{ $item->api_token }}')" class="w-100 d-flex align-items-center justify-content-between cursor-pointer tip" title="Copy full token URL to clipboard">
-                                        <span>{{ $item->api_token }}</span>
-                                        <i class="ml-auto fa fa-copy"></i>
+                                    <div class="w-100 d-flex align-items-center justify-content-between">
+                                        <span onclick="app.copyToClipboard('{{ $item->api_token }}')" class="cursor-pointer tip" title="Copy token to clipboard">
+                                            <small>{{ $item->api_token }}</small>&nbsp;<i class="fa fa-copy"></i>
+                                        </span>
+                                        <i class="ml-auto fa fa-link" onclick="app.copyToClipboard('{{env('APP_URL')}}/api/leads/new?api_token={{ $item->api_token }}')" class="cursor-pointer tip" title="Copy full token URL to clipboard"></i>
                                     </div>
                                 </td>
                                 <td>

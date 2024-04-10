@@ -63,6 +63,9 @@ class LeadManager extends Component
         $this->filtersActive = 0;
         $query = Lead::query();
 
+        //remove archived
+        $query = $query->where('status','!=',Lead::ARCHIVED);
+
         if ($this->sort_order != '') {
             ++$this->filtersActive;
             switch ($this->sort_order) {
@@ -73,11 +76,11 @@ class LeadManager extends Component
                     $query = $query->orderBy('id', 'asc');
                     break;
                 default:
-                    $query = $query->orderBy('id', 'asc');
+                    $query = $query->orderBy('id', 'desc');
                     break;
             }
         } else {
-            $query = $query->orderBy('id', 'asc');
+            $query = $query->orderBy('id', 'desc');
         }
 
         if ($this->lead_status == 'not_contacted') {

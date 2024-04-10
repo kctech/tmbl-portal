@@ -64,6 +64,9 @@ class LeadTable extends Component
             $q->whereNull('user_id')->orWhere('user_id',session('user_id'));
         });
 
+        //remove archived
+        $query = $query->where('status','!=',Lead::ARCHIVED);
+
         if ($this->sort_order != '') {
             ++$this->filtersActive;
             switch ($this->sort_order) {

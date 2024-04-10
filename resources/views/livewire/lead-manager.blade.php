@@ -278,7 +278,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="d-flex justify-content-center">
+            <div class="mt-3 d-flex justify-content-center">
                 {{ $list->links() }}
             </div>
 

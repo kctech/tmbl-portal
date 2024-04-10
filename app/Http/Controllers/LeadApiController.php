@@ -12,6 +12,9 @@ use Illuminate\Support\Str;
 
 class LeadApiController extends Controller
 {
+
+    protected static $strip_fields = ['api_token','action','id','hidden','type','triggerIntegration','fieldLabels','formcraft3_wpnonce'];
+
     /**
      * Create a new controller instance.
      *
@@ -29,11 +32,10 @@ class LeadApiController extends Controller
      */
     public function store(Request $request)
     {
-        //dump($request->all());
-
         //prepare incoming request, check its not empty
         $full_request = $request->all();
-        unset($full_request['api_token']);
+        //dump($full_request);
+
         if(empty($full_request)){
             return response()->json("Error: Empty Request", 422);
         }
@@ -53,6 +55,7 @@ class LeadApiController extends Controller
                 case 'emailaddress';
                     $new_lead['email_address'] = trim($value);
                     break;
+                case 'phone':
                 case 'contact_number':
                 case 'contactnumber':
                 case 'phone_number':
@@ -62,16 +65,19 @@ class LeadApiController extends Controller
                 case 'mobilenumber':
                     $new_lead['contact_number'] = trim($value);
                     break;
+                case 'fname':
                 case 'first_name':
                 case 'firstname';
                     $new_lead['first_name'] = trim($value);
                     break;
+                case 'lname':
                 case 'last_name':
                 case 'lastname';
                     $new_lead['last_name'] = trim($value);
                     break;
                 case 'full_name':
                 case 'fullname';
+                case 'name':
                     $split_name = split_name($value);
                     $new_lead['first_name'] = $full_request['first_name'] = trim($split_name->first_name);
                     $new_lead['last_name'] = $full_request['last_name'] = trim($split_name->last_name);
@@ -81,17 +87,25 @@ class LeadApiController extends Controller
             if(isset($new_lead['email_address']) && isset($new_lead['contact_number']) && isset($new_lead['first_name']) && isset($new_lead['last_name'])){
                 break;
             }
+
+            //remove empty variables from saved payload
+            if(trim($value) == ""){
+                unset($full_request[$key]);
+            }
+
+            //stringify arrays
+            if(is_array($value)){
+                $full_request[$key] = implode(", ", $value);
+            }
         }
 
         //remove misc data from payload
-        unset($full_request['api_token']);
-        unset($full_request['action']);
-        unset($full_request['id']);
-        unset($full_request['hidden']);
-        unset($full_request['type']);
-        unset($full_request['triggerIntegration']);
-        unset($full_request['fieldLabels']);
-        unset($full_request['formcraft3_wpnonce']);
+        foreach(self::$strip_fields as $f){
+            if(isset($full_request[$f])){
+                unset($full_request[$f]);
+            }
+        }
+
         $new_lead['data'] = json_encode($full_request);
 
         //attempt save
