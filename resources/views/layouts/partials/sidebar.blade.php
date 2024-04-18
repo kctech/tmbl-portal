@@ -61,6 +61,14 @@
                 @endcan
                 @can('lead_admin')
                     <li class="nav-item">
+                        <a class="nav-link {{ isActive('admin/leads/flow') }}" href="{{ route('leads.flow') }}">
+                            <i class="fab fa-trello"></i>
+                            Lead FLow
+                        </a>
+                    </li>
+                @endcan
+                @can('lead_admin')
+                    <li class="nav-item">
                         <a class="nav-link {{ isActive('admin/leads/manager') }}" href="{{ route('leads.manager') }}">
                             <i class="fa fa-folders"></i>
                             Leads Manager

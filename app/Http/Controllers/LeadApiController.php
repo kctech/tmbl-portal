@@ -46,6 +46,8 @@ class LeadApiController extends Controller
         $new_lead['status'] = LEAD::PROSPECT;
         $new_lead['source_id'] = session('source_id') ?? 0;
         $new_lead['account_id'] = session('account_id') ?? 0;
+        $new_lead['strategy_id'] = session('strategy_id') ?? 1;
+        $new_lead['strategy_position_id'] = 1;
 
         // attempt to set default column data
         foreach($request->all() as $key => $value){

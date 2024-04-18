@@ -37,13 +37,23 @@ class LeadController extends Controller
     }
 
     /**
+     * Show the leads manager.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function flow()
+    {
+        return view('admin.leads.flow');
+    }
+
+    /**
      * Show the leads manager contact.
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function managerContact($id)
+    public function managerContact($id,$redirect='leads.manager')
     {
-        return view('admin.leads.manager-contact')->with('id', $id);
+        return view('admin.leads.manager-contact')->with('id', $id)->with('redirect', $redirect);
     }
 
     /**

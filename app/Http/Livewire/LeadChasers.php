@@ -30,6 +30,10 @@ class LeadChasers extends Component
 
     //form vars
     public $status = [LeadChaser::ACTIVE => 'Inactive', LeadChaser::INACTIVE => 'Active'];
+    public $auto_progress = [LeadChaser::ACTIVE => 'Yes', LeadChaser::INACTIVE => 'No'];
+    public $auto_contact = [LeadChaser::ACTIVE => 'Yes', LeadChaser::INACTIVE => 'No'];
+    public $strategy_id = 1;
+    public $chase_order = 0;
     public $method = 'email';
     public $time_unit = 0;
     public $time_amount = 'minutes';
@@ -71,7 +75,7 @@ class LeadChasers extends Component
     public function data()
     {
         $this->filtersActive = 0;
-        $query = LeadChaser::where('account_id', session('account_id'));
+        $query = LeadChaser::with('strategy')->where('account_id', session('account_id'));
 
         if ($this->sort_order != '') {
             ++$this->filtersActive;
@@ -87,7 +91,7 @@ class LeadChasers extends Component
                     break;
             }
         } else {
-            $query = $query->orderBy('id', 'asc');
+            $query = $query->orderBy('strategy_id', 'asc')->orderBy('chase_order', 'asc');
         }
 
         if ($this->chaser_status != '') {
@@ -161,6 +165,8 @@ class LeadChasers extends Component
         $this->message_bar = '';
         $this->save_mode = 'create';
 
+        $this->strategy_id = 1;
+        $this->chase_order = 0;
         $this->method = 'email';
         $this->time_amount = 0;
         $this->time_unit = 'minutes';
@@ -169,6 +175,8 @@ class LeadChasers extends Component
         $this->body = null;
         $this->attachments = null;
         $this->status = LeadChaser::ACTIVE;
+        $this->auto_contact = LeadChaser::ACTIVE;
+        $this->auto_progress = LeadChaser::ACTIVE;
 
         $this->view = 'form';
     }
@@ -180,6 +188,8 @@ class LeadChasers extends Component
         $this->save_mode = 'update';
         $base = LeadChaser::where('id', $id)->first();
         if ($base) {
+            $this->strategy_id = $base->strategy_id;
+            $this->chase_order = $base->chase_order;
             $this->method = $base->method;
             $this->name = $base->name;
             $this->time_amount = explode(" ",$base->chase_duration)[0];
@@ -188,6 +198,8 @@ class LeadChasers extends Component
             $this->body = $base->body;
             $this->attachments = $base->attachments;
             $this->status = $base->status;
+            $this->auto_contact = $base->auto_contact;
+            $this->auto_progress = $base->auto_progress;
 
             $this->view = 'form';
         } else {
@@ -201,6 +213,8 @@ class LeadChasers extends Component
         $this->save_mode = 'create';
         $base = LeadChaser::where('id', $id)->first();
         if($base){
+            $this->strategy_id = $base->strategy_id;
+            $this->chase_order = $base->chase_order;
             $this->method = $base->method;
             $this->name = $base->name;
             $this->time_amount = explode(" ",$base->chase_duration)[0];
@@ -209,6 +223,8 @@ class LeadChasers extends Component
             $this->body = $base->body;
             $this->attachments = $base->attachments;
             $this->status = $base->status;
+            $this->auto_contact = $base->auto_contact;
+            $this->auto_progress = $base->auto_progress;
 
             $this->view = 'form';
         }else{
@@ -222,23 +238,31 @@ class LeadChasers extends Component
         $validatedData = Validator::make(
             [
                 'account_id' => session('account_id'),
+                'strategy_id' => $this->strategy_id,
                 'method' => $this->method,
+                'chase_order' => $this->chase_order,
                 'name' => $this->name,
                 'chase_duration' => $chase_duration,
                 'subject' => $this->subject,
                 'body' => $this->body,
                 'attachments' => $this->attachments,
                 'status' => $this->status,
+                'auto_contact' => $this->auto_contact,
+                'auto_progress' => $this->auto_progress,
             ],
             [
                 'account_id' => 'required|numeric',
                 'method' => 'required',
+                'strategy_id' => 'required|numeric',
+                'chase_order' => 'required|numeric',
                 'name' => 'required',
                 'chase_duration' => 'required',
                 'subject' => 'required',
                 'body' => 'required',
                 'attachments' => '',
-                'status' => 'required|in:0,1'
+                'status' => 'required|in:0,1',
+                'auto_contact' => 'required|in:0,1',
+                'auto_progress' => 'required|in:0,1'
             ]
         );
         $validatedData->validate();

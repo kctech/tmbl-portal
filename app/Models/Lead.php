@@ -30,7 +30,7 @@ class Lead extends Model
      * @var array
      */
     protected $fillable = [
-        'uuid','source_id','account_id','user_id','client_id','first_name','last_name','email_address','contact_number','data','options','status','allocated_at','transferred_at','contact_count','last_contacted_at'
+        'uuid','source_id','account_id','strategy_id','strategy_position_id','user_id','client_id','first_name','last_name','email_address','contact_number','data','options','status','allocated_at','transferred_at','contact_count','last_contacted_at'
     ];
 
     public function newQuery()

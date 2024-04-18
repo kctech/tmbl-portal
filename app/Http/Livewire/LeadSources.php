@@ -31,6 +31,7 @@ class LeadSources extends Component
     //form vars
     public $status = [0 => 'Inactive', 1 => 'Active'];
     public $source = null;
+    public $icon = null;
     public $api_token = null;
 
     //save vars
@@ -56,6 +57,7 @@ class LeadSources extends Component
         $this->sort_order = session(self::$session_prefix . 'sort_order') ?? '';
 
         $this->source = session(self::$session_prefix . 'source') ?? '';
+        $this->icon = session(self::$session_prefix . 'icon') ?? '';
         $this->api_token = session(self::$session_prefix . 'api_token') ?? '';
         $this->status = session(self::$session_prefix . 'status') ?? '';
     }
@@ -70,7 +72,7 @@ class LeadSources extends Component
     public function data()
     {
         $this->filtersActive = 0;
-        $query = ApiKey::where('account_id', session('account_id'));
+        $query = ApiKey::with('chase_strategy')->where('account_id', session('account_id'));
 
         if ($this->sort_order != '') {
             ++$this->filtersActive;
@@ -161,6 +163,7 @@ class LeadSources extends Component
         $this->save_mode = 'create';
 
         $this->source = null;
+        $this->icon = null;
         $this->api_token = Str::random(64);
         $this->status = 0;
 
@@ -175,6 +178,7 @@ class LeadSources extends Component
         $base = ApiKey::where('id', $id)->first();
         if ($base) {
             $this->source = $base->source;
+            $this->icon = $base->icon;
             $this->api_token = $base->api_token;
             $this->status = $base->status;
 
@@ -191,6 +195,7 @@ class LeadSources extends Component
         $base = ApiKey::where('id', $id)->first();
         if($base){
             $this->source = $base->source;
+            $this->icon = $base->icon;
             $this->api_token = $base->api_token;
             $this->status = $base->status;
 
@@ -210,13 +215,17 @@ class LeadSources extends Component
         $validatedData = Validator::make(
             [
                 'account_id' => session('account_id'),
+                'strategy_id' => 1,
                 'source' => $this->source,
+                'source' => $this->icon,
                 'api_token' => $this->api_token,
                 'status' => $this->status
             ],
             [
                 'account_id' => 'required|numeric',
+                'strategy_id' => 'required',
                 'source' => 'required',
+                'icon' => '',
                 'api_token' => $api_token_validation,
                 'status' => 'required|in:0,1'
             ]

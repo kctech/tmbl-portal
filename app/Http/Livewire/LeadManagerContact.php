@@ -8,6 +8,7 @@ use App\Libraries\MABApi;
 use App\Libraries\Azure\GraphConnector;
 use App\Libraries\SSO\AzureProvider;
 use App\Libraries\Azure\OnlineMeeting;
+use App\Libraries\ChaseEmail;
 
 use App\Models\Lead;
 use App\Models\LeadEvent;
@@ -34,7 +35,9 @@ class LeadManagerContact extends Component
     public $adviser_list = [];
     public $lead_id = null;
     public $lead = null;
+    public $redirect = null;
 
+    public $show_contact = false;
     public $weeks = 4;
     public $days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
     public $start_hour = 6;
@@ -46,16 +49,17 @@ class LeadManagerContact extends Component
     public $selected_time = null;
     public $lead_notes = '';
 
-    public function mount($lead_id)
+    public function mount($lead_id, $redirect = 'leads.manager')
     {
         $this->advisers = session(self::$session_prefix . 'advisers') ?? [];
+        $this->redirect = $redirect;
         $this->lead_id = $lead_id;
         $this->lead = Lead::where('id',$lead_id)->first();
 
         if(is_null($this->lead)){
             $this->skipRender();
             session()->flash('alert-danger','Unable to load lead ID '.$this->lead_id);
-            return $this->redirectRoute('leads.manager');
+            return $this->redirectRoute($redirect);
         }
 
         $this->lead_notes = json_decode($this->lead->data)->contact_notes ?? '';
@@ -132,7 +136,7 @@ class LeadManagerContact extends Component
 
     private function data(){
 
-        if($this->readyToLoad){
+        if($this->readyToLoad && $this->show_contact){
 
             $cache = PortalCache::where('cache_key','azure_calendars')->orderBy('updated_at','desc')->first();
             $this->cache_date = $cache->updated_at;
@@ -256,6 +260,92 @@ class LeadManagerContact extends Component
 
     }
 
+    public function archive(){
+
+        $lead_data = json_decode($this->lead->data);
+        $lead_data->contact_notes = $this->lead_notes;
+        $this->lead->data = json_encode($lead_data);
+        $this->lead->status = Lead::ARCHIVED;
+        $this->lead->save();
+        //$this->emit('updated', ['message' => "Lead status updated [" . $this->lead_id . "]"]);
+
+        $this->skipRender();
+        session()->flash('alert-success','Marked lead ID '.$this->lead_id.' as archived');
+        return $this->redirectRoute($this->redirect);
+    }
+
+    public function contact_progress(){
+
+        //next contact step
+        $next_step = \App\Models\LeadChaser::getNextStep($this->lead->strategy_id, $this->lead->strategy_position_id);
+
+        $lead_data = json_decode($this->lead->data);
+        $lead_data->contact_notes = $this->lead_notes;
+        $this->lead->data = json_encode($lead_data);
+        $this->lead->last_contacted_at = date("Y-m-d H:i:s");
+        //$this->lead->status = Lead::CONTACT_ATTEMPTED;
+        ++$this->lead->contact_count;
+        if($next_step !== false){
+            $this->lead->strategy_position_id = $next_step->chase_order;
+        }
+        $this->lead->save();
+        //$this->emit('updated', ['message' => "Lead status updated [" . $this->lead_id . "]"]);
+
+        //send next stage email
+        if($next_step !== false){
+            $merge_data_compiled = ChaseEmail::createAndSend($this->lead,$next_step,true);
+        }else{
+            session()->flash('alert-danger','Lead '.$this->lead_id.' is at the end of the chase streategy, consider archiving.');
+            return $this->redirectRoute($this->redirect);
+        }
+
+        $this->lead->events()->create([
+            'account_id' => $this->lead->account_id,
+            'user_id' => session('user_id'),
+            'event_id' => LeadEvent::MANUAL_CONTACT_ATTEMPTED,
+            'information' => $this->lead_notes
+        ]);
+
+        $this->skipRender();
+        session()->flash('alert-success','Lead ID '.$this->lead_id.' has been contacted and progressed to the next step');
+        return $this->redirectRoute($this->redirect);
+    }
+
+    public function contact_progress_silent(){
+
+        //next contact step
+        $next_step = \App\Models\LeadChaser::getNextStep($this->lead->strategy_id, $this->lead->strategy_position_id);
+
+        $lead_data = json_decode($this->lead->data);
+        $lead_data->contact_notes = $this->lead_notes;
+        $this->lead->data = json_encode($lead_data);
+        $this->lead->last_contacted_at = date("Y-m-d H:i:s");
+        //$this->lead->status = Lead::CONTACT_ATTEMPTED;
+        ++$this->lead->contact_count;
+        if($next_step !== false){
+            $this->lead->strategy_position_id = $next_step->chase_order;
+        }
+        $this->lead->save();
+        //$this->emit('updated', ['message' => "Lead status updated [" . $this->lead_id . "]"]);
+
+        //send next stage email
+        if($next_step == false){
+            session()->flash('alert-danger','Lead '.$this->lead_id.' is at the end of the chase streategy, consider archiving.');
+            return $this->redirectRoute($this->redirect);
+        }
+
+        $this->lead->events()->create([
+            'account_id' => $this->lead->account_id,
+            'user_id' => session('user_id'),
+            'event_id' => LeadEvent::MANUAL_CONTACT_ATTEMPTED,
+            'information' => $this->lead_notes
+        ]);
+
+        $this->skipRender();
+        session()->flash('alert-success','Lead ID '.$this->lead_id.' has been progressed to the next step without contacting');
+        return $this->redirectRoute($this->redirect);
+    }
+
     public function mark_as_contacted(){
 
         $lead_data = json_decode($this->lead->data);
@@ -276,7 +366,7 @@ class LeadManagerContact extends Component
 
         $this->skipRender();
         session()->flash('alert-success','Marked lead ID '.$this->lead_id.' as contacted');
-        return $this->redirectRoute('leads.manager');
+        return $this->redirectRoute($this->redirect);
     }
 
     public function mark_as_pause_contacting(){
@@ -299,7 +389,7 @@ class LeadManagerContact extends Component
 
         $this->skipRender();
         session()->flash('alert-success','Lead ID '.$this->lead_id.' will no longer recieve automatic messages');
-        return $this->redirectRoute('leads.manager');
+        return $this->redirectRoute($this->redirect);
     }
 
     public function allocate_and_transfer(){
@@ -459,14 +549,14 @@ class LeadManagerContact extends Component
 
                         $this->skipRender();
                         session()->flash('alert-success','Lead ID '.$this->lead_id.' transferred to '.$this->selected_adviser." and a Teams meeting booked at ".$meeting_date->format("d/m/Y H:i"));
-                        return $this->redirectRoute('leads.manager');
+                        return $this->redirectRoute($this->redirect);
                     }
                 } catch (\App\Exceptions\AccountNotConfiguredException $exception) {
                     Log::critical($exception->getMessage(),['tenant_id' => $this->provider->getTenantId()],json_encode($meeting));
                     //no teams setup
                     $this->skipRender();
                     session()->flash('alert-success','Lead ID '.$this->lead_id.' transferred to '.$this->selected_adviser." and a Teams meeting couldn't be booked");
-                    return $this->redirectRoute('leads.manager');
+                    return $this->redirectRoute($this->redirect);
                 }
             }else{
                 $this->emit('error', ['message' => "Unable to send to MAB Portal [" . $this->lead_id . "]"]);

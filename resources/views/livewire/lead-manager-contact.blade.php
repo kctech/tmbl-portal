@@ -68,10 +68,12 @@
         </div>
     </div>
 
+    @if($show_contact)
+
     <div class="card mb-3 p-3">
         <div class="row">
             <div class="col-2 d-flex align-items-center justify-content-center"><strong>Filter Adviser List</strong></div>
-            <div class="col-10">
+            <div class="col-8">
                 <x-select2-tags wire:model="advisers" id="advisers" class="form-control select2-tags" placeholder="Select adviser(s). Showing All by default.">
                     @foreach($adviser_list as $adv)
                         @php $adv = (object) $adv @endphp
@@ -83,12 +85,40 @@
                     @endforeach
                 </x-select2-tags>
             </div>
+            <div class="col-2">
+                <button class="btn btn-danger btn-block" wire:click="$set('show_contact',false)">Hide Organiser</button>
+            </div>
         </div>
     </div>
 
+    @else
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-2 mb-3">
+                        <h3>Lead Notes</h3>
+                    </div>
+                    <div class="col-md-10 mb-3">
+                        <textarea wire:model.defer="lead_notes" id="lead_notes" class="form-control w-100" rows="10">{{json_decode($this->lead->data)->contact_notes ?? ''}}</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <button class="btn btn-success" wire:click="$set('show_contact',true)">Show Contact Organiser</button>
+                <button class="ml-3 btn btn-danger" wire:click="archive()">Archive Lead</button>
+                <button class="ml-3 btn btn-secondary" wire:click="mark_as_contacted()">Mark as contacted, leave at current step</button>
+                <button class="ml-3 btn btn-primary" wire:click="contact_progress()">Move to next step in chase process (send email)</button>
+                <button class="ml-3 btn btn-dark" wire:click="contact_progress_silent()">Move to next step in chase process (without email)</button>
+            </div>
+        </div>
+    @endif
+
     <div wire:loading.remove>
 
-        @if($isLoaded)
+        @if($isLoaded && $show_contact)
 
             <div class="row">
                 <div class="col-md-4  d-flex flex-column">
@@ -220,10 +250,8 @@
 
             <div class="row">
                 <div class="col ml-auto text-right">
-                    <button class="btn btn-secondary" wire:click="mark_as_pause_contacting()">Pause auto-contacting</button>
-                    <button class="ml-3 btn btn-secondary" wire:click="mark_as_contacted()">Mark as contacted</button>
                     @if(!empty($selected_adviser) && !empty($selected_date) && !empty($selected_time))
-                        <button class="ml-3 btn btn-primary" wire:click="allocate_and_transfer()">Allocate and Transfer Lead</button>
+                        <button class="ml-3 btn btn-success" wire:click="allocate_and_transfer()">Allocate and Transfer Lead</button>
                     @endif
                 </div>
             </div>

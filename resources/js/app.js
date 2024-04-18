@@ -22,8 +22,9 @@ import { library, dom } from '@fortawesome/fontawesome-svg-core';
 import { far } from '@fortawesome/pro-regular-svg-icons';
 import { fas } from '@fortawesome/pro-solid-svg-icons';
 import { fal } from '@fortawesome/pro-light-svg-icons';
+import { fab } from '@fortawesome/free-brands-svg-icons';
 import { faFacebookF } from '@fortawesome/free-brands-svg-icons';
-library.add(far, fas, fal, faFacebookF);
+library.add(far, fas, fal, fab, faFacebookF);
 
 /* Kicks off the process of finding <i> tags and replacing with <svg>*/
 dom.watch();

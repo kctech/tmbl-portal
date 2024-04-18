@@ -2,11 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\QueueRenderedEmail;
-use App\Libraries\Render;
 use Illuminate\Console\Command;
 
-use Illuminate\Support\Facades\Blade;
+use App\Libraries\ChaseEmail;
 
 use App\Models\Lead;
 use App\Models\LeadChaser;
@@ -48,8 +46,13 @@ class ContactLeads extends Command
     public function handle()
     {
         session()->put('account_id',$this->option('account_id'));
-        $contact_schedule = LeadChaser::where('method','email')->where('status',LeadChaser::ACTIVE)->get();
+        $contact_schedule = LeadChaser::where('method','email')->where('status',LeadChaser::ACTIVE)->where('auto_contact',0)->get();
         $prospects = Lead::whereIn('status',[Lead::PROSPECT,Lead::CONTACT_ATTEMPTED,Lead::CLAIMED])->get();
+
+        $live = false;
+        if($this->option('live') == 'true'){
+            $live = true;
+        }
 
         foreach($prospects as $prospect){
             $this->info($prospect->id."|".$prospect->email_address."|".$prospect->created_at);
@@ -58,50 +61,19 @@ class ContactLeads extends Command
             $prospect_auto_comms = $prospect->events()->where('event_id',LeadEvent::AUTO_CONTACT_ATTEMPTED)->pluck('information')->toArray();
 
             foreach($contact_schedule as $chaser){
+                $this->info("> checking ".$chaser->id);
                 if(!in_array($chaser->id, $prospect_auto_comms)){
                     $this->info("check time for ".$chaser->id." - ".$chaser->chase_duration);
                     if($created_at->copy()->add($chaser->chase_duration)->isPast()){
                         $this->info("> send ".$chaser->id);
 
-                        if(!empty($prospect->owner)){
-                            $adviser = $prospect->owner;
-                        }else{
-                            /*$adviser = collect((object)[
-                                "first_name" => "The Mortgage Broker",
-                                "last_name" => "",
-                                "tel" => "0800 0320 316",
-                                "email" => "enquiries@tmblgroup.co.uk"
-                            ]);*/
-                            $adviser = new \App\Models\User;
-                            $adviser->first_name = "The Mortgage Broker";
-                            $adviser->last_name = "";
-                            $adviser->tel = "0800 0320 316";
-                            $adviser->email = "enquiries@tmblgroup.co.uk";
-                        }
+                        $merge_data_compiled = ChaseEmail::createAndSend($prospect,$chaser,$live);
 
-                        $merge_data = ['prospect'=>json_decode($prospect->data), 'adviser'=>$adviser->toArray(), 'chaser'=>$chaser->toArray()];
-                        $merge_data_compiled = [];
-                        foreach($merge_data as $datatype => $values){
-                            foreach($values as $key => $value){
-                                $merge_data_compiled[$datatype.":".$key] = $value;
-                            }
-                        }
-
-                        if($this->option('live') == 'true'){
-                            //build email
-                            $email['ident'] = $chaser->name;
-                            $email['subject'] = $chaser->subject;
-                            $email['body'] = Blade::render(Render::merge_data($merge_data_compiled,$chaser->body));
-                            $email['to'] = $prospect->email_address;
-                            $email['from'] = $adviser->email;
-                            $email['fromName'] = $adviser->first_name ." ". $adviser->last_name;
-                            $email['replyTo'] = $adviser->email;
-
-                            dispatch(new QueueRenderedEmail($email))->onQueue('lead_chasers');
-
+                        if($live){
                             //record event
                             //$prospect->status = Lead::AUTO_CONTACT_ATTEMPTED;
                             $prospect->last_contacted_at = date("Y-m-d H:i:s");
+                            $prospect->strategy_position_id = $chaser->id;
                             ++$prospect->contact_count;
                             $prospect->save();
                             $prospect->events()->create([

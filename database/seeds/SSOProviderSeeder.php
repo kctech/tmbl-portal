@@ -14,10 +14,9 @@ class SSOProviderSeeder extends Seeder
     public function run()
     {
         DB::table('sso_providers')->insert([
-            'organisation' => 'Microsoft',
-            'provider' => 'AZURE',
-            'icon' => 'fa-microsoft',
-            'color' => '#01a4ef',
+            'account_id' => 1,
+            'name' => 'Default',
+            'status' => 0
         ]);
 
     }

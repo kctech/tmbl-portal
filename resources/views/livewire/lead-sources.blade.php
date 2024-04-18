@@ -32,6 +32,17 @@
         </div>
     </div>
     <div class="form-group row">
+        <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('FontAwesome Icon Code') }}</label>
+        <div class="col-md-6">
+            <input type="text" class="form-control{{ $errors->has('icon') ? ' is-invalid' : '' }}" wire:model.defer="icon">
+            @if ($errors->has('icon'))
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $errors->first('icon') }}</strong>
+                </span>
+            @endif
+        </div>
+    </div>
+    <div class="form-group row">
         <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('API Token') }}</label>
         <div class="col-md-6">
             <input type="text" class="form-control{{ $errors->has('api_token') ? ' is-invalid' : '' }}" wire:model.defer="api_token">
@@ -155,6 +166,7 @@
                             <th>ID</th>
                             <th>Source</th>
                             <th>API Key</th>
+                            <th>Strategy</th>
                             <th>Last Use</th>
                             <th>Created</th>
                             <th>Leads</th>
@@ -173,7 +185,7 @@
 
                             <tr class="">
                                 <td>{{ $item->id }}</td>
-                                <td>{{ $item->source }}</td>
+                                <td><i class="fa {{$item->icon ?? 'fa-star'}}"></i>&nbsp;{{ $item->source }}</td>
                                 <td>
                                     <div class="w-100 d-flex align-items-center justify-content-between">
                                         <span onclick="app.copyToClipboard('{{ $item->api_token }}')" class="cursor-pointer tip" title="Copy token to clipboard">
@@ -182,16 +194,17 @@
                                         <i class="ml-auto fa fa-link" onclick="app.copyToClipboard('{{env('APP_URL')}}/api/leads/new?api_token={{ $item->api_token }}')" class="cursor-pointer tip" title="Copy full token URL to clipboard"></i>
                                     </div>
                                 </td>
+                                <td>{{ $item->chase_strategy->name }}</td>
                                 <td>
                                     @if(!is_null($item->last_login_at))
-                                        {{\Carbon\Carbon::parse($item->last_login_at)->format('d/m/Y H:i')}}
+                                        {{\Carbon\Carbon::parse($item->last_login_at)->format('d/m/Y H:i')}}<br />
                                         <span class="badge badge-primary">{{\Carbon\Carbon::parse($item->last_login_at)->diffForHumans()}}</span>
                                     @else
                                         Never
                                     @endif
                                 </td>
                                 <td>
-                                    {{\Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i')}}
+                                    {{\Carbon\Carbon::parse($item->created_at)->format('d/m/Y')}}<br />
                                     <span class="badge badge-primary">{{\Carbon\Carbon::parse($item->created_at)->diffForHumans()}}</span>
                                 </td>
                                 <td>{{ $item->leads->count() }}</td>

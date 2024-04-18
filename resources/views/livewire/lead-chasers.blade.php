@@ -78,6 +78,63 @@
         </div>
     </div>
     <div class="form-group row">
+        <label for="chase_order" class="col-md-4 col-form-label text-md-right">{{ __('Order') }}</label>
+        <div class="col-md-6">
+            <input type="number" class="form-control{{ $errors->has('chase_order') ? ' is-invalid' : '' }}" wire:model.defer="chase_order">
+            @if ($errors->has('chase_order'))
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $errors->first('chase_order') }}</strong>
+                </span>
+            @endif
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="auto_progress" class="col-md-4 col-form-label text-md-right">{{ __('Automatic Progession?') }}</label>
+        <div class="col-md-6">
+            <div class="form-control{{ $errors->has('auto_progress') ? ' is-invalid' : '' }}" style="height:auto;">
+                <div class="custom-control custom-radio mb-2">
+                    <input type="radio" id="chaser_auto_progress_{{\App\Models\LeadChaser::ACTIVE}}" wire:model="auto_progress" class="custom-control-input" value="{{\App\Models\LeadChaser::ACTIVE}}" />
+                    <label class="custom-control-label" for="chaser_auto_progress_{{\App\Models\LeadChaser::ACTIVE}}">Automatic</label>
+                </div>
+                <div class="custom-control custom-radio">
+                    <input type="radio" id="chaser_auto_progress_{{\App\Models\LeadChaser::INACTIVE}}" wire:model="auto_progress" class="custom-control-input" value="{{\App\Models\LeadChaser::INACTIVE}}" />
+                    <label class="custom-control-label" for="chaser_auto_progress_{{\App\Models\LeadChaser::INACTIVE}}">Manual</label>
+                </div>
+            </div>
+            @if ($errors->has('auto_progress'))
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $errors->first('auto_progress') }}</strong>
+                </span>
+            @endif
+            <small id="auto_progressHelpBlock" class="form-text text-muted">
+                {{ __('Once communication is sent, automatically move to the next step in chase progress.') }}
+            </small>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="auto_contact" class="col-md-4 col-form-label text-md-right">{{ __('Auto Contact?') }}</label>
+        <div class="col-md-6">
+            <div class="form-control{{ $errors->has('auto_contact') ? ' is-invalid' : '' }}" style="height:auto;">
+                <div class="custom-control custom-radio mb-2">
+                    <input type="radio" id="chaser_auto_contact_{{\App\Models\LeadChaser::ACTIVE}}" wire:model="auto_contact" class="custom-control-input" value="{{\App\Models\LeadChaser::ACTIVE}}" />
+                    <label class="custom-control-label" for="chaser_auto_contact_{{\App\Models\LeadChaser::ACTIVE}}">Automatic</label>
+                </div>
+                <div class="custom-control custom-radio">
+                    <input type="radio" id="chaser_auto_contact_{{\App\Models\LeadChaser::INACTIVE}}" wire:model="auto_contact" class="custom-control-input" value="{{\App\Models\LeadChaser::INACTIVE}}" />
+                    <label class="custom-control-label" for="chaser_auto_contact_{{\App\Models\LeadChaser::INACTIVE}}">Manual</label>
+                </div>
+            </div>
+            @if ($errors->has('auto_contact'))
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $errors->first('auto_contact') }}</strong>
+                </span>
+            @endif
+            <small id="auto_contactsHelpBlock" class="form-text text-muted">
+                {{ __('Should the associated communication (email/sms/whatsapp) be sent automatically based on timings below, or manually as they are moved.') }}
+            </small>
+        </div>
+    </div>
+    <div class="form-group row">
         <label for="time_amount" class="col-md-4 col-form-label text-md-right">{{ __('Chase Frequency') }}</label>
         <div class="col-md-3">
             <label for="time_amount" class="">{{ __('Time Amount') }}</label>
@@ -222,9 +279,10 @@
                 <table class="table table-bordered table-striped table-hover text-sm">
                     <thead class="thead-dark text-center">
                         <tr>
-                            <th>ID</th>
-                            <th>Method</th>
+                            <th>Strategy</th>
+                            <th>Order</th>
                             <th>Name</th>
+                            <th>Method</th>
                             <th>Chase Duration</th>
                             <th>Last Updated</th>
                             <th>Status</th>
@@ -241,9 +299,20 @@
                         @foreach($list as $item)
 
                             <tr class="">
-                                <td>{{ $item->id }}</td>
-                                <td>{{ $item->method }}</td>
+                                <td>{{ $item->strategy->name }}</td>
+                                <td>{{ $item->chase_order }}</td>
                                 <td>{{ $item->name }}</td>
+                                <td>
+                                    @if($item->auto_contact == 0)
+                                        {{ __('Automatic') }}
+                                    @else
+                                        {{ __('Manual') }}
+                                    @endif
+                                    {{ $item->method }}
+                                    @if($item->auto_progress == 0)
+                                        {{ __('then progress') }}
+                                    @endif
+                                </td>
                                 <td>{{ $item->chase_duration }}</td>
                                 <td>
                                     {{\Carbon\Carbon::parse($item->updated_at)->format('d/m/Y H:i')}}

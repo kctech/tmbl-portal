@@ -26,7 +26,7 @@ class ApiKey extends Model
      * @var array
      */
     protected $fillable = [
-        'account_id', 'source', 'api_token', 'last_login_at', 'last_login_ip', 'status'
+        'account_id', 'strategy_id', 'source', 'icon', 'api_token', 'last_login_at', 'last_login_ip', 'status'
     ];
 
     /**
@@ -48,5 +48,13 @@ class ApiKey extends Model
     public function leads()
     {
         return $this->hasMany(\App\Models\Lead::class, 'source_id', 'id');
+    }
+
+    /**
+     * Get the users quotes
+     */
+    public function chase_strategy()
+    {
+        return $this->hasOne(\App\Models\LeadChaseStrategy::class, 'id', 'strategy_id');
     }
 }
