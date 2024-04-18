@@ -46,15 +46,15 @@
                             @php $lead = (object) $lead; @endphp
                             <li class="list-group-item p-1">
                                 <div class="row">
-                                    <div class="col-9">
-                                        <span class="badge badge-dark"><i class="fa fa-fw {{$lead->source['icon'] ?? 'fa-star'}} tip" data-title="{{$lead->source['source'] ?? 'Default'}}"></i> {{$lead->id}}</span> {{$lead->first_name}} {{$lead->last_name}}
+                                    <div class="col-auto">
+                                        <span class="badge badge-dark tip" data-title="From source: {{$lead->source['source'] ?? 'Default'}}"><i class="fa fa-fw {{$lead->source['icon'] ?? 'fa-star'}}"></i> {{$lead->id}}</span> {{$lead->first_name}} {{$lead->last_name}}
                                         <br />
                                         <span class="badge badge-info text-white tip" data-title="Created {{\Carbon\Carbon::parse($lead->created_at)->format('d/m/Y H:i')}}"><i class="fa fa-plus"></i>{{\Carbon\Carbon::parse($lead->created_at)->diffForHumans()}}</span>
                                         @if(!empty($lead->last_contacted_at))
                                             <span class="badge badge-success tip" title="Contacted {{ $lead->contact_count }} times, last at {{$lead->last_contacted_at}}"><i class="fas fa-phone"></i> {{\Carbon\Carbon::parse($lead->last_contacted_at)->diffForHumans()}}</span>
                                         @endif
                                     </div>
-                                    <div class="col-3 d-flex align-items-center justify-content-end">
+                                    <div class="col d-flex align-items-center justify-content-end">
                                         <a class="btn btn-sm btn-primary" href="{{route('leads.manager-contact', [$lead->id, 'leads.flow'])}}"><i class="fa fa-chevron-right"></i></a>
                                     </div>
                                 </div>

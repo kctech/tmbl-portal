@@ -1,8 +1,8 @@
-<nav class="navbar navbar-dark p-0 fixed-top bg-dark shadow d-sm-block d-md-block d-lg-none">
-    <a class="navbar-brand" href="{{ route('admin.dashboard') }}">
+<nav class="navbar navbar-dark p-0 fixed-topX bg-primary shadow d-sm-flex d-md-flex d-lg-none">
+    <a class="navbar-brand" href="{{ route('admin.dashboard') }}" style=" background: none; box-shadow: none;">
         <img class="" src="{{asset('img/'.Session::get('viewset','default').'/'.Session::get('logo','tmbl_logo.png'))}}" alt="{{ config('app.name', Session::get('viewset','default').' Portal') }}" width="237" height="84" />
     </a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+    <button class="ml-auto mr-2 navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
         <span class="navbar-toggler-icon"></span>
     </button>
 

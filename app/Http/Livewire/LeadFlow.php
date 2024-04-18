@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 use Livewire\Component;
 
 use App\Models\Lead;
+use App\Models\LeadChaser;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -37,12 +38,12 @@ class LeadFlow extends Component
     {
         $data = [];
 
-        $chaser = \App\Models\LeadChaser::where('account_id',session('account_id'))->where('strategy_id',$this->chase_strategy)->get();
+        $chaser = LeadChaser::where('account_id',session('account_id'))->where('status',LeadChaser::ACTIVE)->where('strategy_id',$this->chase_strategy)->get();
         foreach($chaser as $c) {
             $data[] = (object) [
                 'colour' => "primary",
                 'info' => $c,
-                'data'  => Lead::with('source')->where('strategy_id',$c->strategy_id)->where('strategy_position_id',$c->id)->whereIn('status',[Lead::PROSPECT,Lead::CONTACT_ATTEMPTED,Lead::CLAIMED,Lead::PAUSE_CONTACTING])->get()->toArray()
+                'data'  => Lead::with('source')->where('strategy_id',$c->strategy_id)->where('strategy_position_id',$c->id)->whereIn('status',[Lead::PROSPECT,Lead::CONTACT_ATTEMPTED,Lead::CLAIMED,Lead::PAUSE_CONTACTING])->orderBy('id','desc')->get()->toArray()
             ];
         }
 
