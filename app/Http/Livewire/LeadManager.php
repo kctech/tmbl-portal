@@ -76,11 +76,11 @@ class LeadManager extends Component
                     $query = $query->orderBy('id', 'asc');
                     break;
                 default:
-                    $query = $query->orderBy('id', 'desc');
+                    $query = $query->orderBy('id', 'asc');
                     break;
             }
         } else {
-            $query = $query->orderBy('id', 'desc');
+            $query = $query->orderBy('id', 'asc');
         }
 
         if ($this->lead_status == 'not_contacted') {
@@ -200,6 +200,7 @@ class LeadManager extends Component
         $lead = Lead::find($lead_id);
         if($lead){
             if(is_null($adviser_email)){
+                $lead_data = json_decode($lead->data);
                 $data = [
                     //"mortgageBasis" => 1,
                     //"prospectType" => 1,
@@ -224,7 +225,7 @@ class LeadManager extends Component
                     //"leadReferralType" => 0,
                     //"timeOfReferral" => "2023-02-06T09:17:18.684Z",
                     //"creationDate" => "2023-02-06T09:17:18.684Z",
-                    "notes" => "From TMBL Portal",
+                    "notes" => $lead_data->lead_notes ?? "From TMBL Portal",
                     //"consenter" => 0,
                     "customers" => [
                         [

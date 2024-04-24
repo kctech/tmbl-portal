@@ -35,7 +35,7 @@
                 <div class="card ml-3">
                     <div class="card-body bg-light">
                         <select name="consent_type" id="consent_type"  class="form-control">
-                            <option value="" {{selected('default', $consent_type)}}>Consent Type (All)</option>    
+                            <option value="" {{selected('default', $consent_type)}}>Consent Type (All)</option>
                             <option value="DA" {{selected('DA', $consent_type)}}>Directly Authorised</option>
                             <option value="OPW" {{selected('OPW', $consent_type)}}>Openwork</option>
                             <option value="PR" {{selected('PR', $consent_type)}}>Protection Referral</option>
@@ -56,7 +56,7 @@
                             </div>
                             <select name="sort" id="sort"  class="form-control">
                                 <option value="recent" {{selected('recent', $sort)}}>Recently Updated</option>
-                                <option value="newest_first" {{selected('newest_first', $sort)}} {{selected('default', $sort)}}>Newset First</option>    
+                                <option value="newest_first" {{selected('newest_first', $sort)}} {{selected('default', $sort)}}>Newest First</option>
                                 <option value="oldest_first" {{selected('oldest_first', $sort)}}>Oldest First</option>
                                 <option value="surname_az" {{selected('surname_az', $sort)}}>Surname A-Z</option>
                                 <option value="surname_za" {{selected('surname_za', $sort)}}>Surname Z-A</option>
@@ -124,7 +124,7 @@
                             @else
                                 <a href="mailto:{{ $request->client->email }}">{{ $request->client->email }}</a>
                             @endif
-                        
+
                         </td>
                         <td>{{ $request->client->tel }}</td>
                         <td>{{ $request->client->mkt_email_consent }}</td>

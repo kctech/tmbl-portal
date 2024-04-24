@@ -40,7 +40,7 @@
                             </div>
                             <select name="sort" id="sort"  class="form-control">
                                 <option value="recent" {{selected('recent', $sort)}}>Recently Updated</option>
-                                <option value="newest_first" {{selected('newest_first', $sort)}} {{selected('default', $sort)}}>Newset First</option>    
+                                <option value="newest_first" {{selected('newest_first', $sort)}} {{selected('default', $sort)}}>Newest First</option>
                                 <option value="oldest_first" {{selected('oldest_first', $sort)}}>Oldest First</option>
                                 <option value="surname_az" {{selected('surname_az', $sort)}}>Surname A-Z</option>
                                 <option value="surname_za" {{selected('surname_za', $sort)}}>Surname Z-A</option>
@@ -70,7 +70,7 @@
                 </tr>
                 <tr>
                     <th>Edit</th>
-                    <th>Copy</th> 
+                    <th>Copy</th>
                     <th>Fee</th>
                     <th>Amount</th>
                     <th>View</th>

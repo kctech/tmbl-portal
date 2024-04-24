@@ -5,6 +5,13 @@
     <div id="topbar_title"><h1 class="h2">Leads Flow</h1></div>
 
     <div class="btn-toolbar mb-2 mb-md-0">
+        @can('lead_admin')
+            @if($flow_include == 'unclaimed')
+                <button class="btn btn-dark mr-3 mb-3" wire:click="$set('flow_include','all');" type="button">Show All Leads</button>
+            @else
+                <button class="btn btn-dark mr-3 mb-3" wire:click="$set('flow_include','unclaimed');" type="button">Show Unclaimed Leads</button>
+            @endif
+        @endcan
         {{ Breadcrumbs::render('leads') }}
         <a href="{{ route('leads.manager') }}" class="btn btn-lg btn-primary ml-3 mb-3"><i class="fa fa-inbox-in"></i> Leads</a>
     </div>
@@ -20,7 +27,7 @@
 
 <div wire:loading.remove>
 
-    <div class="row mb-4">
+    <div class="row mb-4" id="flow-board">
         @forelse($data as $strategy)
             @php $strategy->info = (object) ($strategy->info ?? $strategy['info']); @endphp
             <div class="col">
@@ -49,6 +56,11 @@
                                     <div class="col-auto">
                                         <span class="badge badge-dark tip" data-title="From source: {{$lead->source['source'] ?? 'Default'}}"><i class="fa fa-fw {{$lead->source['icon'] ?? 'fa-star'}}"></i> {{$lead->id}}</span> {{$lead->first_name}} {{$lead->last_name}}
                                         <br />
+                                        @if($flow_type != 'user' && !empty($lead->user_id))
+                                            <span class="badge badge-danger text-white tip" data-title="Claimed by {{$lead->owner['first_name']}} {{$lead->owner['last_name']}} at {{$lead->allocated_at}}"">
+                                                <i class="fa fa-user"></i>
+                                            </span>
+                                        @endif
                                         <span class="badge badge-info text-white tip" data-title="Created {{\Carbon\Carbon::parse($lead->created_at)->format('d/m/Y H:i')}}"><i class="fa fa-plus"></i>{{\Carbon\Carbon::parse($lead->created_at)->diffForHumans()}}</span>
                                         @if(!empty($lead->last_contacted_at))
                                             <span class="badge badge-success tip" title="Contacted {{ $lead->contact_count }} times, last at {{$lead->last_contacted_at}}"><i class="fas fa-phone"></i> {{\Carbon\Carbon::parse($lead->last_contacted_at)->diffForHumans()}}</span>

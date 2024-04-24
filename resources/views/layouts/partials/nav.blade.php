@@ -37,14 +37,6 @@
                 @endcan
                 @can('lead_admin')
                     <li class="nav-item">
-                        <a class="nav-link {{ isActive('admin/leads/flow') }}" href="{{ route('leads.flow') }}">
-                            <i class="fab fa-trello"></i>
-                            Lead FLow
-                        </a>
-                    </li>
-                @endcan
-                @can('lead_admin')
-                    <li class="nav-item">
                         <a class="nav-link {{ isActive('admin/leads/manager') }}" href="{{ route('leads.manager') }}">
                             <i class="fa fa-folders"></i>
                             Leads Manager
@@ -59,19 +51,19 @@
                         </a>
                     </li>
                 @endcan
+                @can('leads')
+                    <li class="nav-item">
+                        <a class="nav-link {{ isActive('admin/leads/flow') }}" href="{{ route('leads.flow') }}">
+                            <i class="fab fa-trello"></i>
+                            Lead Flow
+                        </a>
+                    </li>
+                @endcan
                 @can('calculators')
                     <li class="nav-item">
                         <a class="nav-link {{ isActive('admin/calculators') }}" href="{{ route('calculators.index') }}">
                             <i class="fa fa-calculator"></i>
                             Calculators
-                        </a>
-                    </li>
-                @endcan
-                @can('users')
-                    <li class="nav-item">
-                        <a class="nav-link {{ isActive('admin/users') }}" href="{{ route('users.index') }}">
-                            <i class="fa fa-user-tie"></i>
-                            Users
                         </a>
                     </li>
                 @endcan
@@ -138,6 +130,14 @@
                         <a class="nav-link {{ isActive('admin/quote') }}" href="{{ route('quote.index') }}">
                             <i class="fa fa-key"></i>
                             Mortgage Quote
+                        </a>
+                    </li>
+                @endcan
+                @can('users')
+                    <li class="nav-item">
+                        <a class="nav-link {{ isActive('admin/users') }}" href="{{ route('users.index') }}">
+                            <i class="fa fa-user-tie"></i>
+                            Users
                         </a>
                     </li>
                 @endcan

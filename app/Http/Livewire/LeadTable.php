@@ -77,11 +77,11 @@ class LeadTable extends Component
                     $query = $query->orderBy('id', 'asc');
                     break;
                 default:
-                    $query = $query->orderBy('id', 'desc');
+                    $query = $query->orderBy('id', 'asc');
                     break;
             }
         } else {
-            $query = $query->orderBy('id', 'desc');
+            $query = $query->orderBy('id', 'asc');
         }
 
         if ($this->lead_status != '') {

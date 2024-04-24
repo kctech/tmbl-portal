@@ -58,7 +58,7 @@
                         </div>
                         <select wire:model="sort_order" id="sort_order"  class="form-control">
                             <option value="recent" {{selected('recent', $sort_order)}}>Recently Updated</option>
-                            <option value="newest_first" {{selected('newest_first', $sort_order)}} {{selected('default', $sort_order)}}>Newset First</option>
+                            <option value="newest_first" {{selected('newest_first', $sort_order)}} {{selected('default', $sort_order)}}>Newest First</option>
                             <option value="oldest_first" {{selected('oldest_first', $sort_order)}}>Oldest First</option>
                         </select>
                     </div>

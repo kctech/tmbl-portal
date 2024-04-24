@@ -53,7 +53,7 @@
                         </div>
                         <select wire:model="sort_order" id="sort_order"  class="form-control">
                             <option value="recent" {{selected('recent', $sort_order)}}>Recently Updated</option>
-                            <option value="newest_first" {{selected('newest_first', $sort_order)}} {{selected('default', $sort_order)}}>Newset First</option>
+                            <option value="newest_first" {{selected('newest_first', $sort_order)}} {{selected('default', $sort_order)}}>Newest First</option>
                             <option value="oldest_first" {{selected('oldest_first', $sort_order)}}>Oldest First</option>
                             <option value="surname_az" {{selected('surname_az', $sort_order)}}>Surname A-Z</option>
                             <option value="surname_za" {{selected('surname_za', $sort_order)}}>Surname Z-A</option>
@@ -107,6 +107,7 @@
                                     <div class="list-group list-group-flush">
                                         @if($lead->status == \App\Models\Lead::PROSPECT || $lead->status == \App\Models\Lead::CONTACT_ATTEMPTED)
                                             @foreach($advisers as $adviser)
+                                                @php $adviser = (object) $adviser; @endphp
                                                 <div class="list-group-item p-1">
                                                     <div class="row">
                                                         <div class="col-1 text-right">
@@ -135,7 +136,12 @@
                                                             {{$adviser->first_name}} {{$adviser->last_name}}
                                                         </div>
                                                         <div class="col-2 text-right">
-                                                            {{$adviser->leads_this_month->count()}} this mo.
+                                                            @if(is_array($adviser->leads_this_month))
+                                                                {{count($adviser->leads_this_month)}}
+                                                            @else
+                                                                {{$adviser->leads_this_month->count()}}
+                                                            @endif
+                                                            this mo.
                                                         </div>
                                                         <div class="col-4 text-right">
                                                             @if($lead->status == \App\Models\Lead::PROSPECT || $lead->status == \App\Models\Lead::CONTACT_ATTEMPTED)
