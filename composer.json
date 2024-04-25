@@ -8,8 +8,8 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^7.3",
-        "barryvdh/laravel-dompdf": "^0.8.4",
+        "php": "^7.4|^8.1",
+        "barryvdh/laravel-dompdf": "^0.9",
         "diglactic/laravel-breadcrumbs": "^6.1",
         "fideloper/proxy": "^4.4",
         "guzzlehttp/guzzle": "^7.0.1",
@@ -24,14 +24,14 @@
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.9",
         "facade/ignition": "^2.3.6",
-        "fakerphp/faker": "1.9.1",
+        "fakerphp/faker": "1.23.1",
         "mockery/mockery": "1.0",
         "nunomaduro/collision": "^5.0",
         "phpunit/phpunit": "^9.0"
     },
     "config": {
         "platform": {
-            "php": "7.4.22"
+            "php": "8.1.25"
         },
         "optimize-autoloader": true,
         "preferred-install": "dist",
