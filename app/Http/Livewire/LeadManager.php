@@ -64,7 +64,7 @@ class LeadManager extends Component
         $query = Lead::query();
 
         //remove archived
-        $query = $query->where('status','!=',Lead::ARCHIVED);
+        $query = $query->whereNotIn('status',[Lead::ARCHIVED,Lead::TRANSFERRED]);
 
         if ($this->sort_order != '') {
             ++$this->filtersActive;
