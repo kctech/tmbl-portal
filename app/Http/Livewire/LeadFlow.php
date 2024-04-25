@@ -21,6 +21,7 @@ class LeadFlow extends Component
     public $chase_straties = [];
     public $flow_type = 'user';
     public $flow_include = 'unclaimed';
+    public $contact_route = null;
 
     //filters
     public $chase_strategy = 1;
@@ -32,10 +33,13 @@ class LeadFlow extends Component
 
         if(auth()->user()->can('lead_admin') && $this->flow_include == 'unclaimed'){
             $this->flow_type = 'unclaimed';
+            $this->contact_route = 'leads.manager-contact';
         }elseif(auth()->user()->can('lead_admin') && $this->flow_include == 'all'){
             $this->flow_type = 'admin';
+            $this->contact_route = 'leads.manager-contact';
         }else{
             $this->flow_type = 'user';
+            $this->contact_route = 'leads.contact';
         }
     }
 

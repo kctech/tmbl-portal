@@ -8,6 +8,7 @@ use App\Libraries\MABApi;
 use App\Libraries\Azure\GraphConnector;
 use App\Libraries\SSO\AzureProvider;
 use App\Libraries\Azure\OnlineMeeting;
+use App\Libraries\ChaseEmail;
 
 use App\Models\Lead;
 use App\Models\LeadEvent;

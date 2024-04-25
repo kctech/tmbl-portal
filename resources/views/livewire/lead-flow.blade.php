@@ -39,14 +39,14 @@
                             <span class="badge badge-light tip" title="Manual - Stage {{$strategy->info->chase_order}}"><i class="fal fa-user"></i> {{$strategy->info->chase_order}}</span>
                         @endif
                         <strong>{{$strategy->info->name}}</strong><br />
-                        <small>
+                        {{--<small>
                             @if($strategy->info->auto_contact == 0)
                                 {{ __('Automatically') }}
                             @else
                                 {{ __('Manually') }}
                             @endif
                             here {{$strategy->info->chase_duration}} after creation
-                        </small>
+                        </small>--}}
                     </div>
                     <ul class="list-group list-group-flush">
                         @forelse($strategy->data as $lead)
@@ -67,7 +67,7 @@
                                         @endif
                                     </div>
                                     <div class="col d-flex align-items-center justify-content-end">
-                                        <a class="btn btn-sm btn-primary" href="{{route('leads.manager-contact', [$lead->id, 'leads.flow'])}}"><i class="fa fa-chevron-right"></i></a>
+                                        <a class="btn btn-sm btn-primary" href="{{route($contact_route, [$lead->id, 'leads.flow'])}}"><i class="fa fa-chevron-right"></i></a>
                                     </div>
                                 </div>
                             </li>
