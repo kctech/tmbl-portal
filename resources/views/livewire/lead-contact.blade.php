@@ -86,13 +86,39 @@
         </div>
     </div>
 
+    @if(!$show_contact)
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-2 mb-3">
+                        <h3>Lead Notes</h3>
+                    </div>
+                    <div class="col-md-10 mb-3">
+                        <textarea wire:model.defer="lead_notes" id="lead_notes" class="form-control w-100" rows="10">{{json_decode($this->lead->data)->contact_notes ?? ''}}</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <button class="btn btn-info text-white" wire:click="$set('show_contact',true)">Show Meeting Organiser</button>
+                <button class="ml-3 btn btn-success" wire:click="allocate_and_transfer()">Transfer to MAB without Teams Meeting</button>
+                {{--<button class="ml-3 btn btn-secondary" wire:click="mark_as_contacted()">Mark as contacted, leave at current step</button>--}}
+                <button class="ml-3 btn btn-primary" wire:click="contact_progress()">Move to next step in chase process (send email)</button>
+                {{--<button class="ml-3 btn btn-dark" wire:click="contact_progress_silent()">Move to next step in chase process (without email)</button>--}}
+                <button class="float-right ml-3 btn btn-danger" wire:click="archive()">Archive Lead</button>
+            </div>
+        </div>
+    @endif
+
     <div wire:loading.remove>
 
-        @if($isLoaded)
+        @if($isLoaded && $show_contact)
 
             <div class="row">
                 <div class="col-md-12 mb-3">
-                    <h2>Weekly Availabilty <small class="float-right badge badge-primary">Updated {{$cache_date ?? 'Unknown'}}</small></h2>
+                    <h2>Weekly Availabilty <button class="btn btn-danger float-right mx-2" wire:click="$set('show_contact',false)">Hide Organiser</button> <small class="float-right badge badge-primary">Updated {{$cache_date ?? 'Unknown'}}</small></h2>
                     <div class="accordion" id="accordionWeeklyeAvailability">
                         @foreach($calendar as $week_number => $week)
                             <div class="card mb-3 p-3">
@@ -124,7 +150,18 @@
                                                 </div>
                                                 @foreach($hour['hours'] as $hour_number => $availability)
                                                     @if($availability['availability'] > 0)
-                                                        <div class="card px-1 mb-1 w-100 @if($availability['is_past']) text-muted @else cursor-pointer @endif @if($selected_date == $hour['date'] && $selected_time == (str_pad($hour_number,  2, "0", STR_PAD_LEFT).':00')) bg-primary text-white @else bg-light @endif" @if($availability['is_past']) style="opacity:0.5;" @endif @if(!$availability['is_past']) wire:click="select_slot('{{$hour['date']}}','{{ str_pad($hour_number,  2, "0", STR_PAD_LEFT) }}:00')" @endif>
+                                                        <div class="card px-1 mb-1 w-100
+                                                            @if($availability['is_past']) text-muted @else cursor-pointer @endif
+                                                            @if($selected_date == $hour['date'] && $selected_time == (str_pad($hour_number,  2, "0", STR_PAD_LEFT).':00')) bg-primary text-white @else bg-light @endif"
+                                                            @if($availability['is_past']) style="opacity:0.5;" @endif
+                                                            @if(!$availability['is_past'])
+                                                                @if($selected_date == $hour['date'] && $selected_time == (str_pad($hour_number,  2, "0", STR_PAD_LEFT).':00'))
+                                                                    wire:click="select_slot(null,null)"
+                                                                @else
+                                                                    wire:click="select_slot('{{$hour['date']}}','{{ str_pad($hour_number,  2, "0", STR_PAD_LEFT) }}:00')"
+                                                                @endif
+                                                            @endif
+                                                        >
                                                             <div class="row">
                                                                 <div class="col-7">{{ str_pad($hour_number,  2, "0", STR_PAD_LEFT) }}:00</div>
                                                                 <div class="col-5 text-right">{{$availability['availability']}}</div>
@@ -158,10 +195,10 @@
 
             <div class="row">
                 <div class="col ml-auto text-right">
-                    <button class="btn btn-secondary" wire:click="mark_as_pause_contacting()">Pause auto-contacting</button>
-                    <button class="ml-3 btn btn-secondary" wire:click="mark_as_contacted()">Mark as contacted</button>
-                    @if(!empty($selected_adviser) && !empty($selected_date) && !empty($selected_time))
-                        <button class="ml-3 btn btn-primary" wire:click="allocate_and_transfer()">Allocate and Transfer Lead</button>
+                    {{--<button class="btn btn-secondary" wire:click="mark_as_pause_contacting()">Pause auto-contacting</button>
+                    <button class="ml-3 btn btn-secondary" wire:click="mark_as_contacted()">Mark as contacted</button>--}}
+                    @if(!empty($selected_adviser))
+                        <button class="ml-3 btn btn-success" wire:click="allocate_and_transfer()">Allocate and Transfer to MAB @if(!empty($selected_date) && !empty($selected_time)) (with Teams meeting) @endif</button>
                     @endif
                 </div>
             </div>

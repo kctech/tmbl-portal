@@ -69,29 +69,30 @@
     </div>
 
     @if($show_contact)
-
-    <div class="card mb-3 p-3">
-        <div class="row">
-            <div class="col-2 d-flex align-items-center justify-content-center"><strong>Filter Adviser List</strong></div>
-            <div class="col-8">
-                <x-select2-tags wire:model="advisers" id="advisers" class="form-control select2-tags" placeholder="Select adviser(s). Showing All by default.">
-                    @foreach($adviser_list as $adv)
-                        @php $adv = (object) $adv @endphp
-                        @if($adv->email)
-                            <option value="{{$adv->email}}">
-                                {{$adv->first_name}} {{$adv->last_name}} [{{$adv->presence->availability ?? 'Unknown'}}]
-                            </option>
-                        @endif
-                    @endforeach
-                </x-select2-tags>
+        @if($show_meeting)
+            <div class="card mb-3 p-3">
+                <div class="row">
+                    <div class="col-2 d-flex align-items-center justify-content-center"><strong>Filter Adviser List</strong></div>
+                    <div class="col-8">
+                        <x-select2-tags wire:model="advisers" id="advisers" class="form-control select2-tags" placeholder="Select adviser(s). Showing All by default.">
+                            @foreach($adviser_list as $adv)
+                                @php $adv = (object) $adv @endphp
+                                @if($adv->email)
+                                    <option value="{{$adv->email}}">
+                                        {{$adv->first_name}} {{$adv->last_name}} [{{$adv->presence->availability ?? 'Unknown'}}]
+                                    </option>
+                                @endif
+                            @endforeach
+                        </x-select2-tags>
+                    </div>
+                    <div class="col-2">
+                        <button class="btn btn-danger btn-block" wire:click="hide_contact()">Hide Organiser</button>
+                    </div>
+                </div>
             </div>
-            <div class="col-2">
-                <button class="btn btn-danger btn-block" wire:click="$set('show_contact',false)">Hide Organiser</button>
-            </div>
-        </div>
-    </div>
-
+        @endif
     @else
+
         <div class="card mb-3">
             <div class="card-body">
                 <div class="row">
@@ -107,132 +108,226 @@
 
         <div class="card mb-3">
             <div class="card-body">
-                <button class="btn btn-success" wire:click="$set('show_contact',true)">Show Contact Organiser</button>
-                <button class="ml-3 btn btn-danger" wire:click="archive()">Archive Lead</button>
-                <button class="ml-3 btn btn-secondary" wire:click="mark_as_contacted()">Mark as contacted, leave at current step</button>
-                <button class="ml-3 btn btn-primary" wire:click="contact_progress()">Move to next step in chase process (send email)</button>
-                <button class="ml-3 btn btn-dark" wire:click="contact_progress_silent()">Move to next step in chase process (without email)</button>
+                <button class="btn btn-sm btn-info text-white" wire:click="show_meeting_contact()">Meeting Organiser</button>
+                <button class="ml-3 btn btn-sm btn-info text-white" wire:click="$set('show_contact',true)">Allocate &amp; Transfer</button>
+                <button class="ml-3 btn-sm btn btn-secondary" wire:click="mark_as_contacted()">Mark as contacted, leave at current step</button>
+                <button class="ml-3 btn-sm btn btn-primary" wire:click="contact_progress()">Move to next step in chase process (send email)</button>
+                <button class="ml-3 btn-sm btn btn-dark" wire:click="contact_progress_silent()">Move to next step in chase process (without email)</button>
+                <button class="float-right ml-3 btn btn-sm btn-danger" wire:click="archive()">Archive Lead</button>
             </div>
         </div>
+
     @endif
 
     <div wire:loading.remove>
 
         @if($isLoaded && $show_contact)
-
-            <div class="row">
-                <div class="col-md-4  d-flex flex-column">
-                    <h2>Availabile Advisers</h2>
-                    <div class="card p-0 w-100 h-100 position-relative mb-3 flex-grow-1" style="min-height: @if(!empty($advisers)) 100px; @else 300px; @endif">
-                        <div class="card-body p-0 position-absolute overflow-auto" style="top:0; bottom:0; left:0; right:0;">
-                            <div class="list-group list-group-flush">
-                                @foreach($adviser_list as $adviser)
-                                    @php
-                                        $adviser = (object) $adviser;
-                                        $adviser->presence = (object) $adviser->presence;
-                                    @endphp
-                                    @if(
-                                        (!in_array($adviser->email,$advisers) && !empty($advisers))
-                                        ||
-                                        (in_array(($adviser->presence->activity ?? 'PresenceUnknown'),['PresenceUnknown','Unknown','Offline','OutOfOffice']) && empty($advisers))
-                                    )
-                                        @continue
+            @if($show_meeting)
+                <div class="row">
+                    <div class="col-md-4  d-flex flex-column">
+                        <h2>Availabile Advisers</h2>
+                        <div class="card p-0 w-100 h-100 position-relative mb-3 flex-grow-1" style="min-height: @if(!empty($advisers)) 100px; @else 300px; @endif">
+                            <div class="card-body p-0 position-absolute overflow-auto" style="top:0; bottom:0; left:0; right:0;">
+                                <div class="list-group list-group-flush">
+                                    @if(!empty($selected_adviser))
+                                        <div onclick="@this.set('selected_adviser',null)" class="cursor-pointer list-group-item p-1 text-center text-white bg-danger">
+                                            Deselect Adviser
+                                        </div>
                                     @endif
-                                    <div class="list-group-item p-1">
-                                        <div onclick="@this.set('selected_adviser','{{$adviser->email}}')" class="cursor-pointer row @if($adviser->email == $selected_adviser)) bg-primary text-white @endif">
-                                            <div class="col-1 text-right">
-                                                <span class="tip" title="
-                                                    {{\App\Libraries\Interpret::AzureStatus(($adviser->presence->activity ?? 'Unknown'))}}
-                                                    @if(!is_null(($adviser->presence->statusMessage->message->content ?? null)))
-                                                        - {{$adviser->presence->statusMessage->message->content ?? 'Blank Message'}}
-                                                    @endif
-                                                ">
-                                                    @switch(($adviser->presence->availability ?? 'unknown'))
-                                                        @case('Available')
-                                                            <i class="fas fa-check-circle text-success"></i>
-                                                            @break
-                                                        @case('Busy')
-                                                        @case('Presenting')
-                                                        @case('DoNotDisturb')
-                                                            <i class="fas fa-circle text-danger"></i>
-                                                            @break
-                                                        @case('Away')
-                                                            <i class="fas fa-circle text-warning"></i>
-                                                            @break
-                                                        @case('Offline')
-                                                            <i class="fas fa-times-circle text-muted"></i>
-                                                            @break
-                                                        @default
-                                                            <i class="fas fa-question-circle text-muted"></i>
-                                                    @endswitch
-                                                </span>
-                                            </div>
-                                            <div class="col-7 text-truncate">
-                                                {{$adviser->first_name ?? '?'}} {{$adviser->last_name ?? '?'}}
-                                            </div>
-                                            <div class="col-4 text-right">
-                                                {{$adviser->leads_count ?? 0 }} this mo.
+                                    @foreach($adviser_list as $adviser)
+                                        @php
+                                            $adviser = (object) $adviser;
+                                            $adviser->presence = (object) $adviser->presence;
+                                        @endphp
+                                        @if(
+                                            (!in_array($adviser->email,$advisers) && !empty($advisers))
+                                            ||
+                                            (in_array(($adviser->presence->activity ?? 'PresenceUnknown'),['PresenceUnknown','Unknown','Offline','OutOfOffice']) && empty($advisers))
+                                        )
+                                            @continue
+                                        @endif
+                                        <div class="list-group-item p-1">
+                                            <div onclick="@this.set('selected_adviser','{{$adviser->email}}')" class="cursor-pointer row @if($adviser->email == $selected_adviser)) bg-primary text-white @endif">
+                                                <div class="col-1 text-right">
+                                                    <span class="tip" title="
+                                                        {{\App\Libraries\Interpret::AzureStatus(($adviser->presence->activity ?? 'Unknown'))}}
+                                                        @if(!is_null(($adviser->presence->statusMessage->message->content ?? null)))
+                                                            - {{$adviser->presence->statusMessage->message->content ?? 'Blank Message'}}
+                                                        @endif
+                                                    ">
+                                                        @switch(($adviser->presence->availability ?? 'unknown'))
+                                                            @case('Available')
+                                                                <i class="fas fa-check-circle text-success"></i>
+                                                                @break
+                                                            @case('Busy')
+                                                            @case('Presenting')
+                                                            @case('DoNotDisturb')
+                                                                <i class="fas fa-circle text-danger"></i>
+                                                                @break
+                                                            @case('Away')
+                                                                <i class="fas fa-circle text-warning"></i>
+                                                                @break
+                                                            @case('Offline')
+                                                                <i class="fas fa-times-circle text-muted"></i>
+                                                                @break
+                                                            @default
+                                                                <i class="fas fa-question-circle text-muted"></i>
+                                                        @endswitch
+                                                    </span>
+                                                </div>
+                                                <div class="col-7 text-truncate">
+                                                    {{$adviser->first_name ?? '?'}} {{$adviser->last_name ?? '?'}}
+                                                </div>
+                                                <div class="col-4 text-right">
+                                                    {{$adviser->leads_count ?? 0 }} this mo.
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                @endforeach
+                                    @endforeach
+                                </div>
+                            </div>
+                            <div class="overflow-msg overflow-msg-scroll position-absolute text-muted text-center" style="bottom:0; left:0; right:0; background-image: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,1));">
+                                <small>scroll to see more</small>
                             </div>
                         </div>
-                        <div class="overflow-msg overflow-msg-scroll position-absolute text-muted text-center" style="bottom:0; left:0; right:0; background-image: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,1));">
-                            <small>scroll to see more</small>
+                    </div>
+                    <div class="col-md-8 mb-3">
+                        <h2>Weekly Availabilty <small class="float-right badge badge-primary">Updated {{$cache_date ?? 'Unknown'}}</small></h2>
+                        <div class="accordion" id="accordionWeeklyeAvailability">
+                            @foreach($calendar as $week_number => $week)
+                                <div class="card mb-3 p-3">
+                                    <div onclick="@this.set('selected_week','{{$week_number}}')" class="cursor-pointer w-100 d-flex flex-row align-items-center justify-content-center" data-toggle="collapse" data-target="#collapseWeek{{$week_number}}" aria-expanded="@if($week_number == $selected_week) true @else false @endif" aria-controls="collapseWeek{{$week_number}}"  id="heading{{$week_number}}">
+                                        <div>
+                                            <h3>
+                                                <small>
+                                                    @if($week['available_slots'] == 0)
+                                                        <i class="fas fa-circle text-danger tip" title="{{$week['available_slots']}} slots available"></i>
+                                                    @elseif($week['available_slots'] > 0 && $week['available_slots'] < 10)
+                                                        <i class="fas fa-circle text-warning tip" title="{{$week['available_slots']}} slots available"></i>
+                                                    @else
+                                                        <i class="fas fa-circle text-success tip" title="{{$week['available_slots']}} slots available"></i>
+                                                    @endif
+                                                </small>
+                                                {{$week['title']}}
+                                            </h3>
+                                        </div>
+                                        <div class="ml-auto"><span class="badge badge-primary">Starts {{$week['start_date']}}</span></div>
+                                    </div>
+                                    <div class="collapse @if($week_number == $selected_week) show @endif" id="collapseWeek{{$week_number}}"  aria-labelledby="heading{{$week_number}}" data-parent="#accordionWeeklyeAvailability">
+                                        <hr />
+                                        <div class="row">
+                                            @foreach($week['days'] as $day => $hour)
+                                                <div class="col" @if($hour['is_past']) style="opacity:0.5;" @endif>
+                                                    <div class="mb-1">
+                                                        <h3 class="mb-0">{{$day}}</h3>
+                                                        <span class="badge badge-primary">{{$hour['date']}}</span>
+                                                    </div>
+                                                    @foreach($hour['hours'] as $hour_number => $availability)
+                                                        @if($availability['availability'] > 0)
+                                                            <div class="card px-1 mb-1 w-100
+                                                                @if($availability['is_past']) text-muted @else cursor-pointer @endif
+                                                                @if($selected_date == $hour['date'] && $selected_time == (str_pad($hour_number,  2, "0", STR_PAD_LEFT).':00')) bg-primary text-white @else bg-light @endif"
+                                                                @if($availability['is_past']) style="opacity:0.5;" @endif
+                                                                @if(!$availability['is_past'])
+                                                                    @if($selected_date == $hour['date'] && $selected_time == (str_pad($hour_number,  2, "0", STR_PAD_LEFT).':00'))
+                                                                        wire:click="select_slot(null,null)"
+                                                                    @else
+                                                                        wire:click="select_slot('{{$hour['date']}}','{{ str_pad($hour_number,  2, "0", STR_PAD_LEFT) }}:00')"
+                                                                    @endif
+                                                                @endif
+                                                            >
+                                                                <div class="row">
+                                                                    <div class="col-7">{{ str_pad($hour_number,  2, "0", STR_PAD_LEFT) }}:00</div>
+                                                                    <div class="col-5 text-right">{{$availability['availability']}}</div>
+                                                                </div>
+                                                            </div>
+                                                        @endif
+                                                    @endforeach
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>
-                <div class="col-md-8 mb-3">
-                    <h2>Weekly Availabilty <small class="float-right badge badge-primary">Updated {{$cache_date ?? 'Unknown'}}</small></h2>
-                    <div class="accordion" id="accordionWeeklyeAvailability">
-                        @foreach($calendar as $week_number => $week)
-                            <div class="card mb-3 p-3">
-                                <div onclick="@this.set('selected_week','{{$week_number}}')" class="cursor-pointer w-100 d-flex flex-row align-items-center justify-content-center" data-toggle="collapse" data-target="#collapseWeek{{$week_number}}" aria-expanded="@if($week_number == $selected_week) true @else false @endif" aria-controls="collapseWeek{{$week_number}}"  id="heading{{$week_number}}">
-                                    <div>
-                                        <h3>
-                                            <small>
-                                                @if($week['available_slots'] == 0)
-                                                    <i class="fas fa-circle text-danger tip" title="{{$week['available_slots']}} slots available"></i>
-                                                @elseif($week['available_slots'] > 0 && $week['available_slots'] < 10)
-                                                    <i class="fas fa-circle text-warning tip" title="{{$week['available_slots']}} slots available"></i>
-                                                @else
-                                                    <i class="fas fa-circle text-success tip" title="{{$week['available_slots']}} slots available"></i>
-                                                @endif
-                                            </small>
-                                            {{$week['title']}}
-                                        </h3>
-                                    </div>
-                                    <div class="ml-auto"><span class="badge badge-primary">Starts {{$week['start_date']}}</span></div>
-                                </div>
-                                <div class="collapse @if($week_number == $selected_week) show @endif" id="collapseWeek{{$week_number}}"  aria-labelledby="heading{{$week_number}}" data-parent="#accordionWeeklyeAvailability">
-                                    <hr />
-                                    <div class="row">
-                                        @foreach($week['days'] as $day => $hour)
-                                            <div class="col" @if($hour['is_past']) style="opacity:0.5;" @endif>
-                                                <div class="mb-1">
-                                                    <h3 class="mb-0">{{$day}}</h3>
-                                                    <span class="badge badge-primary">{{$hour['date']}}</span>
+
+            @else
+
+            <div class="card mb-3 p-3">
+                <div class="row">
+                    <div class="col-10">
+                        <h2>Select Adviser</h2>
+                    </div>
+                    <div class="col-2">
+                        <button class="btn btn-danger btn-block" wire:click="hide_contact()">Hide Organiser</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card p-0 w-100 h-100 position-relative mb-3 flex-grow-1" style="min-height: @if(!empty($advisers)) 100px; @else 300px; @endif">
+                            <div class="card-body p-0 position-absolute overflow-auto" style="top:0; bottom:0; left:0; right:0;">
+                                <div class="list-group list-group-flush">
+                                    @if(!empty($selected_adviser))
+                                        <div onclick="@this.set('selected_adviser',null)" class="cursor-pointer list-group-item p-1 text-center text-white bg-danger">
+                                            Deselect Adviser
+                                        </div>
+                                    @endif
+                                    @foreach($adviser_list as $adviser)
+                                        @php
+                                            $adviser = (object) $adviser;
+                                            $adviser->presence = (object) $adviser->presence;
+                                        @endphp
+                                        <div class="list-group-item p-1">
+                                            <div onclick="@this.set('selected_adviser','{{$adviser->email}}')" class="cursor-pointer row @if($adviser->email == $selected_adviser)) bg-primary text-white @endif">
+                                                <div class="col-1 text-right">
+                                                    <span class="tip" title="
+                                                        {{\App\Libraries\Interpret::AzureStatus(($adviser->presence->activity ?? 'Unknown'))}}
+                                                        @if(!is_null(($adviser->presence->statusMessage->message->content ?? null)))
+                                                            - {{$adviser->presence->statusMessage->message->content ?? 'Blank Message'}}
+                                                        @endif
+                                                    ">
+                                                        @switch(($adviser->presence->availability ?? 'unknown'))
+                                                            @case('Available')
+                                                                <i class="fas fa-check-circle text-success"></i>
+                                                                @break
+                                                            @case('Busy')
+                                                            @case('Presenting')
+                                                            @case('DoNotDisturb')
+                                                                <i class="fas fa-circle text-danger"></i>
+                                                                @break
+                                                            @case('Away')
+                                                                <i class="fas fa-circle text-warning"></i>
+                                                                @break
+                                                            @case('Offline')
+                                                                <i class="fas fa-times-circle text-muted"></i>
+                                                                @break
+                                                            @default
+                                                                <i class="fas fa-question-circle text-muted"></i>
+                                                        @endswitch
+                                                    </span>
                                                 </div>
-                                                @foreach($hour['hours'] as $hour_number => $availability)
-                                                    @if($availability['availability'] > 0)
-                                                        <div class="card px-1 mb-1 w-100 @if($availability['is_past']) text-muted @else cursor-pointer @endif @if($selected_date == $hour['date'] && $selected_time == (str_pad($hour_number,  2, "0", STR_PAD_LEFT).':00')) bg-primary text-white @else bg-light @endif" @if($availability['is_past']) style="opacity:0.5;" @endif @if(!$availability['is_past']) wire:click="select_slot('{{$hour['date']}}','{{ str_pad($hour_number,  2, "0", STR_PAD_LEFT) }}:00')" @endif>
-                                                            <div class="row">
-                                                                <div class="col-7">{{ str_pad($hour_number,  2, "0", STR_PAD_LEFT) }}:00</div>
-                                                                <div class="col-5 text-right">{{$availability['availability']}}</div>
-                                                            </div>
-                                                        </div>
-                                                    @endif
-                                                @endforeach
+                                                <div class="col-7 text-truncate">
+                                                    {{$adviser->first_name ?? '?'}} {{$adviser->last_name ?? '?'}}
+                                                </div>
+                                                <div class="col-4 text-right">
+                                                    {{$adviser->leads_count ?? 0 }} this mo.
+                                                </div>
                                             </div>
-                                        @endforeach
-                                    </div>
+                                        </div>
+                                    @endforeach
                                 </div>
                             </div>
-                        @endforeach
+                            <div class="overflow-msg overflow-msg-scroll position-absolute text-muted text-center" style="bottom:0; left:0; right:0; background-image: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,1));">
+                                <small>scroll to see more</small>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            @endif
 
             <div class="row">
                 <div class="col-md-4 mb-3">
@@ -250,11 +345,12 @@
 
             <div class="row">
                 <div class="col ml-auto text-right">
-                    @if(!empty($selected_adviser) && !empty($selected_date) && !empty($selected_time))
-                        <button class="ml-3 btn btn-success" wire:click="allocate_and_transfer()">Allocate and Transfer Lead</button>
+                    @if(!empty($selected_adviser))
+                        <button class="ml-3 btn btn-success" wire:click="allocate_and_transfer()">Allocate and Transfer Lead @if(!empty($selected_date) && !empty($selected_time)) (with meeting) @endif</button>
                     @endif
                 </div>
             </div>
+
         @endif
 
     </div>

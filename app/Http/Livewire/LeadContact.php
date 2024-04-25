@@ -35,6 +35,7 @@ class LeadContact extends Component
     public $lead_id = null;
     public $lead = null;
 
+    public $show_contact = false;
     public $weeks = 4;
     public $days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
     public $start_hour = 6;
@@ -61,7 +62,7 @@ class LeadContact extends Component
 
         $this->lead_notes = json_decode($this->lead->data)->contact_notes ?? '';
 
-        $this->selected_adviser = User::where('id',session('user_id'))->first()->emailAddress;
+        $this->selected_adviser = User::where('id',session('user_id'))->first()->email;
 
         $this->contact_schedule = LeadChaser::where('method','email')->where('status',LeadChaser::ACTIVE)->get();
     }
@@ -83,7 +84,11 @@ class LeadContact extends Component
         $this->selected_date = $date;
         $this->selected_time = $hour;
         //Carbon::createFromFormat("Y-m-d H:i", $date." ".$hour)->format("d-m-Y H:i");
-        $this->emit('updated',['message'=>'Selected: '.$this->selected_date .' '. $this->selected_time]);
+        if(is_null($date)){
+            $this->emit('updated',['message'=>'Deselected date']);
+        }else{
+            $this->emit('updated',['message'=>'Selected: '.$this->selected_date .' '. $this->selected_time]);
+        }
     }
 
     private function buildCalendar(){
@@ -232,6 +237,67 @@ class LeadContact extends Component
 
     }
 
+    public function contact_progress(){
+
+        //next contact step
+        $next_step = \App\Models\LeadChaser::getNextStep($this->lead->strategy_id, $this->lead->strategy_position_id);
+
+        $lead_data = json_decode($this->lead->data);
+        $lead_data->contact_notes = $this->lead_notes;
+        $this->lead->data = json_encode($lead_data);
+        $this->lead->last_contacted_at = date("Y-m-d H:i:s");
+        //$this->lead->status = Lead::CONTACT_ATTEMPTED;
+        ++$this->lead->contact_count;
+        if($next_step !== false){
+            $this->lead->strategy_position_id = $next_step->chase_order;
+        }
+        $this->lead->save();
+        //$this->emit('updated', ['message' => "Lead status updated [" . $this->lead_id . "]"]);
+
+        //send next stage email
+        if($next_step !== false){
+            $merge_data_compiled = ChaseEmail::createAndSend($this->lead,$next_step,true);
+        }else{
+            session()->flash('alert-danger','Lead '.$this->lead_id.' is at the end of the chase streategy, consider archiving.');
+            return $this->redirectRoute($this->redirect);
+        }
+
+        $this->lead->events()->create([
+            'account_id' => $this->lead->account_id,
+            'user_id' => session('user_id'),
+            'event_id' => LeadEvent::MANUAL_CONTACT_ATTEMPTED,
+            'information' => $this->lead_notes
+        ]);
+
+        $this->skipRender();
+        session()->flash('alert-success','Lead ID '.$this->lead_id.' has been contacted and progressed to the next step');
+        return $this->redirectRoute($this->redirect);
+    }
+
+    public function contact_progress_silent(){
+
+        //next contact step
+        $next_step = \App\Models\LeadChaser::getNextStep($this->lead->strategy_id, $this->lead->strategy_position_id);
+
+        $lead_data = json_decode($this->lead->data);
+        $lead_data->contact_notes = $this->lead_notes;
+        $this->lead->data = json_encode($lead_data);
+        $this->lead->last_contacted_at = date("Y-m-d H:i:s");
+        //$this->lead->status = Lead::CONTACT_ATTEMPTED;
+        ++$this->lead->contact_count;
+        if($next_step !== false){
+            $this->lead->strategy_position_id = $next_step->chase_order;
+        }
+        $this->lead->save();
+        //$this->emit('updated', ['message' => "Lead status updated [" . $this->lead_id . "]"]);
+
+        //send next stage email
+        if($next_step == false){
+            session()->flash('alert-danger','Lead '.$this->lead_id.' is at the end of the chase streategy, consider archiving.');
+            return $this->redirectRoute($this->redirect);
+        }
+    }
+
     public function mark_as_contacted(){
 
         $lead_data = json_decode($this->lead->data);
@@ -279,177 +345,184 @@ class LeadContact extends Component
     }
 
     public function allocate_and_transfer(){
-
-        $lead_data = json_decode($this->lead->data);
-        $lead_data->contact_notes = $this->lead_notes;
-        $this->lead->data = json_encode($lead_data);
-        $this->lead->last_contacted_at = date("Y-m-d H:i:s");
-        $this->lead->status = Lead::CONTACT_ATTEMPTED;
-        ++$this->lead->contact_count;
-        if($this->lead->save()){
-
-            $this->lead->events()->create([
-                'account_id' => $this->lead->account_id,
-                'user_id' => session('user_id'),
-                'event_id' => LeadEvent::MANUAL_CONTACT_ATTEMPTED,
-                'information' => $this->lead_notes
-            ]);
-
-            $adviser = \App\Models\User::where('email',$this->selected_adviser)->first() ?? null;
-            if(is_null($adviser->mab_id)){
-                $mab = new \App\Libraries\MABApi(false,'introducers:read:authorizedfirms',true);
-                $mab_id = $mab->getAdviser($adviser->full_name());
-                if(!is_null($mab_id)){
-                    $adviser->mab_id = $mab_id;
-                    $adviser->save();
-                }
-            }
-
-            if(is_null($adviser->mab_id)){
-                $this->emit('error', ['message' => "Unable to find user '".$adviser->full_name()."' in MAB portal."]);
-                return;
-            }
-
-            list($mab_firm_id,$mab_branch_id,$mab_user_id) = explode("|",$adviser->mab_id);
-
-            $data = [
-                //"mortgageBasis" => 1,
-                //"prospectType" => 1,
-                "contactMethodTypeId" => 4,
-                //"groupId" => 1,
-                //"introducerId" => "6388e19c-feb1-4df2-8bcc-704a090999b0",
-                "introducerBranchId" => "1061f882-a004-4b6c-84d4-ab5bb9a03826",
-                "introducerStaffId" => "03580d2b-4aee-4983-b904-6016f142d9e6",
-                //"groupEmailAddress" => "Devnoreply1@mab.org.uk",
-                //"submittedByName" => "Create Local Lead Referer",
-                "dateTimeGdprConsent" => \Carbon\Carbon::parse($this->lead->created_at)->format("Y-m-d\TH:i:s\Z"),
-                //"mortgagePurpose" => 1,
-                //"currentBuyingPosition" => 2,
-                //"howCanWeHelp" => 1,
-                //"plotNumber" => 42,
-                //"foundFutureHome" => false,
-                //"totalGrossSalary" => 80000,
-                //"propertyValue" => 300000,
-                //"deposit" => 30000,
-                "distributionType" => 3,
-                //"distributionGroupId" => "5a4aaeb5-484e-4018-a2e6-a2e988fef65e",
-                //"leadReferralType" => 0,
-                //"timeOfReferral" => "2023-02-06T09:17:18.684Z",
-                //"creationDate" => "2023-02-06T09:17:18.684Z",
-                "notes" => $this->lead_notes,
-                //"consenter" => 0,
-                "customers" => [
-                    [
-                        //"id" => "feecfecc-8cad-4175-a781-37ea4cb1e8b2",
-                        //"title" => 1,
-                        "firstName" => $this->lead->first_name,
-                        "lastName" => $this->lead->last_name,
-                        "emailAddress" => $this->lead->email_address,
-                        "telephoneNumber" => $this->lead->contact_number,
-                        "dateOfBirth" => "1900-01-01T00:00:00Z",
-                        //"gender" => 1,
-                        //"maritalStatus" => 2,
-                        "index" => 0,
-                        //"employmentStatus" => 1,
-                        //"workedLongerThan6MonthsForCurrentEmployer" => true,
-                        //"retirementAge" => 65,
-                        //"hasActiveUserAccount" => false,
-                        //"midasProClientId" => null
-                    ]
-                ],
-                "allocatedFirmId" => $mab_firm_id,
-                "allocatedFirmBranchId" => $mab_branch_id,
-                "allocatedAdviserId" => $mab_user_id,
-                //"shouldSendCustomerInviteEmail" => true,
-                //"midasProClientFolderID" => null,
-                "customFields" => [
-                    "Portal_Lead_ID" => $this->lead->id,
-                ]
-            ];
-
-            $mab = new MABApi(false);
-            $mab_lead_response = $mab->newLead($data);
-            if($mab_lead_response->status){
-                $this->emit('updated', ['message' => "Lead allocated [" . $this->lead_id . "]"]);
-                $this->lead->status = Lead::TRANSFERRED;
-                $this->lead->user_id = $adviser->id;
-                $this->lead->allocated_at = date("Y-m-d H:i:s");
-                $this->lead->transferred_at = date("Y-m-d H:i:s");
-                $this->lead->save();
+        if(!empty($this->selected_adviser)){
+            $lead_data = json_decode($this->lead->data);
+            $lead_data->contact_notes = $this->lead_notes;
+            $this->lead->data = json_encode($lead_data);
+            $this->lead->last_contacted_at = date("Y-m-d H:i:s");
+            $this->lead->status = Lead::CONTACT_ATTEMPTED;
+            ++$this->lead->contact_count;
+            if($this->lead->save()){
 
                 $this->lead->events()->create([
                     'account_id' => $this->lead->account_id,
                     'user_id' => session('user_id'),
-                    'event_id' => LeadEvent::TRANSFERRED_TO_MAB,
-                    'information' => json_encode($mab_lead_response)
+                    'event_id' => LeadEvent::MANUAL_CONTACT_ATTEMPTED,
+                    'information' => $this->lead_notes
                 ]);
 
-                //Try and instantiate an Azureprovider instance for teams. It'll throw if there's no account config for it or it's not enabled
-                try {
-                    $azure = new AzureProvider($this->lead->account_id, 'TEAMS', true);
-                    $meeting_date = Carbon::createFromFormat("Y-m-d H:i", $this->selected_date." ".$this->selected_time);
-
-                    //TEAMS
-                    $meeting = new OnlineMeeting($adviser->email);
-                    $meeting->subject = "New Lead: ".$this->lead->full_name();
-                    $meeting->description = "Testing Azure/Teams API credentials";
-                    $meeting->date = $meeting_date->format("Y-m-d");
-                    $meeting->time = $meeting_date->startOfHour()->addHour()->format("H:i");
-                    $meeting->duration = 60;
-                    $meeting->addAttendee($this->lead->full_name(), $this->lead->email_address);
-
-                    $graph = new GraphConnector($azure);
-                    $confirmation = $graph->createOnlineMeeting($meeting);
-                    switch($confirmation->error){
-                        case null:
-                            $err = null;
-                            break;
-                        case 1:
-                            $err = "User ".$this->selected_adviser." not found in Miscosoft AD.";
-                            break;
-                        case 2:
-                            $err = "Failed to create Teams meeting";
-                            break;
-                        case 3:
-                            $err = "User ".$this->selected_adviser." couldn't be fetched form Miscosoft AD.";
-                            break;
-                        case 4:
-                            $err = "Missing required Information";
-                            break;
-                        case 8:
-                            $err = "No attendees added";
-                            break;
-                        default:
-                            $err = null;
+                $adviser = \App\Models\User::where('email',$this->selected_adviser)->first() ?? null;
+                if(is_null($adviser->mab_id)){
+                    $mab = new \App\Libraries\MABApi(false,'introducers:read:authorizedfirms',true);
+                    $mab_id = $mab->getAdviser($adviser->full_name());
+                    if(!is_null($mab_id)){
+                        $adviser->mab_id = $mab_id;
+                        $adviser->save();
                     }
-                    if(!is_null($err)){
-                        $this->emit('error', ['message' => "Teams create failed: ".$err]);
-                    }else{
-
-                        $this->lead->events()->create([
-                            'account_id' => $this->lead->account_id,
-                            'user_id' => session('user_id'),
-                            'event_id' => LeadEvent::BOOKED_TEAMS_MEETING,
-                            'information' => json_encode(["adviser"=>strtolower($adviser->email),"date"=>$meeting_date->format("Y-m-d H:i:s")])
-                        ]);
-
-                        $this->skipRender();
-                        session()->flash('alert-success','Lead ID '.$this->lead_id.' transferred to '.$this->selected_adviser." and a Teams meeting booked at ".$meeting_date->format("d/m/Y H:i"));
-                        return $this->redirectRoute('leads.manager');
-                    }
-                } catch (\App\Exceptions\AccountNotConfiguredException $exception) {
-                    Log::critical($exception->getMessage(),['tenant_id' => $this->provider->getTenantId()],json_encode($meeting));
-                    //no teams setup
-                    $this->skipRender();
-                    session()->flash('alert-success','Lead ID '.$this->lead_id.' transferred to '.$this->selected_adviser." and a Teams meeting couldn't be booked");
-                    return $this->redirectRoute('leads.manager');
                 }
-            }else{
-                $this->emit('error', ['message' => "Unable to send to MAB Portal [" . $this->lead_id . "]"]);
-            }
 
+                if(is_null($adviser->mab_id)){
+                    $this->emit('error', ['message' => "Unable to find user '".$adviser->full_name()."' in MAB portal."]);
+                    return;
+                }
+
+                list($mab_firm_id,$mab_branch_id,$mab_user_id) = explode("|",$adviser->mab_id);
+
+                $data = [
+                    //"mortgageBasis" => 1,
+                    //"prospectType" => 1,
+                    "contactMethodTypeId" => 4,
+                    //"groupId" => 1,
+                    //"introducerId" => "6388e19c-feb1-4df2-8bcc-704a090999b0",
+                    "introducerBranchId" => "1061f882-a004-4b6c-84d4-ab5bb9a03826",
+                    "introducerStaffId" => "03580d2b-4aee-4983-b904-6016f142d9e6",
+                    //"groupEmailAddress" => "Devnoreply1@mab.org.uk",
+                    //"submittedByName" => "Create Local Lead Referer",
+                    "dateTimeGdprConsent" => \Carbon\Carbon::parse($this->lead->created_at)->format("Y-m-d\TH:i:s\Z"),
+                    //"mortgagePurpose" => 1,
+                    //"currentBuyingPosition" => 2,
+                    //"howCanWeHelp" => 1,
+                    //"plotNumber" => 42,
+                    //"foundFutureHome" => false,
+                    //"totalGrossSalary" => 80000,
+                    //"propertyValue" => 300000,
+                    //"deposit" => 30000,
+                    "distributionType" => 3,
+                    //"distributionGroupId" => "5a4aaeb5-484e-4018-a2e6-a2e988fef65e",
+                    //"leadReferralType" => 0,
+                    //"timeOfReferral" => "2023-02-06T09:17:18.684Z",
+                    //"creationDate" => "2023-02-06T09:17:18.684Z",
+                    "notes" => $this->lead_notes,
+                    //"consenter" => 0,
+                    "customers" => [
+                        [
+                            //"id" => "feecfecc-8cad-4175-a781-37ea4cb1e8b2",
+                            //"title" => 1,
+                            "firstName" => $this->lead->first_name,
+                            "lastName" => $this->lead->last_name,
+                            "emailAddress" => $this->lead->email_address,
+                            "telephoneNumber" => $this->lead->contact_number,
+                            "dateOfBirth" => "1900-01-01T00:00:00Z",
+                            //"gender" => 1,
+                            //"maritalStatus" => 2,
+                            "index" => 0,
+                            //"employmentStatus" => 1,
+                            //"workedLongerThan6MonthsForCurrentEmployer" => true,
+                            //"retirementAge" => 65,
+                            //"hasActiveUserAccount" => false,
+                            //"midasProClientId" => null
+                        ]
+                    ],
+                    "allocatedFirmId" => $mab_firm_id,
+                    "allocatedFirmBranchId" => $mab_branch_id,
+                    "allocatedAdviserId" => $mab_user_id,
+                    //"shouldSendCustomerInviteEmail" => true,
+                    //"midasProClientFolderID" => null,
+                    "customFields" => array_merge((array) $lead_data, ["Portal_Lead_ID" => $this->lead->id])
+                ];
+
+                $mab = new MABApi(false);
+                $mab_lead_response = $mab->newLead($data);
+                if($mab_lead_response->status){
+                    $this->emit('updated', ['message' => "Lead allocated [" . $this->lead_id . "]"]);
+                    $this->lead->status = Lead::TRANSFERRED;
+                    $this->lead->user_id = $adviser->id;
+                    $this->lead->allocated_at = date("Y-m-d H:i:s");
+                    $this->lead->transferred_at = date("Y-m-d H:i:s");
+                    $this->lead->save();
+
+                    $this->lead->events()->create([
+                        'account_id' => $this->lead->account_id,
+                        'user_id' => session('user_id'),
+                        'event_id' => LeadEvent::TRANSFERRED_TO_MAB,
+                        'information' => json_encode($mab_lead_response)
+                    ]);
+
+                    if(!empty($this->selected_date) && !empty($this->selected_time)){
+                        //Try and instantiate an Azureprovider instance for teams. It'll throw if there's no account config for it or it's not enabled
+                        try {
+                            $azure = new AzureProvider($this->lead->account_id, 'TEAMS', true);
+                            $meeting_date = Carbon::createFromFormat("Y-m-d H:i", $this->selected_date." ".$this->selected_time);
+
+                            //TEAMS
+                            $meeting = new OnlineMeeting($adviser->email);
+                            $meeting->subject = "New Lead: ".$this->lead->full_name();
+                            $meeting->description = "Testing Azure/Teams API credentials";
+                            $meeting->date = $meeting_date->format("Y-m-d");
+                            $meeting->time = $meeting_date->startOfHour()->addHour()->format("H:i");
+                            $meeting->duration = 60;
+                            $meeting->addAttendee($this->lead->full_name(), $this->lead->email_address);
+
+                            $graph = new GraphConnector($azure);
+                            $confirmation = $graph->createOnlineMeeting($meeting);
+                            switch($confirmation->error){
+                                case null:
+                                    $err = null;
+                                    break;
+                                case 1:
+                                    $err = "User ".$this->selected_adviser." not found in Miscosoft AD.";
+                                    break;
+                                case 2:
+                                    $err = "Failed to create Teams meeting";
+                                    break;
+                                case 3:
+                                    $err = "User ".$this->selected_adviser." couldn't be fetched form Miscosoft AD.";
+                                    break;
+                                case 4:
+                                    $err = "Missing required Information";
+                                    break;
+                                case 8:
+                                    $err = "No attendees added";
+                                    break;
+                                default:
+                                    $err = null;
+                            }
+                            if(!is_null($err)){
+                                $this->emit('error', ['message' => "Teams create failed: ".$err]);
+                            }else{
+
+                                $this->lead->events()->create([
+                                    'account_id' => $this->lead->account_id,
+                                    'user_id' => session('user_id'),
+                                    'event_id' => LeadEvent::BOOKED_TEAMS_MEETING,
+                                    'information' => json_encode(["adviser"=>strtolower($adviser->email),"date"=>$meeting_date->format("Y-m-d H:i:s")])
+                                ]);
+
+                                $this->skipRender();
+                                session()->flash('alert-success','Lead ID '.$this->lead_id.' transferred to '.$this->selected_adviser." and a Teams meeting booked at ".$meeting_date->format("d/m/Y H:i"));
+                                return $this->redirectRoute('leads.manager');
+                            }
+                        } catch (\App\Exceptions\AccountNotConfiguredException $exception) {
+                            Log::critical($exception->getMessage(),['tenant_id' => $this->provider->getTenantId()],json_encode($meeting));
+                            //no teams setup
+                            $this->skipRender();
+                            session()->flash('alert-success','Lead ID '.$this->lead_id.' transferred to '.$this->selected_adviser." and a Teams meeting couldn't be booked");
+                            return $this->redirectRoute('leads.manager');
+                        }
+                    }else{
+                        $this->skipRender();
+                        session()->flash('alert-success','Lead ID '.$this->lead_id.' transferred to '.$this->selected_adviser." but no date was selected to create a Teams meeting");
+                        return $this->redirectRoute($this->redirect);
+                    }
+                }else{
+                    $this->emit('error', ['message' => "Unable to send to MAB Portal [" . $this->lead_id . "]"]);
+                }
+
+            }else{
+                $this->emit('error', ['message' => "Cant load lead [" . $this->lead_id . "]"]);
+            }
         }else{
-            $this->emit('error', ['message' => "Cant load lead [" . $this->lead_id . "]"]);
+            $this->emit('error', ['message' => "You must select an adviser first"]);
         }
     }
 
