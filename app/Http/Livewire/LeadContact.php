@@ -35,6 +35,7 @@ class LeadContact extends Component
     public $message_bar = '';
     public $lead_id = null;
     public $lead = null;
+    public $redirect = null;
 
     public $show_contact = false;
     public $weeks = 4;
@@ -50,15 +51,16 @@ class LeadContact extends Component
 
     public $contact_schedule = [];
 
-    public function mount($lead_id)
+    public function mount($lead_id, $redirect = 'leads.table')
     {
         $this->lead_id = $lead_id;
         $this->lead = Lead::where('id',$lead_id)->first();
+        $this->redirect = $redirect;
 
         if(is_null($this->lead)){
             $this->skipRender();
             session()->flash('alert-danger','Unable to load lead ID '.$this->lead_id);
-            return $this->redirectRoute('leads.table');
+            return $this->redirectRoute($redirect);
         }
 
         $this->lead_notes = json_decode($this->lead->data)->contact_notes ?? '';
@@ -319,7 +321,7 @@ class LeadContact extends Component
 
         $this->skipRender();
         session()->flash('alert-success','Marked lead ID '.$this->lead_id.' as contacted');
-        return $this->redirectRoute('leads.table');
+        return $this->redirectRoute($this->redirect);
     }
 
     public function mark_as_pause_contacting(){
@@ -342,7 +344,7 @@ class LeadContact extends Component
 
         $this->skipRender();
         session()->flash('alert-success','Lead ID '.$this->lead_id.' will no longer recieve automatic messages');
-        return $this->redirectRoute('leads.table');
+        return $this->redirectRoute($this->redirect);
     }
 
     public function allocate_and_transfer(){
@@ -501,14 +503,14 @@ class LeadContact extends Component
 
                                 $this->skipRender();
                                 session()->flash('alert-success','Lead ID '.$this->lead_id.' transferred to '.$this->selected_adviser." and a Teams meeting booked at ".$meeting_date->format("d/m/Y H:i"));
-                                return $this->redirectRoute('leads.manager');
+                                return $this->redirectRoute($this->redirect);
                             }
                         } catch (\App\Exceptions\AccountNotConfiguredException $exception) {
                             Log::critical($exception->getMessage(),['tenant_id' => $this->provider->getTenantId()],json_encode($meeting));
                             //no teams setup
                             $this->skipRender();
                             session()->flash('alert-success','Lead ID '.$this->lead_id.' transferred to '.$this->selected_adviser." and a Teams meeting couldn't be booked");
-                            return $this->redirectRoute('leads.manager');
+                            return $this->redirectRoute($this->redirect);
                         }
                     }else{
                         $this->skipRender();
