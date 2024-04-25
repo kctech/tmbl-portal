@@ -7,7 +7,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use PDF;
+use Pdf;
 use Storage;
 
 //for testing
@@ -61,7 +61,7 @@ class PdfController extends Controller
 	{
 
 		if (!empty($view) && !empty($filename) && !empty($mode)) {
-	        $pdf = PDF::loadView($view, $data);
+	        $pdf = Pdf::loadView($view, $data);
 
 	        switch ($mode) {
 	        	case 'download':

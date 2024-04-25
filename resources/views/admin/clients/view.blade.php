@@ -28,7 +28,7 @@
                                 <a href="{{ route('terms-consent.edit',$request->id)}}" class="btn btn-block btn-sm btn-dark" data-toggle="tooltip" data-placement="right" title="Edit request"><i class="far fa-edit"></i> {{ $request->id }}</a>
                             </div>
                             <div class="col-sm-3">
-                                {{ $request->service }} {{ $request->type }} 
+                                {{ $request->service }} {{ $request->type }}
                                 {{-- ({{ $request->amount }}) {{ _('on') }} {{ $request->timing }} --}}
                             </div>
                             <div class="col-sm-3">
@@ -43,7 +43,7 @@
                                 {{\Carbon\Carbon::parse($request->updated_at)->format('d/m/Y H:i')}}
                                 <span class="badge badge-primary">{{\Carbon\Carbon::parse($request->updated_at)->diffForHumans()}}</span>
                                 @if($request->user_id != Session::get('user_id',auth()->id()))
-                                    <br />By {{$request->user->first_name}} {{$request->user->last_name}}
+                                    <br />By {{$request->user->first_name ?? '** User Deleted **'}} {{$request->user->last_name ?? ''}}
                                 @endif
                             </div>
                         </div>
@@ -90,7 +90,7 @@
                                 {{\Carbon\Carbon::parse($request->updated_at)->format('d/m/Y H:i')}}
                                 <span class="badge badge-primary">{{\Carbon\Carbon::parse($request->updated_at)->diffForHumans()}}</span>
                                 @if($request->user_id != Session::get('user_id',auth()->id()))
-                                    <br />By {{$request->user->first_name}} {{$request->user->last_name}}
+                                    <br />By {{$request->user->first_name ?? '** User Deleted **'}} {{$request->user->last_name ?? ''}}
                                 @endif
                             </div>
                         </div>
@@ -196,11 +196,15 @@
                 <div class="card mb-3">
                     <div class="card-header">Adviser Information</div>
                     <div class="card-body">
-                        {{ $client->user->first_name }} {{ $client->user->last_name }}
-                        <br />
-                        <a href="mailto:{{ $client->user->email }}">{{ $client->user->email }}</a>
-                        <br />
-                        <a href="tel:{{ $client->user->tel }}">{{ $client->user->tel }}</a>
+                        @if($client->user)
+                            {{ $client->user->first_name }} {{ $client->user->last_name }}
+                            <br />
+                            <a href="mailto:{{ $client->user->email }}">{{ $client->user->email }}</a>
+                            <br />
+                            <a href="tel:{{ $client->user->tel }}">{{ $client->user->tel }}</a>
+                        @else
+                            ** Adviser Deleted **
+                        @endif
                     </div>
                 </div>
             </div>
@@ -318,7 +322,7 @@
                                 <div class="col-sm-6">@if($client->mkt_web_consent == 'Y') Yes @else No @endif</div>
                             </div>
                         </li>--}}
-                        <li class="list-group-item">    
+                        <li class="list-group-item">
                             <div class="row">
                                 <div class="col-sm-6">Other</div>
                                 <div class="col-sm-6">@if($client->mkt_other_consent == 'Y') Yes @else No @endif</div>

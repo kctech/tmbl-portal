@@ -13,6 +13,7 @@ return array(
     */
     'show_warnings' => false,   // Throw an Exception on warnings from dompdf
     'orientation' => 'portrait',
+    'options.default_paper_orientation' => 'portrait',
     'defines' => array(
         /**
          * The location of the DOMPDF font directory

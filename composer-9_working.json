@@ -9,21 +9,22 @@
     "license": "MIT",
     "require": {
         "php": "^7.4|^8.1",
-        "barryvdh/laravel-dompdf": "^2.1.1",
+        "barryvdh/laravel-dompdf": "^1.0.1",
         "diglactic/laravel-breadcrumbs": "^8.1.1",
         "guzzlehttp/guzzle": "^7.0.1",
-        "laravel/framework": "^10.0",
+        "laravel/framework": "^9.0",
+        "laravel/telescope": "^4.10",
         "laravel/tinker": "^2.5",
-        "laravel/ui": "^4.0",
+        "laravel/ui": "^3.2",
         "livewire/livewire": "^2.12",
         "socialiteproviders/microsoft-azure": "^5.1"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.9",
-        "spatie/laravel-ignition": "^2.0",
+        "spatie/laravel-ignition": "^1.0",
         "fakerphp/faker": "1.23.1",
         "mockery/mockery": "1.0",
-        "nunomaduro/collision": "^7.0",
+        "nunomaduro/collision": "^6.1",
         "phpunit/phpunit": "^9.0"
     },
     "config": {

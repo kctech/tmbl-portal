@@ -231,7 +231,8 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-        'PDF' => Barryvdh\DomPDF\Facade::class,
+        'Pdf' => Barryvdh\DomPDF\Facade\Pdf::class,
+        //'PDF' => Barryvdh\DomPDF\Facade::class,
         //'PDF' => Elibyy\TCPDF\Facades\TCPDF::class,
         //'PDF' => PhantomPdf\Laravel\PDFFacade::class,
 
