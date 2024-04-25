@@ -24,7 +24,7 @@ class SSOCredentialTester extends Command
      */
     protected $signature = 'sso_credential_tester {account_id} {client_email_address} {perpetual_email_address=kyle@perpetual.pro}';
 
-    /**§§
+    /**
      * The console command description.
      *
      * @var string

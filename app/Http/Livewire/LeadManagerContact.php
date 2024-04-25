@@ -36,6 +36,7 @@ class LeadManagerContact extends Component
     public $lead_id = null;
     public $lead = null;
     public $redirect = null;
+    public $error_redirect = false;
 
     public $show_contact = false;
     public $show_meeting = false;
@@ -58,15 +59,13 @@ class LeadManagerContact extends Component
         $this->lead = Lead::where('id',$lead_id)->first();
 
         if(is_null($this->lead)){
-            $this->skipRender();
+            $this->error_redirect = true;
             session()->flash('alert-danger','Unable to load lead ID '.$this->lead_id);
-            return $this->redirectRoute($redirect);
         }
 
         if(!empty($this->lead->user_id)){
-            $this->skipRender();
-            session()->flash('alert-danger','Lead ID '.$this->lead_id .' has been claimed by' . $this->lead->owner->full_name());
-            return $this->redirectRoute($redirect);
+            $this->error_redirect = true;
+            session()->flash('alert-danger','Lead ID '.$this->lead_id .' has been claimed by ' . $this->lead->owner->full_name());
         }
 
         $this->lead_notes = json_decode($this->lead->data)->contact_notes ?? '';
@@ -603,13 +602,17 @@ class LeadManagerContact extends Component
 
     public function render()
     {
-        $this->data();
-        return view('livewire.lead-manager-contact',[
-            'cache_date' => $this->cache_date,
-            'calendar' => $this->calendar,
-            'availability' => $this->availability,
-            'isLoaded' => $this->isLoaded
-        ]);
+        if ($this->error_redirect) {
+            return view('redirect')->with('redirect', $this->redirect);
+        }else{
+            $this->data();
+            return view('livewire.lead-manager-contact',[
+                'cache_date' => $this->cache_date,
+                'calendar' => $this->calendar,
+                'availability' => $this->availability,
+                'isLoaded' => $this->isLoaded
+            ]);
+        }
     }
 
 }
