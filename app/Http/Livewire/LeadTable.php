@@ -29,6 +29,7 @@ class LeadTable extends Component
     public $view = 'list';
     public $filtersActive = 0;
     public $message_bar = '';
+    public $claimable_id = 0;
 
     //filters
     public $sort_order;
@@ -46,6 +47,9 @@ class LeadTable extends Component
         $this->sort_order = session(self::$session_prefix . 'sort_order') ?? '';
 
         $this->contact_schedule = LeadChaser::where('method','email')->where('status',LeadChaser::ACTIVE)->get();
+        $this->claimable_id = Lead::where(function($q){
+            $q->whereNull('user_id')->orWhere('user_id',session('user_id'));
+        })->whereNotIn('status',[Lead::ARCHIVED,Lead::TRANSFERRED])->orderBy('id', 'asc')->first()->id ?? 0;
 
         $this->stats();
     }
@@ -185,10 +189,14 @@ class LeadTable extends Component
     public function allocate($lead_id){
         $lead = Lead::find($lead_id);
         if($lead){
-            $lead->status = Lead::CLAIMED;
-            $lead->user_id = session('user_id');
-            $lead->allocated_at = date('Y-m-d H:i:s');
-            $lead->save();
+            if($lead->status == Lead::PROSPECT){
+                $lead->status = Lead::CLAIMED;
+                $lead->user_id = session('user_id');
+                $lead->allocated_at = date('Y-m-d H:i:s');
+                $lead->save();
+            }else{
+                $this->emit('error', ['message' => "Sorry, this lead has already been claimed"]);
+            }
         }else{
             $this->emit('error', ['message' => "Cant find lead [" . $lead_id . "]"]);
         }

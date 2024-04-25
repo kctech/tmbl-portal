@@ -144,7 +144,7 @@
                                                             this mo.
                                                         </div>
                                                         <div class="col-4 text-right">
-                                                            @if($lead->status == \App\Models\Lead::PROSPECT || $lead->status == \App\Models\Lead::CONTACT_ATTEMPTED)
+                                                            @if($lead->status == \App\Models\Lead::PROSPECT || $lead->status == \App\Models\Lead::CONTACT_ATTEMPTED && empty($lead->user_id))
                                                                 <button class="btn btn-sm btn-secondary btn-blockX" wire:click="allocate({{$lead_id}},'{{$adviser->id}}')">Allocate</button>
                                                                 <button class="ml-2 btn btn-sm btn-primary btn-blockX" wire:click="transfer({{$lead_id}},'{{$adviser->email}}')">Transfer</button>
                                                             @endif

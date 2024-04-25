@@ -210,7 +210,7 @@
                                 </td>
                                 <td class="text-right">
                                     @if(in_array($item->status,[\App\Models\Lead::PROSPECT,\App\Models\Lead::CONTACT_ATTEMPTED,App\Models\Lead::PAUSE_CONTACTING]) || $item->user_id != session('user_id'))
-                                        <button class="btn btn-sm btn-secondary btn-blockX" wire:click="allocate({{$item->id}})">Claim</button>
+                                        <button class="btn btn-sm btn-secondary btn-blockX" wire:click="allocate({{$item->id}})" @if($loop->index != 0 && $item->id != $claimable_id) disabled @endif>Claim</button>
                                     @elseif($item->status == \App\Models\Lead::CLAIMED || ($item->status == \App\Models\Lead::PAUSE_CONTACTING && $item->user_id == session('user_id')))
                                         <a class="btn btn-sm btn-primary" href="{{route('leads.contact', $item->id)}}">Contact</a>
                                         <button class="btn btn-sm btn-secondary" wire:click="info({{$item->id}})">Info</button>

@@ -63,6 +63,12 @@ class LeadManagerContact extends Component
             return $this->redirectRoute($redirect);
         }
 
+        if(!empty($this->lead->user_id)){
+            $this->skipRender();
+            session()->flash('alert-danger','Lead ID '.$this->lead_id .' has been claimed by' . $this->lead->owner->full_name());
+            return $this->redirectRoute($redirect);
+        }
+
         $this->lead_notes = json_decode($this->lead->data)->contact_notes ?? '';
 
         $adviser_list = [];
