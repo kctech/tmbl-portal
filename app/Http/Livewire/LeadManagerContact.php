@@ -525,7 +525,7 @@ class LeadManagerContact extends Component
 
                             //TEAMS
                             $meeting = new OnlineMeeting($adviser->email);
-                            $meeting->subject = "New Lead: ".$this->lead->full_name();
+                            $meeting->subject = "Mortgage Appointment: ".$this->lead->full_name();
                             $meeting->description = "Testing Azure/Teams API credentials";
                             $meeting->date = $meeting_date->format("Y-m-d");
                             $meeting->time = $meeting_date->startOfHour()->addHour()->format("H:i");
