@@ -452,9 +452,9 @@ class LeadManagerContact extends Component
                     //"prospectType" => 1,
                     "contactMethodTypeId" => 4,
                     //"groupId" => 1,
-                    //"introducerId" => "6388e19c-feb1-4df2-8bcc-704a090999b0",
+                    "introducerId" => "6388e19c-feb1-4df2-8bcc-704a090999b0",
                     "introducerBranchId" => "1061f882-a004-4b6c-84d4-ab5bb9a03826",
-                    "introducerStaffId" => "03580d2b-4aee-4983-b904-6016f142d9e6",
+                    //"introducerStaffId" => "03580d2b-4aee-4983-b904-6016f142d9e6",
                     //"groupEmailAddress" => "Devnoreply1@mab.org.uk",
                     //"submittedByName" => "Create Local Lead Referer",
                     "dateTimeGdprConsent" => \Carbon\Carbon::parse($this->lead->created_at)->format("Y-m-d\TH:i:s\Z"),
@@ -584,6 +584,7 @@ class LeadManagerContact extends Component
                         return $this->redirectRoute($this->redirect);
                     }
                 }else{
+                    Log::error(json_encode($mab_lead_response));
                     $this->emit('error', ['message' => "Unable to send to MAB Portal [" . $this->lead_id . "]"]);
                 }
             }else{
