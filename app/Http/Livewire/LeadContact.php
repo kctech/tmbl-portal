@@ -240,6 +240,20 @@ class LeadContact extends Component
 
     }
 
+    public function archive(){
+
+        $lead_data = json_decode($this->lead->data);
+        $lead_data->contact_notes = $this->lead_notes;
+        $this->lead->data = json_encode($lead_data);
+        $this->lead->status = Lead::ARCHIVED;
+        $this->lead->save();
+        //$this->emit('updated', ['message' => "Lead status updated [" . $this->lead_id . "]"]);
+
+        $this->skipRender();
+        session()->flash('alert-success','Marked lead ID '.$this->lead_id.' as archived');
+        return $this->redirectRoute($this->redirect);
+    }
+
     public function contact_progress(){
 
         //next contact step
