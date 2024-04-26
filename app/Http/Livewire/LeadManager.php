@@ -245,8 +245,8 @@ class LeadManager extends Component
     public function transfer($lead_id, $adviser_email=null){
         $lead = Lead::find($lead_id);
         if($lead){
+            $lead_data = json_decode($lead->data);
             if(is_null($adviser_email)){
-                $lead_data = json_decode($lead->data);
                 $data = [
                     //"mortgageBasis" => 1,
                     //"prospectType" => 1,
@@ -356,7 +356,7 @@ class LeadManager extends Component
                     //"leadReferralType" => 0,
                     //"timeOfReferral" => "2023-02-06T09:17:18.684Z",
                     //"creationDate" => "2023-02-06T09:17:18.684Z",
-                    "notes" => "From DEV TMBL Portal",
+                    "notes" => $lead_data->lead_notes ?? "From TMBL Portal",
                     //"consenter" => 0,
                     "customers" => [
                         [
