@@ -98,16 +98,21 @@ class LeadTable extends Component
             $query = $query->whereNull('user_id');
         }elseif(in_array($this->lead_status,['all']) && empty(trim($this->search_filter))){
             $query = $query->where(function($q){
-                $q->whereNull('user_id')->orWhere('user_id',session('user_id'));
-            });
+                $q->whereNull('user_id')->where('status','!=',Lead::ARCHIVED);
+            })->orWhere('user_id',session('user_id'));
         }else{
             $query = $query->where('user_id',session('user_id'));
         }
 
 
         switch($this->lead_status){
-            case "all":
             case "mine";
+                $query = $query->where('user_id',session('user_id'));
+                break;
+            case "all":
+                $query = $query->where(function($q){
+                    $q->whereNull('user_id')->where('status','!=',Lead::ARCHIVED);
+                })->orWhere('user_id',session('user_id'));
                 break;
             case "new":
                     $query = $query->whereNotIn('status',[Lead::ARCHIVED,Lead::TRANSFERRED]);
