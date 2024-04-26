@@ -33,7 +33,7 @@
 <div class="card mb-4">
     <div class="card-body">
         <div class="d-flex align-self-center">
-            <div class="card">
+            {{--<div class="card">
                 <div class="card-body bg-light d-flex align-items-center">
                     <div class="custom-control custom-radio custom-control-inline">
                         <input wire:click="$set('lead_status','')" type="radio" id="lead_status_all" name="lead_status" class="custom-control-input" value="" {{checked('', $lead_status)}}>
@@ -44,13 +44,36 @@
                         <label class="custom-control-label" for="lead_status_no">New Leads Only</label>
                     </div>
                 </div>
+            </div>--}}
+            <div class="card ml-3">
+                <div class="card-body bg-light">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text"><i class="far fa-filter"></i></div>
+                        </div>
+                        <select wire:model="lead_status" id="lead_status"  class="form-control">
+                            <option value="new" >New Only</option>
+                            <option value="mine">My Leads</option>
+                            <option value="contacted">Contacted</option>
+                            <option value="not_contacted">Not Contacted</option>
+                            <option value="chase_1">Step 1 of Chase Process</option>
+                            <option value="chase_2">Step 2 of Chase Process</option>
+                            <option value="chase_3">Step 3 of Chase Process</option>
+                            <option value="chase_4">Step 4 of Chase Process</option>
+                            <option value="chase_5">Step 5 of Chase Process</option>
+                            <option value="transferred">Transferred</option>
+                            <option value="archived" >Archived</option>
+                            <option value="all" >All</option>
+                        </select>
+                    </div>
+                </div>
             </div>
             <div class="card ml-3">
                 <div class="card-body bg-light">
                     <input class="form-control" placeholder="Lead Search" wire:model="search_filter" value="{{$search_filter}}" />
                 </div>
             </div>
-            <div class="card ml-3">
+            {{--<div class="card ml-3">
                 <div class="card-body bg-light">
                     <div class="input-group">
                         <div class="input-group-prepend">
@@ -63,7 +86,7 @@
                         </select>
                     </div>
                 </div>
-            </div>
+            </div>--}}
             <div class="ml-auto d-flex align-items-center justify-content-center">
                 <button wire:click="resetFilters" class="btn btn-outline-dark btn-lg">
                     <i class="fas fa-times fa-sm"></i> Clear
@@ -160,7 +183,7 @@
 
                             <tr class="">
                                 <td>{{ $item->id }}</td>
-                                @if(in_array($item->status,[\App\Models\Lead::PROSPECT,\App\Models\Lead::CONTACT_ATTEMPTED,App\Models\Lead::PAUSE_CONTACTING]) || $item->user_id != session('user_id'))
+                                @if($item->user_id != session('user_id'))
                                     <td>{{ __('***') }}</td>
                                     <td>{{ __('***') }}</td>
                                     <td>{{ __('***') }}</td>
@@ -209,7 +232,7 @@
                                     @endif
                                 </td>
                                 <td class="text-right">
-                                    @if(in_array($item->status,[\App\Models\Lead::PROSPECT,\App\Models\Lead::CONTACT_ATTEMPTED,App\Models\Lead::PAUSE_CONTACTING]) || $item->user_id != session('user_id'))
+                                    @if($item->user_id != session('user_id'))
                                         <button class="btn btn-sm btn-secondary btn-blockX" wire:click="allocate({{$item->id}})" @if($loop->index != 0 && $item->id != $claimable_id) disabled @endif>Claim</button>
                                     @elseif($item->status == \App\Models\Lead::CLAIMED || ($item->status == \App\Models\Lead::PAUSE_CONTACTING && $item->user_id == session('user_id')))
                                         <a class="btn btn-sm btn-primary" href="{{route('leads.contact', $item->id)}}">Contact</a>

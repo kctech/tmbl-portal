@@ -32,13 +32,13 @@ class Kernel extends ConsoleKernel
         //$schedule->command('backup:clean')->daily()->at('01:00');
         //$schedule->command('backup:run')->daily()->at('02:00');
 
-        $schedule->command('leads:contact')->withoutOverlapping()->everyMinute();
+        $schedule->command('leads:contact')->environments(['production'])->withoutOverlapping()->everyMinute();
 
-        $schedule->command('queue:restart')->everyMinute();
-        $schedule->command('queue:retry all')->everyFifteenMinutes();
-        $schedule->command('queue:work --queue=adviseremails,clientemails,lead_chasers --timeout=60 --sleep=5 --tries=3')->withoutOverlapping()->everyMinute();
+        $schedule->command('queue:restart')->environments(['production'])->everyMinute();
+        $schedule->command('queue:retry all')->environments(['production'])->everyFifteenMinutes();
+        $schedule->command('queue:work --queue=adviseremails,clientemails,lead_chasers --timeout=60 --sleep=5 --tries=3')->environments(['production'])->withoutOverlapping()->everyMinute();
 
-        $schedule->command('portal_cache:calendars --account_id=1 --base_user_email=sam@tmblgroup.co.uk --weeks=4')->withoutOverlapping()->everyThirtyMinutes();
+        $schedule->command('portal_cache:calendars --account_id=1 --base_user_email=sam@tmblgroup.co.uk --weeks=4')->environments(['production'])->withoutOverlapping()->everyThirtyMinutes();
 
         //$schedule->command('inspire')->hourly();
     }

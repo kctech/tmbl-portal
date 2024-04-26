@@ -32,22 +32,23 @@ class LeadManager extends Component
     public $message_bar = '';
 
     //filters
-    public $sort_order;
+    public $sort_order = 'oldest_first';
     public $search_filter;
-    public $lead_status = '';
+    public $lead_status = 'new_unclaimed';
 
     public $lead_id = null;
     public $lead = null;
     public $advisers = [];
+    public $selected_adviser = null;
     public $contact_schedule = [];
 
     public function mount()
     {
         $this->user_id = session('user_id');
-        $this->lead_status = request()->get('lead_status') ?? session(self::$session_prefix . 'lead_status') ?? '';
+        $this->lead_status = request()->get('lead_status') ?? session(self::$session_prefix . 'lead_status') ?? 'new_unclaimed';
         $this->search_filter = session(self::$session_prefix . 'search_filter') ?? '';
-        $this->sort_order = session(self::$session_prefix . 'sort_order') ?? '';
-
+        $this->sort_order = session(self::$session_prefix . 'sort_order') ?? 'oldest_first';
+        $this->advisers = $this->buildAdvisersList();
         $this->contact_schedule = LeadChaser::where('method','email')->where('status',LeadChaser::ACTIVE)->get();
     }
 
@@ -63,17 +64,23 @@ class LeadManager extends Component
         $this->filtersActive = 0;
         $query = Lead::query();
 
-        //remove archived
-        $query = $query->whereNotIn('status',[Lead::ARCHIVED,Lead::TRANSFERRED]);
-
         if ($this->sort_order != '') {
             ++$this->filtersActive;
             switch ($this->sort_order) {
-                case 'id_desc':
+                case 'recent':
+                    $query = $query->orderBy('updated_at', 'asc');
+                    break;
+                case 'newest_first':
                     $query = $query->orderBy('id', 'desc');
                     break;
-                case 'id_asc':
+                case 'oldest_first':
                     $query = $query->orderBy('id', 'asc');
+                    break;
+                case 'surname_az':
+                    $query = $query->orderBy('last_name', 'asc');
+                    break;
+                case 'surname_za':
+                    $query = $query->orderBy('last_name', 'desc');
                     break;
                 default:
                     $query = $query->orderBy('id', 'asc');
@@ -83,10 +90,49 @@ class LeadManager extends Component
             $query = $query->orderBy('id', 'asc');
         }
 
-        if ($this->lead_status == 'not_contacted') {
-            $query = $query->whereIn('status',[Lead::PROSPECT,Lead::CONTACT_ATTEMPTED,Lead::PAUSE_CONTACTING])->whereDoesntHave('events', function($q){ $q->where('event_id', LeadEvent::MANUAL_CONTACT_ATTEMPTED); });
-        }elseif ($this->lead_status != '') {
-            $query = $query->whereIn('status',explode(",",$this->lead_status));
+        switch($this->lead_status){
+            case "all":
+                break;
+            case "new_unclaimed":
+                $query = $query->whereNull('user_id')->whereNotIn('status',[Lead::ARCHIVED,Lead::TRANSFERRED]);
+                break;
+            case "new_claimed":
+                $query = $query->whereNotNull('user_id')->whereNotIn('status',[Lead::ARCHIVED,Lead::TRANSFERRED]);
+                break;
+            case "chase_1":
+                $query = $query->where('strategy_position_id', 1)->whereNotIn('status',[Lead::ARCHIVED,Lead::TRANSFERRED]);
+                break;
+            case "chase_2":
+                $query = $query->where('strategy_position_id', 2)->whereNotIn('status',[Lead::ARCHIVED,Lead::TRANSFERRED]);
+                break;
+            case "chase_3":
+                $query = $query->where('strategy_position_id', 3)->whereNotIn('status',[Lead::ARCHIVED,Lead::TRANSFERRED]);
+                break;
+            case "chase_4":
+                $query = $query->where('strategy_position_id', 4)->whereNotIn('status',[Lead::ARCHIVED,Lead::TRANSFERRED]);
+                break;
+            case "chase_5":
+                $query = $query->where('strategy_position_id', 5)->whereNotIn('status',[Lead::ARCHIVED,Lead::TRANSFERRED]);
+                break;
+            case "contacted":
+                $query = $query->whereIn('status',[Lead::PROSPECT,Lead::CONTACT_ATTEMPTED,Lead::PAUSE_CONTACTING])->whereHas('events', function($q){ $q->whereIn('event_id', [LeadEvent::MANUAL_CONTACT_ATTEMPTED, LeadEvent::AUTO_CONTACT_ATTEMPTED]); });
+                break;
+            case "not_contacted":
+                $query = $query->whereIn('status',[Lead::PROSPECT,Lead::CONTACT_ATTEMPTED,Lead::PAUSE_CONTACTING])->whereDoesntHave('events', function($q){ $q->where('event_id', LeadEvent::MANUAL_CONTACT_ATTEMPTED); });
+                break;
+            case "transferred":
+                $query = $query->where('status',Lead::TRANSFERRED);
+                break;
+            case "archived":
+                $query = $query->where('status',Lead::ARCHIVED);
+                break;
+            default:
+                $query = $query->whereNotIn('status',[Lead::ARCHIVED,Lead::TRANSFERRED]);
+        }
+
+        if (!empty(trim($this->selected_adviser))) {
+            ++$this->filtersActive;
+            $query = $query->where('user_id', $this->selected_adviser);
         }
 
         if (!empty(trim($this->search_filter))) {
@@ -127,7 +173,7 @@ class LeadManager extends Component
         }
     }
 
-    private function buildAdvisersList(){
+    private function buildAdvisersList() : \Illuminate\Support\Collection {
 
         return buildAdvisersList();
 

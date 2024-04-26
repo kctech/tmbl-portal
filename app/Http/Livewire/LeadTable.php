@@ -6,6 +6,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 
 use App\Models\Lead;
+use App\Models\LeadEvent;
 use App\Models\LeadChaser;
 
 use App\Libraries\MABApi;
@@ -32,9 +33,9 @@ class LeadTable extends Component
     public $claimable_id = 0;
 
     //filters
-    public $sort_order;
+    public $sort_order = 'oldest_first';
     public $search_filter;
-    public $lead_status = '';
+    public $lead_status = 'new';
 
     public $lead_id = null;
     public $lead = null;
@@ -42,9 +43,9 @@ class LeadTable extends Component
 
     public function mount()
     {
-        $this->lead_status = session(self::$session_prefix . 'lead_status') ?? '';
+        $this->lead_status = request()->get('lead_status') ?? session(self::$session_prefix . 'lead_status') ?? 'new';
         $this->search_filter = session(self::$session_prefix . 'search_filter') ?? '';
-        $this->sort_order = session(self::$session_prefix . 'sort_order') ?? '';
+        $this->sort_order = session(self::$session_prefix . 'sort_order') ?? 'oldest_first';
 
         $this->contact_schedule = LeadChaser::where('method','email')->where('status',LeadChaser::ACTIVE)->get();
         $this->claimable_id = Lead::where(function($q){
@@ -64,21 +65,25 @@ class LeadTable extends Component
     public function data()
     {
         $this->filtersActive = 0;
-        $query = Lead::where(function($q){
-            $q->whereNull('user_id')->orWhere('user_id',session('user_id'));
-        });
-
-        //remove archived
-        $query = $query->whereNotIn('status',[Lead::ARCHIVED,Lead::TRANSFERRED]);
+        $query = Lead::query();
 
         if ($this->sort_order != '') {
             ++$this->filtersActive;
             switch ($this->sort_order) {
-                case 'id_desc':
+                case 'recent':
+                    $query = $query->orderBy('updated_at', 'asc');
+                    break;
+                case 'newest_first':
                     $query = $query->orderBy('id', 'desc');
                     break;
-                case 'id_asc':
+                case 'oldest_first':
                     $query = $query->orderBy('id', 'asc');
+                    break;
+                case 'surname_az':
+                    $query = $query->orderBy('last_name', 'asc');
+                    break;
+                case 'surname_za':
+                    $query = $query->orderBy('last_name', 'desc');
                     break;
                 default:
                     $query = $query->orderBy('id', 'asc');
@@ -88,8 +93,54 @@ class LeadTable extends Component
             $query = $query->orderBy('id', 'asc');
         }
 
-        if ($this->lead_status != '') {
-            $query = $query->where('status', $this->lead_status);
+
+        if(in_array($this->lead_status,['new']) && empty(trim($this->search_filter))){
+            $query = $query->whereNull('user_id');
+        }elseif(in_array($this->lead_status,['all']) && empty(trim($this->search_filter))){
+            $query = $query->where(function($q){
+                $q->whereNull('user_id')->orWhere('user_id',session('user_id'));
+            });
+        }else{
+            $query = $query->where('user_id',session('user_id'));
+        }
+
+
+        switch($this->lead_status){
+            case "all":
+            case "mine";
+                break;
+            case "new":
+                    $query = $query->whereNotIn('status',[Lead::ARCHIVED,Lead::TRANSFERRED]);
+                break;
+            case "chase_1":
+                $query = $query->where('strategy_position_id', 1)->whereNotIn('status',[Lead::ARCHIVED,Lead::TRANSFERRED]);
+                break;
+            case "chase_2":
+                $query = $query->where('strategy_position_id', 2)->whereNotIn('status',[Lead::ARCHIVED,Lead::TRANSFERRED]);
+                break;
+            case "chase_3":
+                $query = $query->where('strategy_position_id', 3)->whereNotIn('status',[Lead::ARCHIVED,Lead::TRANSFERRED]);
+                break;
+            case "chase_4":
+                $query = $query->where('strategy_position_id', 4)->whereNotIn('status',[Lead::ARCHIVED,Lead::TRANSFERRED]);
+                break;
+            case "chase_5":
+                $query = $query->where('strategy_position_id', 5)->whereNotIn('status',[Lead::ARCHIVED,Lead::TRANSFERRED]);
+                break;
+            case "contacted":
+                $query = $query->whereIn('status',[Lead::PROSPECT,Lead::CONTACT_ATTEMPTED,Lead::PAUSE_CONTACTING])->whereHas('events', function($q){ $q->whereIn('event_id', [LeadEvent::MANUAL_CONTACT_ATTEMPTED]); });
+                break;
+            case "not_contacted":
+                $query  = $query->whereIn('status',[Lead::PROSPECT,Lead::CONTACT_ATTEMPTED,Lead::PAUSE_CONTACTING])->whereDoesntHave('events', function($q){ $q->where('event_id', LeadEvent::MANUAL_CONTACT_ATTEMPTED); });
+                break;
+            case "transferred":
+                $query = $query->where('status',Lead::TRANSFERRED);
+                break;
+            case "archived":
+                $query = $query->where('status',Lead::ARCHIVED);
+                break;
+            default:
+                $query = $query->whereNotIn('status',[Lead::ARCHIVED,Lead::TRANSFERRED]);
         }
 
         if (!empty(trim($this->search_filter))) {
@@ -99,6 +150,8 @@ class LeadTable extends Component
             });
         }
 
+        //dq($query);
+
         $this->data = $query;
     }
 
@@ -107,32 +160,34 @@ class LeadTable extends Component
 
         //totals
         $stats['Totals'][] = (object) [
-            'link' => route('leads.table',['lead_status' => Lead::PROSPECT]),
+            'link' => route('leads.table',['lead_status' => 'new']),
             'tpl' => 'total',
             'size' => "col-md-4",
             'colour' => null,
-            'title' => "New Leads Available",
+            'title' => "Leads Available",
             'date' => null,
             'icon' => "far fa-alarm-clock",
             'data'  => (object) [
-                'current' => Lead::whereIn('status',[Lead::PROSPECT,Lead::CONTACT_ATTEMPTED])->whereNull('user_id')->count()
+                'current' => Lead::whereNotIn('status',[Lead::ARCHIVED,Lead::TRANSFERRED])->whereNull('user_id')->count()
                 //'current' => Lead::whereIn('status',[Lead::PROSPECT,Lead::CONTACT_ATTEMPTED])->whereDoesntHave('events', function($q){ $q->where('event_id', LeadEvent::MANUAL_CONTACT_ATTEMPTED); })->count()
             ]
         ];
 
         $stats['Totals'][] = (object) [
+            'link' => route('leads.table',['lead_status' => 'contacted']),
             'tpl' => 'total',
             'size' => "col-md-4",
-            'title' => "Contacted Leads",
+            'title' => "My Contacted Leads",
             'date' => null,
             'icon' => "far fa-phone",
             'data'  => (object) [
-                'current' => Lead::where('status',Lead::CONTACT_ATTEMPTED)->where('user_id',session('user_id'))->count()
+                'current' => Lead::whereHas('events', function($q){ $q->whereIn('event_id', [LeadEvent::MANUAL_CONTACT_ATTEMPTED]); })->where('user_id',session('user_id'))->count()
                 //'current' => Lead::whereIn('status',[Lead::PROSPECT,Lead::CONTACT_ATTEMPTED])->whereDoesntHave('events', function($q){ $q->where('event_id', LeadEvent::MANUAL_CONTACT_ATTEMPTED); })->count()
             ]
         ];
 
         $stats['Totals'][] = (object) [
+            'link' => route('leads.table',['lead_status' => 'mine']),
             'tpl' => 'total',
             'size' => "col-md-4",
             'title' => "Transferred Leads",

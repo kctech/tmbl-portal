@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 use Livewire\Component;
 
 use App\Models\Lead;
+use App\Models\LeadEvent;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -38,7 +39,7 @@ class LeadDashboard extends Component
 
         //totals
         $data['Totals'][] = (object) [
-            'link' => route('leads.manager',['lead_status' => Lead::PROSPECT]),
+            'link' => route('leads.manager',['lead_status' => 'new_unclaimed']),
             'tpl' => 'total',
             'size' => "col-md-2",
             'colour' => "danger",
@@ -46,7 +47,7 @@ class LeadDashboard extends Component
             'date' => null,
             'icon' => "far fa-alarm-clock text-danger",
             'data'  => (object) [
-                'current' => Lead::where('status',Lead::PROSPECT)->count()
+                'current' => Lead::whereNull('user_id')->whereNotIn('status',[Lead::ARCHIVED,Lead::TRANSFERRED])->whereDoesntHave('events', function($q){ $q->where('event_id', LeadEvent::MANUAL_CONTACT_ATTEMPTED); })->count()
                 //'current' => Lead::whereIn('status',[Lead::PROSPECT,Lead::CONTACT_ATTEMPTED])->whereDoesntHave('events', function($q){ $q->where('event_id', LeadEvent::MANUAL_CONTACT_ATTEMPTED); })->count()
             ]
         ];

@@ -28,7 +28,7 @@
 <div class="card mb-4">
     <div class="card-body">
         <div class="d-flex align-self-center">
-            <div class="card">
+            {{--<div class="card">
                 <div class="card-body bg-light d-flex align-items-center">
                     <div class="custom-control custom-radio custom-control-inline">
                         <input wire:click="$set('lead_status','')" type="radio" id="lead_status_all" name="lead_status" class="custom-control-input" value="" {{checked('', $lead_status)}}>
@@ -37,6 +37,45 @@
                     <div class="custom-control custom-radio custom-control-inline">
                         <input wire:click="$set('lead_status','{{\App\Models\Lead::PROSPECT}},{{\App\Models\Lead::PAUSE_CONTACTING}}')" type="radio" id="lead_status_no" name="lead_status" class="custom-control-input" value="{{\App\Models\Lead::PROSPECT}}" {{checked(\App\Models\Lead::PROSPECT, $lead_status)}}>
                         <label class="custom-control-label" for="lead_status_no">New Leads Only</label>
+                    </div>
+                </div>
+            </div>--}}
+            <div class="card ml-3">
+                <div class="card-body bg-light">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text"><i class="far fa-filter"></i></div>
+                        </div>
+                        <select wire:model="lead_status" id="lead_status"  class="form-control">
+                            <option value="new_unclaimed" >New &amp; Unclaimed</option>
+                            <option value="new_claimed" >New &amp; Claimed</option>
+                            <option value="contacted">Contacted</option>
+                            <option value="not_contacted">Not Contacted</option>
+                            <option value="chase_1">Step 1 of Chase Process</option>
+                            <option value="chase_2">Step 2 of Chase Process</option>
+                            <option value="chase_3">Step 3 of Chase Process</option>
+                            <option value="chase_4">Step 4 of Chase Process</option>
+                            <option value="chase_5">Step 5 of Chase Process</option>
+                            <option value="transferred">Transferred</option>
+                            <option value="archived" >Archived</option>
+                            <option value="all" >All</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="card ml-3">
+                <div class="card-body bg-light">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text"><i class="far fa-user"></i></div>
+                        </div>
+                        <select wire:model="selected_adviser" id="selected_adviser" class="form-control">
+                            <option value="" >All</option>
+                            @foreach($advisers as $adviser)
+                                @php $adviser = (object) $adviser; @endphp
+                                <option value="{{$adviser->id}}" >{{$adviser->first_name}} {{$adviser->last_name}}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
             </div>

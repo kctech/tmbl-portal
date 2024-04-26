@@ -1,6 +1,8 @@
 <?php
 
-function buildAdvisersList(){
+use Illuminate\Support\Collection;
+
+function buildAdvisersList() : Collection {
     $list = [];
     $users = [];
     $default_status = (object)[
@@ -29,5 +31,5 @@ function buildAdvisersList(){
             $list[] = $users[$email];
         }
     }
-    return $list;
+    return collect($list);
 }
