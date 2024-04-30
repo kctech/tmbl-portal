@@ -47,9 +47,9 @@
                         <i class="fa fa-envelope"></i>
                         @foreach($contact_schedule as $chaser)
                             @if(in_array($chaser->id, $lead->events()->where('event_id',\App\Models\LeadEvent::AUTO_CONTACT_ATTEMPTED)->pluck('information')->toArray()))
-                                <i class="fas fa-check-circle text-success tip" title="Chaser {{$chaser->name}} sent {{$lead->events()->where('event_id',\App\Models\LeadEvent::AUTO_CONTACT_ATTEMPTED)->where('information',$chaser->id)->first()->created_at}}"></i>
+                                <span class="tip" title="Chaser {{$chaser->name}} sent {{$lead->events()->where('event_id',\App\Models\LeadEvent::AUTO_CONTACT_ATTEMPTED)->where('information',$chaser->id)->first()->created_at}}"><i class="fas fa-check-circle text-success"></i></span>
                             @else
-                                <i class="fas fa-times-circle text-muted tip" title="Chaser {{$chaser->name}} not sent yet"></i>
+                                <span class="tip" title="Chaser {{$chaser->name}} not sent yet"><i class="fas fa-times-circle text-muted"></i></span>
                             @endif
                         @endforeach
                     </div>
@@ -57,7 +57,7 @@
                         <div class="d-block w-100">
                             <i class="fa fa-phone"></i>
                             @foreach($lead->events()->where('event_id',\App\Models\LeadEvent::MANUAL_CONTACT_ATTEMPTED)->get() as $contact)
-                                <i class="fas fa-phone-square text-success tip" title="Contacted at {{$contact->created_at}}"></i>
+                                <span class="tip" title="Contacted at {{$contact->created_at}}"><i class="fas fa-phone-square text-success"></i></span>
                             @endforeach
                         </div>
                     @endif
