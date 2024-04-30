@@ -59,6 +59,7 @@ class SyncMABUserIds extends Command
         foreach(User::all() as $user){
             $mab_id = $mab->getAdviser($user->full_name(), $branch_id);
             if(!is_null($mab_id) || $refresh){
+                $user->timestamps = false;
                 $user->mab_id = $mab_id;
                 $user->save();
                 //dump($mab_id);
