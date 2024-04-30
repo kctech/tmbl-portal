@@ -142,10 +142,15 @@ class MABApi {
         return $this->apiCall([], static::$ENDPOINT_URL.'/lead/introducers/'.static::$user_list_endpoint.'/firmsbasic', 'GET');
     }
 
-    public function getAdviser($name){
+    public function getAdviser($name, $branch_id = null){
         $firms = $this->apiCall([], static::$ENDPOINT_URL.'/lead/introducers/'.static::$user_list_endpoint.'/firmsbasic', 'GET');
         foreach(($firms->data ?? []) as $firm){
             foreach(($firm->branches ?? []) as $branch){
+                if(!is_null($branch_id)){
+                    if($branch_id != $branch->branchId){
+                        continue;
+                    }
+                }
                 foreach(($branch->advisers ?? [])as $adviser){
                     if(strtolower(trim($adviser->name)) == strtolower(trim($name))){
                         return $firm->firmId."|".$branch->branchId."|".$adviser->adviserId;

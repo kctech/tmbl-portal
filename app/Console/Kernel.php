@@ -34,6 +34,8 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('leads:contact')->environments(['production'])->withoutOverlapping()->everyMinute();
 
+        $schedule->command('mab:sync-users --refresh=true --branch-id=9d214e47-c839-4785-a415-d61b6beffc01')->environments(['production'])->withoutOverlapping()->daily()->at('05:00');
+
         $schedule->command('queue:restart')->environments(['production'])->everyMinute();
         $schedule->command('queue:retry all')->environments(['production'])->everyFifteenMinutes();
         $schedule->command('queue:work --queue=adviseremails,clientemails,lead_chasers --timeout=60 --sleep=5 --tries=3')->environments(['production'])->withoutOverlapping()->everyMinute();

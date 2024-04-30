@@ -16,7 +16,7 @@ class SyncMABUserIds extends Command
      *
      * @var string
      */
-    protected $signature = 'mab:sync-users';
+    protected $signature = 'mab:sync-users {--refresh=false} {--branch-id=}';
 
     /**
      * The console command description.
@@ -42,18 +42,29 @@ class SyncMABUserIds extends Command
      */
     public function handle()
     {
+
+        $refresh = false;
+        if($this->option('refresh') == 'true'){
+            $refresh = true;
+        }
+
+        $branch_id = null;
+        if(!empty($this->option('branch-id'))){
+            $branch_id = $this->option('branch-id');
+        }
+
         $failed = $success = [];
         $mab = new \App\Libraries\MABApi(false,'introducers:read:authorizedfirms',true);
         //dd($mab->getAdvisers());
         foreach(User::all() as $user){
-            $mab_id = $mab->getAdviser($user->full_name());
-            if(!is_null($mab_id)){
+            $mab_id = $mab->getAdviser($user->full_name(), $branch_id);
+            if(!is_null($mab_id) || $refresh){
                 $user->mab_id = $mab_id;
                 $user->save();
-                dump($mab_id);
+                //dump($mab_id);
                 $success[$user->email] = $user->full_name();
             }else{
-                dump($user->email);
+                //dump($user->email);
                 $failed[$user->email] = $user->full_name();
             }
         }
