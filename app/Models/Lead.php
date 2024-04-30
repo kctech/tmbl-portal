@@ -63,11 +63,43 @@ class Lead extends Model
     }
 
     /**
-     * Get the allocated user that the lead is related to.
+     * Get the lead events
      */
     public function events()
     {
         return $this->hasMany(\App\Models\LeadEvent::class,'lead_id','id');
+    }
+
+    /**
+     * Get the next step in the chase process
+     */
+    public function next_step(){
+        return LeadChaser::getNextStep($this->strategy_id, $this->strategy_position_id);
+    }
+
+    /**
+     * Get the next step in the chase process
+     */
+    public function next_step_due(){
+        $next_step = $this->next_step();
+        if(Carbon::parse(($this->created_at)->addHours($next_step->chase_duration) <= Carbon::now())){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Get the next step in the chase process
+     */
+    public static function is_next_step_due($lead_id){
+        $lead = self::find($lead_id);
+        if($lead){
+            $next_step = $lead->next_step();
+            if(Carbon::parse($lead->created_at)->add($next_step->chase_duration) <= Carbon::now()){
+                return true;
+            }
+        }
+        return false;
     }
 
     //date query filter maker

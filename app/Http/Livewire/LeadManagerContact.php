@@ -308,6 +308,7 @@ class LeadManagerContact extends Component
 
         //next contact step
         $next_step = \App\Models\LeadChaser::getNextStep($this->lead->strategy_id, $this->lead->strategy_position_id);
+        //$next_step = $this->lead->next_step();
 
         $lead_data = json_decode($this->lead->data);
         $lead_data->contact_notes = $this->lead_notes;
@@ -351,6 +352,7 @@ class LeadManagerContact extends Component
 
         //next contact step
         $next_step = \App\Models\LeadChaser::getNextStep($this->lead->strategy_id, $this->lead->strategy_position_id);
+        //$next_step = $this->lead->next_step();
 
         $lead_data = json_decode($this->lead->data);
         $lead_data->contact_notes = $this->lead_notes;
@@ -601,7 +603,12 @@ class LeadManagerContact extends Component
                     }
                 }else{
                     Log::error(json_encode($mab_lead_response));
-                    $this->emit('error', ['message' => "Unable to send to MAB Portal [" . $this->lead_id . "]"]);
+                    $inital_error = $mab_lead_response->data->errors[0] ?? null;
+                    if(!empty($inital_error)){
+                        $this->emit('error', ['message' => "Unable to send to MAB Portal [" . $this->lead_id . "]: ". $inital_error]);
+                    }else{
+                        $this->emit('error', ['message' => "Unable to send to MAB Portal [" . $this->lead_id . "]"]);
+                    }
                 }
             }else{
                 $this->emit('error', ['message' => "Cant load lead [" . $this->lead_id . "]"]);

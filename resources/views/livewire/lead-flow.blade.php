@@ -61,7 +61,7 @@
                                                 <i class="fa fa-user"></i>
                                             </span>
                                         @endif
-                                        <span class="badge badge-info text-white tip" data-title="Created {{\Carbon\Carbon::parse($lead->created_at)->format('d/m/Y H:i')}}"><i class="fa fa-plus"></i>{{\Carbon\Carbon::parse($lead->created_at)->diffForHumans()}}</span>
+                                        <span class="badge @if(\App\Models\Lead::is_next_step_due($lead->id)) badge-warning @else badge-info text-white @endif tip" data-title="Created {{\Carbon\Carbon::parse($lead->created_at)->format('d/m/Y H:i')}}"><i class="fa fa-plus"></i>{{\Carbon\Carbon::parse($lead->created_at)->diffForHumans()}}</span>
                                         @if(!empty($lead->last_contacted_at))
                                             <span class="badge badge-success tip" title="Contacted {{ $lead->contact_count }} times, last at {{$lead->last_contacted_at}}"><i class="fas fa-phone"></i> {{\Carbon\Carbon::parse($lead->last_contacted_at)->diffForHumans()}}</span>
                                         @endif

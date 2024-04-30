@@ -68,10 +68,12 @@ class LeadFlow extends Component
             if($this->flow_type == 'admin'){
                 $lead_data = Lead::with('source','owner')->where('strategy_id',$c->strategy_id)->where('strategy_position_id',$c->id)->whereIn('status',[Lead::PROSPECT,Lead::CONTACT_ATTEMPTED,Lead::PAUSE_CONTACTING,Lead::CLAIMED])->orderBy('id','asc');
             }elseif($this->flow_type == 'unclaimed'){
-                $lead_data = Lead::with('source','owner')->where('strategy_id',$c->strategy_id)->where('strategy_position_id',$c->id)->whereIn('status',[Lead::PROSPECT,Lead::CONTACT_ATTEMPTED,Lead::PAUSE_CONTACTING]);
+                $lead_data = Lead::with('source','owner')->where('strategy_id',$c->strategy_id)->where('strategy_position_id',$c->id);
                 //if after first 2 steps, show all leads, inclusing claimed
                 if($c->chase_order < 3 ){
-                    $lead_data = $lead_data->whereNull('user_id');
+                    $lead_data = $lead_data->whereIn('status',[Lead::PROSPECT,Lead::CONTACT_ATTEMPTED,Lead::PAUSE_CONTACTING])->whereNull('user_id');
+                }else{
+                    $lead_data = $lead_data->whereIn('status',[Lead::PROSPECT,Lead::CONTACT_ATTEMPTED,Lead::PAUSE_CONTACTING,Lead::CLAIMED]);
                 }
                 $lead_data = $lead_data->orderBy('id','asc');
             }else{
