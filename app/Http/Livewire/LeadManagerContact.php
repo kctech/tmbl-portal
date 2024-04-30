@@ -67,7 +67,7 @@ class LeadManagerContact extends Component
         }
 
         if(!empty($this->lead->user_id)){
-            $this->error_redirect = true;
+            //$this->error_redirect = true;
             session()->flash('alert-danger','Lead ID '.$this->lead_id .' has been claimed by ' . $this->lead->owner->full_name());
         }
 
