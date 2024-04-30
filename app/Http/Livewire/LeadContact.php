@@ -274,6 +274,12 @@ class LeadContact extends Component
         //send next stage email
         if($next_step !== false){
             $merge_data_compiled = ChaseEmail::createAndSend($this->lead,$next_step,true);
+            $this->lead->events()->create([
+                'account_id' => $this->lead->account_id,
+                'user_id' => session('user_id'),
+                'event_id' => LeadEvent::AUTO_CONTACT_ATTEMPTED,
+                'information' => $next_step
+            ]);
         }else{
             session()->flash('alert-danger','Lead '.$this->lead_id.' is at the end of the chase streategy, consider archiving.');
             return $this->redirectRoute($this->redirect);
@@ -307,6 +313,13 @@ class LeadContact extends Component
         }
         $this->lead->save();
         //$this->emit('updated', ['message' => "Lead status updated [" . $this->lead_id . "]"]);
+
+        $this->lead->events()->create([
+            'account_id' => $this->lead->account_id,
+            'user_id' => session('user_id'),
+            'event_id' => LeadEvent::MANUAL_CONTACT_ATTEMPTED,
+            'information' => $this->lead_notes
+        ]);
 
         //send next stage email
         if($next_step == false){
@@ -367,7 +380,7 @@ class LeadContact extends Component
             $lead_data->contact_notes = $this->lead_notes;
             $this->lead->data = json_encode($lead_data);
             $this->lead->last_contacted_at = date("Y-m-d H:i:s");
-            $this->lead->status = Lead::CONTACT_ATTEMPTED;
+            //$this->lead->status = Lead::CONTACT_ATTEMPTED;
             ++$this->lead->contact_count;
             if($this->lead->save()){
 

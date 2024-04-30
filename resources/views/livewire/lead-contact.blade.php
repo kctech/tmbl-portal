@@ -102,12 +102,12 @@
 
         <div class="card mb-3">
             <div class="card-body">
-                <button class="btn btn-info text-white" wire:click="$set('show_contact',true)">Show Meeting Organiser</button>
-                <button class="ml-3 btn btn-success" wire:click="allocate_and_transfer()">Transfer to MAB without Teams Meeting</button>
-                {{--<button class="ml-3 btn btn-secondary" wire:click="mark_as_contacted()">Mark as contacted, leave at current step</button>--}}
-                <button class="ml-3 btn btn-primary" wire:click="contact_progress()">Move to next step in chase process (send email)</button>
-                {{--<button class="ml-3 btn btn-dark" wire:click="contact_progress_silent()">Move to next step in chase process (without email)</button>--}}
-                <button class="float-right ml-3 btn btn-danger" wire:click="archive()">Archive Lead</button>
+                <button class="btn btn-sm btn-info text-white" wire:click="$set('show_contact',true)">Show Meeting Organiser</button>
+                <button class="ml-3 btn btn-sm btn-success" wire:click="allocate_and_transfer()">Transfer to MAB without Teams Meeting</button>
+                <button class="ml-3 btn btn-sm btn-secondary" wire:click="mark_as_contacted()">Mark as contacted, leave at current step</button>
+                <button class="ml-3 btn btn-sm btn-primary" wire:click="contact_progress()">Move to next step in chase process (send email)</button>
+                <button class="ml-3 btn btn-sm btn-dark" wire:click="contact_progress_silent()">Move to next step in chase process (without email)</button>
+                <button class="float-right ml-3 btn btn-sm btn-danger" wire:click="archive()">Archive Lead</button>
             </div>
         </div>
     @endif

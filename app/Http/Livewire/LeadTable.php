@@ -95,7 +95,7 @@ class LeadTable extends Component
 
 
         if(in_array($this->lead_status,['new']) && empty(trim($this->search_filter))){
-            $query = $query->whereNull('user_id');
+            $query = $query->whereNull('user_id')->whereDoesntHave('events', function($q){ $q->where('event_id', LeadEvent::MANUAL_CONTACT_ATTEMPTED); });
         }elseif(in_array($this->lead_status,['all']) && empty(trim($this->search_filter))){
             $query = $query->where(function($q){
                 $q->whereNull('user_id')->where('status','!=',Lead::ARCHIVED);
