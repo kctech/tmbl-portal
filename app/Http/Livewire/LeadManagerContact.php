@@ -12,6 +12,7 @@ use App\Libraries\ChaseEmail;
 
 use App\Models\Lead;
 use App\Models\LeadEvent;
+use App\Models\LeadChaser;
 use App\Models\PortalCache;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -51,6 +52,8 @@ class LeadManagerContact extends Component
     public $selected_time = null;
     public $lead_notes = '';
 
+    public $contact_schedule = [];
+
     public function mount($lead_id, $redirect = 'leads.manager')
     {
         $this->advisers = session(self::$session_prefix . 'advisers') ?? [];
@@ -75,6 +78,8 @@ class LeadManagerContact extends Component
             $adviser_list[$adv->email] = $adv;
         }
         $this->adviser_list = $adviser_list;
+
+        $this->contact_schedule = LeadChaser::where('method','email')->where('status',LeadChaser::ACTIVE)->get();
     }
 
     public function loadData()
