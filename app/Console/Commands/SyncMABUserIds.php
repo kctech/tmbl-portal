@@ -58,7 +58,7 @@ class SyncMABUserIds extends Command
         //dd($mab->getAdvisers());
         foreach(User::all() as $user){
             $mab_id = $mab->getAdviser($user->full_name(), $branch_id);
-            if(!is_null($mab_id) || $refresh){
+            if(!is_null($mab_id) && $refresh){
                 $user->timestamps = false;
                 $user->mab_id = $mab_id;
                 $user->save();
@@ -70,7 +70,7 @@ class SyncMABUserIds extends Command
             }
         }
 
-        dump("success",json_encode($success));
-        dump("failed",json_encode($failed));
+        $this->info(json_encode($success));
+        $this->error(json_encode($failed));
     }
 }
