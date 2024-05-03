@@ -82,8 +82,10 @@ class Lead extends Model
      */
     public function next_step_due(){
         $next_step = $this->next_step();
-        if(Carbon::parse(($this->created_at)->addHours($next_step->chase_duration) <= Carbon::now())){
-            return true;
+        if(!is_bool($next_step)){
+            if(Carbon::parse($this->created_at)->addHours($next_step->chase_duration) >= Carbon::now()){
+                return true;
+            }
         }
         return false;
     }
@@ -94,10 +96,7 @@ class Lead extends Model
     public static function is_next_step_due($lead_id){
         $lead = self::find($lead_id);
         if($lead){
-            $next_step = $lead->next_step();
-            if(Carbon::parse($lead->created_at)->add($next_step->chase_duration) <= Carbon::now()){
-                return true;
-            }
+            return $lead->next_step_due();
         }
         return false;
     }
