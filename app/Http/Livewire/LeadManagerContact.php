@@ -309,6 +309,7 @@ class LeadManagerContact extends Component
         //next contact step
         $next_step = \App\Models\LeadChaser::getNextStep($this->lead->strategy_id, $this->lead->strategy_position_id);
         //$next_step = $this->lead->next_step();
+        $this->lead = Lead::where('id',$this->lead_id)->first();
 
         $lead_data = json_decode($this->lead->data);
         $lead_data->contact_notes = $this->lead_notes;
