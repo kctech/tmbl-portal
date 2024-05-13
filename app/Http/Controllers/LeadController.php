@@ -105,4 +105,14 @@ class LeadController extends Controller
     {
         return view('admin.leads.contact')->with('id', $id);
     }
+
+    /**
+     * Show the leads manager contact.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function edit($id,$redirect='leads.table')
+    {
+        return view('admin.leads.edit')->with('id', $id)->with('redirect', $redirect);
+    }
 }

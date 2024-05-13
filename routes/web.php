@@ -70,6 +70,7 @@ Route::prefix('admin')->group(function () {
             Route::get('/leads/chasers', 'LeadController@chasers')->name('leads.chasers');
             Route::get('/leads/contact/{id}', 'LeadController@contact')->name('leads.contact')->where('id', '[0-9]+');
             Route::get('/leads/flow', 'LeadController@flow')->name('leads.flow');
+            Route::get('/leads/edit/{id}/{redirect?}', 'LeadController@edit')->name('leads.edit')->where('id', '[0-9]+')->where('redirect', '[0-9a-zA-Z.-_]+');
         });
 
         //USERS

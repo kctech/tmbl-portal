@@ -309,6 +309,8 @@
                                                 <i class="fa fa-cog"></i>
                                             </button>
                                             <div class="dropdown-menu">
+                                                <a class="dropdown-item" href="{{route('leads.edit', ['id' => $item->id, 'redirect' => 'leads.manager'])}}">Edit</a>
+                                                <div class="dropdown-divider"></div>
                                                 @foreach(App\Libraries\Interpret::LeadStatus(null,'arr') as $type => $label)
                                                     <a class="dropdown-item" href="#" wire:click="update_status({{$item->id}},{{$type}})">Mark as "{{$label}}"</a>
                                                 @endforeach

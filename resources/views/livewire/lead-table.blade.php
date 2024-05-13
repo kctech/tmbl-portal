@@ -236,6 +236,7 @@
                                         <button class="btn btn-sm btn-secondary btn-blockX" wire:click="allocate({{$item->id}})" @if($loop->index != 0 && $item->id != $claimable_id) disabled @endif>Claim</button>
                                     @elseif($item->status == \App\Models\Lead::CLAIMED || ($item->status == \App\Models\Lead::PAUSE_CONTACTING && $item->user_id == session('user_id')))
                                         <a class="btn btn-sm btn-primary" href="{{route('leads.contact', $item->id)}}">Contact</a>
+                                        <a class="btn btn-sm btn-primary" href="{{route('leads.edit', ['id' => $item->id])}}">Edit</a>
                                         <button class="btn btn-sm btn-secondary" wire:click="info({{$item->id}})">Info</button>
                                         @if(\Carbon\Carbon::parse($item->allocated_at)->diff(\Carbon\Carbon::now())->days > 7)
                                             <button class="btn btn-sm btn-danger btn-blockX" wire:click="deallocate({{$item->id}})">Release Claim</button>

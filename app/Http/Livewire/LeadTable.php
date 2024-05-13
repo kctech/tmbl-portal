@@ -116,6 +116,7 @@ class LeadTable extends Component
                 break;
             case "new":
                     $query = $query->whereNotIn('status',[Lead::ARCHIVED,Lead::TRANSFERRED]);
+                    //$query = $query->whereIn('status',[Lead::PROSPECT]);
                 break;
             case "chase_1":
                 $query = $query->where('strategy_position_id', 1)->whereNotIn('status',[Lead::ARCHIVED,Lead::TRANSFERRED]);
@@ -146,6 +147,7 @@ class LeadTable extends Component
                 break;
             default:
                 $query = $query->whereNotIn('status',[Lead::ARCHIVED,Lead::TRANSFERRED]);
+                //$query = $query->whereIn('status',[Lead::PROSPECT]);
         }
 
         if (!empty(trim($this->search_filter))) {
@@ -249,7 +251,7 @@ class LeadTable extends Component
     public function allocate($lead_id){
         $lead = Lead::find($lead_id);
         if($lead){
-            if($lead->status == Lead::PROSPECT){
+            if(in_array($lead->status, [Lead::PAUSE_CONTACTING,Lead::PROSPECT])){
                 $lead->status = Lead::CLAIMED;
                 $lead->user_id = session('user_id');
                 $lead->allocated_at = date('Y-m-d H:i:s');
