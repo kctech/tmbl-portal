@@ -82,8 +82,9 @@ class Lead extends Model
      */
     public function next_step_due(){
         $next_step = $this->next_step();
+        //dd($next_step);
         if(!is_bool($next_step)){
-            if(Carbon::parse($this->created_at)->addHours($next_step->chase_duration) >= Carbon::now()){
+            if(Carbon::parse($this->created_at)->add($next_step->chase_duration) <= Carbon::now()){
                 return true;
             }
         }
