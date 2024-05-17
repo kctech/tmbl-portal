@@ -325,7 +325,12 @@ class LeadManagerContact extends Component
 
         //send next stage email
         if($next_step !== false){
-            $merge_data_compiled = ChaseEmail::createAndSend($this->lead,$next_step,true);
+            try{
+                $merge_data_compiled = ChaseEmail::createAndSend($this->lead,$next_step,true);
+            }catch(\Exception $e){
+                Log::error($merge_data_compiled);
+                Log::error($e->getMessage());
+            }
             $this->lead->events()->create([
                 'account_id' => $this->lead->account_id,
                 'user_id' => session('user_id'),

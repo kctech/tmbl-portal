@@ -42,17 +42,17 @@ class EmailRendered extends Mailable
         $email = $this->view('email.rendered', $this->details)
             ->subject($this->details['subject']);
 
-        /*
-        NOT ALLOWED USING TMBL's AZURE SMTP
+
+        //NOT ALLOWED USING TMBL's AZURE SMTP
         if (isset($this->details['from'])) {
             if (!empty($this->details['from']) && stripos($this->details['from'],'@tmblgroup.co.uk') !== false) {
                 $email->from($this->details['from'], $this->details['fromName']);
             } else {
-                $email->from('noreply@tmblgroup.co.uk');
+                $email->from('themortgagebroker@tmblgroup.co.uk');
             }
         } else {
-            $email->from('noreply@tmblgroup.co.uk');
-        }*/
+            $email->from('themortgagebroker@tmblgroup.co.uk');
+        }
 
         if (isset($this->details['replyTo'])) {
             if (!empty($this->details['replyTo'])) {

@@ -40,18 +40,18 @@ class EmailTemplated extends Mailable
     public function build()
     {
         $email = $this->view($this->details['view'])
-            ->from('noreply@tmblgroup.co.uk')
+            ->from('themortgagebroker@tmblgroup.co.uk')
             ->subject($this->details['subject']);
 
-        /*if (isset($this->details['from'])) {
+        if (isset($this->details['from'])) {
             if (!empty($this->details['from'])) {
                 $email->from($this->details['from'], $this->details['fromName']);
             } else {
-                $email->from('noreply@tmblgroup.co.uk');
+                $email->from('themortgagebroker@tmblgroup.co.uk');
             }
         } else {
-            $email->from('noreply@tmblgroup.co.uk');
-        }*/
+            $email->from('themortgagebroker@tmblgroup.co.uk');
+        }
 
         if (isset($this->details['replyTo'])) {
             if (!empty($this->details['replyTo'])) {

@@ -10,6 +10,7 @@ use App\Models\Lead;
 use App\Models\LeadChaser;
 use App\Models\LeadEvent;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use stdClass;
 
 class ContactLeads extends Command
@@ -67,7 +68,12 @@ class ContactLeads extends Command
                     if($created_at->copy()->add($chaser->chase_duration)->isPast()){
                         $this->info("> send ".$chaser->id);
 
-                        $merge_data_compiled = ChaseEmail::createAndSend($prospect,$chaser,$live);
+                        try{
+                            $merge_data_compiled = ChaseEmail::createAndSend($prospect,$chaser,$live);
+                        }catch(\Exception $e){
+                            Log::error($merge_data_compiled);
+                            Log::error($e->getMessage());
+                        }
 
                         if($live){
                             //record event
