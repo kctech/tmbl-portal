@@ -175,8 +175,8 @@
                                                             {{$adviser->first_name}} {{$adviser->last_name}}
                                                         </div>
                                                         <div class="col-2 text-right">
-                                                            @if(is_array($adviser->leads_this_month))
-                                                                {{count($adviser->leads_this_month)}}
+                                                            @if(is_array(($adviser->leads_this_month ?? [])))
+                                                                {{count(($adviser->leads_this_month ?? []))}}
                                                             @else
                                                                 {{$adviser->leads_this_month->count()}}
                                                             @endif
