@@ -97,7 +97,7 @@
                     Address
                 </td>
                 <td>
-                    8 Steel Close, Eaton Socon, St Neots, PE19 8TT
+                    The Waterfront, Wyboston Lakes, Great North Road, Wyboston, Bedfordshire, MK44 3AL
                 </td>
             </tr>
         </tbody>
@@ -149,7 +149,7 @@
                             @elseif($record->timing == "Offer")
                                 paid on receipt of the mortgage offer
                             @elseif($record->timing == "Completion")
-                                paid on completion of the mortgage (i.e. when the funds are drawn down) 
+                                paid on completion of the mortgage (i.e. when the funds are drawn down)
                             @endif
                         @endif
                     </td>
@@ -238,7 +238,7 @@
             </tr>
         </thead>
         <tbody>
-            
+
             <tr>
                 <td class="bg-dark text-white">
                     Phone
@@ -357,7 +357,7 @@
                         </tr>
                     </thead>
                     <tbody>
-            
+
                         <tr>
                             <td class="bg-dark text-white">
                                 Phone
@@ -369,7 +369,7 @@
                                 {{ $link->mkt_phone_consent }}
                             </td>
                         </tr>
-            
+
                         <tr>
                             <td class="bg-dark text-white">
                                 Face-to-face
@@ -381,7 +381,7 @@
                                 {{ $link->mkt_face_consent }}
                             </td>
                         </tr>
-            
+
                         <tr>
                             <td class="bg-dark text-white">
                                 SMS
@@ -393,7 +393,7 @@
                                 {{ $link->mkt_sms_consent }}
                             </td>
                         </tr>
-            
+
                         <tr>
                             <td class="bg-dark text-white">
                                 Email
@@ -405,7 +405,7 @@
                                 {{ $link->mkt_email_consent }}
                             </td>
                         </tr>
-            
+
                         <tr>
                             <td class="bg-dark text-white">
                                 3<sup>rd</sup> Party Intermediary
@@ -417,7 +417,7 @@
                                 {{ $link->mkt_thirdparty_consent }}
                             </td>
                         </tr>
-            
+
                         <tr>
                             <td class="bg-dark text-white">
                                 Other
@@ -429,7 +429,7 @@
                                 {{ $link->mkt_other_consent }}
                             </td>
                         </tr>
-            
+
                         <tr>
                             <td class="bg-dark text-white">
                                 Post
@@ -441,7 +441,7 @@
                                 {{ $link->mkt_post_consent }}
                             </td>
                         </tr>
-            
+
                         <tr>
                             <td class="bg-dark text-white">
                                 Automated Call
@@ -453,7 +453,7 @@
                                 {{ $link->mkt_automatedcall_consent }}
                             </td>
                         </tr>
-            
+
                     </tbody>
                 </table>
 

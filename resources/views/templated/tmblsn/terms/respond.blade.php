@@ -61,8 +61,8 @@
         </div>
 
         <div class="card mb-3">
-            
-            <!-- Multi step form --> 
+
+            <!-- Multi step form -->
             <section id="multi_step_form" class="multi_step_form">
 
                 <form id="msform" method="POST" action="{{ signedRoute('terms-consent.respond-save', ['code'=>$record->client->uid, 'id'=>$record->id]) }}">
@@ -73,8 +73,8 @@
 
                     <!-- progressbar -->
                     <ul id="progressbar" class="w-100 d-flex flex-fill p-0 mb-4">
-                        <li class="active flex-grow-1"><i class="icon far fa-shield-check"></i>Privacy Notice</li>  
-                        <li class="flex-grow-1"><i class="icon far fa-briefcase"></i>Terms of Businesss</li> 
+                        <li class="active flex-grow-1"><i class="icon far fa-shield-check"></i>Privacy Notice</li>
+                        <li class="flex-grow-1"><i class="icon far fa-briefcase"></i>Terms of Businesss</li>
                         <li class="flex-grow-1"><i class="icon far fa-tasks"></i>Our Promise</li>
                         {{--<li><i class="icon far fa-user-check"></i>Your Response</li>--}}
                     </ul>
@@ -97,7 +97,7 @@
                                         <div class="card-body bg-primary text-white">
                                             <div class="form-group mb-0 py-3 {{ $errors->has('privacy_consent') ? ' is-invalid' : '' }}">
                                                 <div class="custom-control custom-control-lg custom-checkbox">
-                                                    <input type="checkbox" name="privacy_consent" id="privacy_consent" class="custom-control-input" value="Y" required /> 
+                                                    <input type="checkbox" name="privacy_consent" id="privacy_consent" class="custom-control-input" value="Y" required />
                                                     <label class="custom-control-label" for="privacy_consent">I agree to the privacy notice.</label>
                                                 </div>
                                                 @if ($errors->has('privacy_consent'))
@@ -130,16 +130,16 @@
                                 <div class="card-body no-scroll-box">
 
                                     @include('templated.'.$record->user->account->viewset.'.terms.blocks.business', $record)
-                                    
+
                                 </div>
                             </div>
 
                             <div class="w-100 d-flex justify-content-center">
                                 <button type="button" class="btn btn-lg btn-outline-dark previous">Back</button>
-                                &nbsp;&nbsp;&nbsp; 
+                                &nbsp;&nbsp;&nbsp;
                                 <button type="button" class="btn btn-lg btn-primary next">Continue</button>
                             </div>
-                        </fieldset>  
+                        </fieldset>
 
                         <!-- our primise to you -->
                         <fieldset>
@@ -171,11 +171,11 @@
                                                     <p class="card-text">Please indicate your preferred method(s) of contact:</p>
                                                 </div>
                                                 <ul class="list-group list-group-flush">
-                                                    
+
                                                     <li class="list-group-item bg-primary">
                                                         <div class="form-group mb-0 {{ $errors->has('comm_phone_consent') ? ' is-invalid' : '' }}">
                                                             <div class="custom-control custom-checkbox">
-                                                                <input type="checkbox" name="comm_phone_consent" id="comm_phone_consent" class="custom-control-input" value="Y" {{checked('Y', $record->client->comm_phone_consent)}} /> 
+                                                                <input type="checkbox" name="comm_phone_consent" id="comm_phone_consent" class="custom-control-input" value="Y" {{checked('Y', $record->client->comm_phone_consent)}} />
                                                                 <label class="custom-control-label" for="comm_phone_consent">Telephone</label>
                                                             </div>
 
@@ -190,7 +190,7 @@
                                                     <li class="list-group-item bg-primary">
                                                         <div class="form-group mb-0 {{ $errors->has('comm_face_consent') ? ' is-invalid' : '' }}">
                                                             <div class="custom-control custom-checkbox">
-                                                                <input type="checkbox" name="comm_face_consent" id="comm_face_consent" class="custom-control-input" value="Y" {{checked('Y', $record->client->comm_face_consent)}} /> 
+                                                                <input type="checkbox" name="comm_face_consent" id="comm_face_consent" class="custom-control-input" value="Y" {{checked('Y', $record->client->comm_face_consent)}} />
                                                                 <label class="custom-control-label" for="comm_face_consent">Face to face</label>
                                                             </div>
 
@@ -205,7 +205,7 @@
                                                     <li class="list-group-item bg-primary">
                                                         <div class="form-group mb-0 {{ $errors->has('comm_sms_consent') ? ' is-invalid' : '' }}">
                                                             <div class="custom-control custom-checkbox">
-                                                                <input type="checkbox" name="comm_sms_consent" id="comm_sms_consent" class="custom-control-input" value="Y" {{checked('Y', $record->client->comm_sms_consent)}} /> 
+                                                                <input type="checkbox" name="comm_sms_consent" id="comm_sms_consent" class="custom-control-input" value="Y" {{checked('Y', $record->client->comm_sms_consent)}} />
                                                                 <label class="custom-control-label" for="comm_sms_consent">SMS / Text Message</label>
                                                             </div>
 
@@ -216,11 +216,11 @@
                                                             @endif
                                                         </div>
                                                     </li>
-                                                    
+
                                                     <li class="list-group-item bg-primary bg-primary">
                                                         <div class="form-group mb-0 {{ $errors->has('comm_email_consent') ? ' is-invalid' : '' }}">
                                                             <div class="custom-control custom-checkbox">
-                                                                <input type="checkbox" name="comm_email_consent" id="comm_email_consent" class="custom-control-input" value="Y" {{checked('Y', $record->client->comm_email_consent)}} /> 
+                                                                <input type="checkbox" name="comm_email_consent" id="comm_email_consent" class="custom-control-input" value="Y" {{checked('Y', $record->client->comm_email_consent)}} />
                                                                 <label class="custom-control-label" for="comm_email_consent">Email</label>
                                                             </div>
 
@@ -235,7 +235,7 @@
                                                     <li class="list-group-item bg-primary">
                                                         <div class="form-group mb-0 {{ $errors->has('comm_thirdparty_consent') ? ' is-invalid' : '' }}">
                                                             <div class="custom-control custom-checkbox">
-                                                                <input type="checkbox" name="comm_thirdparty_consent" id="comm_thirdparty_consent" class="custom-control-input" value="Y" {{checked('Y', $record->client->comm_thirdparty_consent)}} /> 
+                                                                <input type="checkbox" name="comm_thirdparty_consent" id="comm_thirdparty_consent" class="custom-control-input" value="Y" {{checked('Y', $record->client->comm_thirdparty_consent)}} />
                                                                 <label class="custom-control-label" for="comm_thirdparty_consent">Third Party Intermediaries</label>
                                                             </div>
 
@@ -250,7 +250,7 @@
                                                     <li class="list-group-item bg-primary">
                                                         <div class="form-group mb-0 {{ $errors->has('comm_other_consent') ? ' is-invalid' : '' }}">
                                                             <div class="custom-control custom-checkbox">
-                                                                <input type="checkbox" name="comm_other_consent" id="comm_other_consent" class="custom-control-input" value="Y" {{checked('Y', $record->client->comm_other_consent)}} /> 
+                                                                <input type="checkbox" name="comm_other_consent" id="comm_other_consent" class="custom-control-input" value="Y" {{checked('Y', $record->client->comm_other_consent)}} />
                                                                 <label class="custom-control-label" for="comm_other_consent">Other</label>
                                                             </div>
 
@@ -283,7 +283,7 @@
                                                     <li class="list-group-item bg-primary">
                                                         <div class="form-group mb-0 {{ $errors->has('mkt_phone_consent') ? ' is-invalid' : '' }}">
                                                             <div class="custom-control custom-checkbox">
-                                                                <input type="checkbox" name="mkt_phone_consent" id="mkt_phone_consent" class="custom-control-input" value="Y" {{checked('Y', $record->client->mkt_phone_consent)}} /> 
+                                                                <input type="checkbox" name="mkt_phone_consent" id="mkt_phone_consent" class="custom-control-input" value="Y" {{checked('Y', $record->client->mkt_phone_consent)}} />
                                                                 <label class="custom-control-label" for="mkt_phone_consent">Telephone</label>
                                                             </div>
 
@@ -298,7 +298,7 @@
                                                     <li class="list-group-item bg-primary">
                                                         <div class="form-group mb-0 {{ $errors->has('mkt_face_consent') ? ' is-invalid' : '' }}">
                                                             <div class="custom-control custom-checkbox">
-                                                                <input type="checkbox" name="mkt_face_consent" id="mkt_face_consent" class="custom-control-input" value="Y" {{checked('Y', $record->client->mkt_face_consent)}} /> 
+                                                                <input type="checkbox" name="mkt_face_consent" id="mkt_face_consent" class="custom-control-input" value="Y" {{checked('Y', $record->client->mkt_face_consent)}} />
                                                                 <label class="custom-control-label" for="mkt_face_consent">Face to face</label>
                                                             </div>
 
@@ -313,7 +313,7 @@
                                                     <li class="list-group-item bg-primary">
                                                         <div class="form-group mb-0 {{ $errors->has('mkt_sms_consent') ? ' is-invalid' : '' }}">
                                                             <div class="custom-control custom-checkbox">
-                                                                <input type="checkbox" name="mkt_sms_consent" id="mkt_sms_consent" class="custom-control-input" value="Y" {{checked('Y', $record->client->mkt_sms_consent)}} /> 
+                                                                <input type="checkbox" name="mkt_sms_consent" id="mkt_sms_consent" class="custom-control-input" value="Y" {{checked('Y', $record->client->mkt_sms_consent)}} />
                                                                 <label class="custom-control-label" for="mkt_sms_consent">SMS / Text Message</label>
                                                             </div>
 
@@ -328,7 +328,7 @@
                                                     <li class="list-group-item bg-primary">
                                                         <div class="form-group mb-0 {{ $errors->has('mkt_email_consent') ? ' is-invalid' : '' }}">
                                                             <div class="custom-control custom-checkbox">
-                                                                <input type="checkbox" name="mkt_email_consent" id="mkt_email_consent" class="custom-control-input" value="Y" {{checked('Y', $record->client->mkt_email_consent)}} /> 
+                                                                <input type="checkbox" name="mkt_email_consent" id="mkt_email_consent" class="custom-control-input" value="Y" {{checked('Y', $record->client->mkt_email_consent)}} />
                                                                 <label class="custom-control-label" for="mkt_email_consent">Email</label>
                                                             </div>
 
@@ -343,7 +343,7 @@
                                                     <li class="list-group-item bg-primary">
                                                         <div class="form-group mb-0 {{ $errors->has('mkt_thirdparty_consent') ? ' is-invalid' : '' }}">
                                                             <div class="custom-control custom-checkbox">
-                                                                <input type="checkbox" name="mkt_thirdparty_consent" id="mkt_thirdparty_consent" class="custom-control-input" value="Y" {{checked('Y', $record->client->mkt_thirdparty_consent)}} /> 
+                                                                <input type="checkbox" name="mkt_thirdparty_consent" id="mkt_thirdparty_consent" class="custom-control-input" value="Y" {{checked('Y', $record->client->mkt_thirdparty_consent)}} />
                                                                 <label class="custom-control-label" for="mkt_thirdparty_consent">Third Party Intermediaries</label>
                                                             </div>
 
@@ -358,7 +358,7 @@
                                                     <li class="list-group-item bg-primary">
                                                         <div class="form-group mb-0 {{ $errors->has('mkt_other_consent') ? ' is-invalid' : '' }}">
                                                             <div class="custom-control custom-checkbox">
-                                                                <input type="checkbox" name="mkt_other_consent" id="mkt_other_consent" class="custom-control-input" value="Y" {{checked('Y', $record->client->mkt_other_consent)}} /> 
+                                                                <input type="checkbox" name="mkt_other_consent" id="mkt_other_consent" class="custom-control-input" value="Y" {{checked('Y', $record->client->mkt_other_consent)}} />
                                                                 <label class="custom-control-label" for="mkt_other_consent">Other</label>
                                                             </div>
 
@@ -373,7 +373,7 @@
                                                     <li class="list-group-item bg-primary">
                                                         <div class="form-group mb-0 {{ $errors->has('mkt_post_consent') ? ' is-invalid' : '' }}">
                                                             <div class="custom-control custom-checkbox">
-                                                                <input type="checkbox" name="mkt_post_consent" id="mkt_post_consent" class="custom-control-input" value="Y" {{checked('Y', $record->client->mkt_post_consent)}} /> 
+                                                                <input type="checkbox" name="mkt_post_consent" id="mkt_post_consent" class="custom-control-input" value="Y" {{checked('Y', $record->client->mkt_post_consent)}} />
                                                                 <label class="custom-control-label" for="mkt_post_consent">Post</label>
                                                             </div>
 
@@ -388,7 +388,7 @@
                                                     <li class="list-group-item bg-primary">
                                                         <div class="form-group mb-0 {{ $errors->has('mkt_automatedcall_consent') ? ' is-invalid' : '' }}">
                                                             <div class="custom-control custom-checkbox">
-                                                                <input type="checkbox" name="mkt_automatedcall_consent" id="mkt_automatedcall_consent" class="custom-control-input" value="Y" {{checked('Y', $record->client->mkt_automatedcall_consent)}} /> 
+                                                                <input type="checkbox" name="mkt_automatedcall_consent" id="mkt_automatedcall_consent" class="custom-control-input" value="Y" {{checked('Y', $record->client->mkt_automatedcall_consent)}} />
                                                                 <label class="custom-control-label" for="mkt_automatedcall_consent">Automated Call</label>
                                                             </div>
 
@@ -403,7 +403,7 @@
                                                     {{--<li class="list-group-item bg-primary">
                                                         <div class="form-group mb-0 {{ $errors->has('mkt_web_consent') ? ' is-invalid' : '' }}">
                                                             <div class="custom-control custom-checkbox">
-                                                                <input type="checkbox" name="mkt_web_consent" id="mkt_web_consent" class="custom-control-input" value="Y" {{checked('Y', $record->client->mkt_web_consent)}} /> 
+                                                                <input type="checkbox" name="mkt_web_consent" id="mkt_web_consent" class="custom-control-input" value="Y" {{checked('Y', $record->client->mkt_web_consent)}} />
                                                                 <label class="custom-control-label" for="mkt_web_consent">Website Enquiry</label>
                                                             </div>
 
@@ -414,7 +414,7 @@
                                                             @endif
                                                         </div>
                                                     </li>--}}
-                                                    
+
                                                 </ul>
                                             </div>
                                         </div>
@@ -438,7 +438,7 @@
                                                             <li class="list-group-item bg-primary">
                                                                 <div class="form-group mb-0 {{ $errors->has('comm_phone_consent_2') ? ' is-invalid' : '' }}">
                                                                     <div class="custom-control custom-checkbox">
-                                                                        <input type="checkbox" name="comm_phone_consent_2" id="comm_phone_consent_2" class="custom-control-input" value="Y" {{checked('Y', $link->comm_phone_consent)}} /> 
+                                                                        <input type="checkbox" name="comm_phone_consent_2" id="comm_phone_consent_2" class="custom-control-input" value="Y" {{checked('Y', $link->comm_phone_consent)}} />
                                                                         <label class="custom-control-label" for="comm_phone_consent_2">Telephone</label>
                                                                     </div>
 
@@ -449,11 +449,11 @@
                                                                     @endif
                                                                 </div>
                                                             </li>
-                                                            
+
                                                             <li class="list-group-item bg-primary">
                                                                 <div class="form-group mb-0 {{ $errors->has('comm_face_consent_2') ? ' is-invalid' : '' }}">
                                                                     <div class="custom-control custom-checkbox">
-                                                                        <input type="checkbox" name="comm_face_consent_2" id="comm_face_consent_2" class="custom-control-input" value="Y" {{checked('Y', $link->comm_face_consent)}} /> 
+                                                                        <input type="checkbox" name="comm_face_consent_2" id="comm_face_consent_2" class="custom-control-input" value="Y" {{checked('Y', $link->comm_face_consent)}} />
                                                                         <label class="custom-control-label" for="comm_face_consent_2">Face to face</label>
                                                                     </div>
 
@@ -468,7 +468,7 @@
                                                             <li class="list-group-item bg-primary">
                                                                 <div class="form-group mb-0 {{ $errors->has('comm_sms_consent_2') ? ' is-invalid' : '' }}">
                                                                     <div class="custom-control custom-checkbox">
-                                                                        <input type="checkbox" name="comm_sms_consent_2" id="comm_sms_consent_2" class="custom-control-input" value="Y" {{checked('Y', $link->comm_sms_consent)}} /> 
+                                                                        <input type="checkbox" name="comm_sms_consent_2" id="comm_sms_consent_2" class="custom-control-input" value="Y" {{checked('Y', $link->comm_sms_consent)}} />
                                                                         <label class="custom-control-label" for="comm_sms_consent_2">SMS / Text Message</label>
                                                                     </div>
 
@@ -483,7 +483,7 @@
                                                             <li class="list-group-item bg-primary bg-primary">
                                                                 <div class="form-group mb-0 {{ $errors->has('comm_email_consent_2') ? ' is-invalid' : '' }}">
                                                                     <div class="custom-control custom-checkbox">
-                                                                        <input type="checkbox" name="comm_email_consent_2" id="comm_email_consent_2" class="custom-control-input" value="Y" {{checked('Y', $link->comm_email_consent)}} /> 
+                                                                        <input type="checkbox" name="comm_email_consent_2" id="comm_email_consent_2" class="custom-control-input" value="Y" {{checked('Y', $link->comm_email_consent)}} />
                                                                         <label class="custom-control-label" for="comm_email_consent_2">Email</label>
                                                                     </div>
 
@@ -498,7 +498,7 @@
                                                             <li class="list-group-item bg-primary">
                                                                 <div class="form-group mb-0 {{ $errors->has('comm_thirdparty_consent_2') ? ' is-invalid' : '' }}">
                                                                     <div class="custom-control custom-checkbox">
-                                                                        <input type="checkbox" name="comm_thirdparty_consent_2" id="comm_thirdparty_consent_2" class="custom-control-input" value="Y" {{checked('Y', $link->comm_thirdparty_consent)}} /> 
+                                                                        <input type="checkbox" name="comm_thirdparty_consent_2" id="comm_thirdparty_consent_2" class="custom-control-input" value="Y" {{checked('Y', $link->comm_thirdparty_consent)}} />
                                                                         <label class="custom-control-label" for="comm_thirdparty_consent_2">Third Party Intermediaries</label>
                                                                     </div>
 
@@ -513,7 +513,7 @@
                                                             <li class="list-group-item bg-primary">
                                                                 <div class="form-group mb-0 {{ $errors->has('comm_other_consent_2') ? ' is-invalid' : '' }}">
                                                                     <div class="custom-control custom-checkbox">
-                                                                        <input type="checkbox" name="comm_other_consent_2" id="comm_other_consent_2" class="custom-control-input" value="Y" {{checked('Y', $link->comm_other_consent)}} /> 
+                                                                        <input type="checkbox" name="comm_other_consent_2" id="comm_other_consent_2" class="custom-control-input" value="Y" {{checked('Y', $link->comm_other_consent)}} />
                                                                         <label class="custom-control-label" for="comm_other_consent_2">Other</label>
                                                                     </div>
 
@@ -540,12 +540,12 @@
                                                                 by ticking the following type(s) of contact acceptable to you:</p>
                                                         </div>
                                                         <ul class="list-group list-group-flush">
-                                                            
+
 
                                                             <li class="list-group-item bg-primary">
                                                                 <div class="form-group mb-0 {{ $errors->has('mkt_face_consent_2') ? ' is-invalid' : '' }}">
                                                                     <div class="custom-control custom-checkbox">
-                                                                        <input type="checkbox" name="mkt_face_consent_2" id="mkt_face_consent_2" class="custom-control-input" value="Y" {{checked('Y', $link->mkt_face_consent)}} /> 
+                                                                        <input type="checkbox" name="mkt_face_consent_2" id="mkt_face_consent_2" class="custom-control-input" value="Y" {{checked('Y', $link->mkt_face_consent)}} />
                                                                         <label class="custom-control-label" for="mkt_face_consent_2">Face to face</label>
                                                                     </div>
 
@@ -556,11 +556,11 @@
                                                                     @endif
                                                                 </div>
                                                             </li>
-                                                            
+
                                                             <li class="list-group-item bg-primary">
                                                                 <div class="form-group mb-0 {{ $errors->has('mkt_phone_consent_2') ? ' is-invalid' : '' }}">
                                                                     <div class="custom-control custom-checkbox">
-                                                                        <input type="checkbox" name="mkt_phone_consent_2" id="mkt_phone_consent_2" class="custom-control-input" value="Y" {{checked('Y', $link->mkt_phone_consent)}} /> 
+                                                                        <input type="checkbox" name="mkt_phone_consent_2" id="mkt_phone_consent_2" class="custom-control-input" value="Y" {{checked('Y', $link->mkt_phone_consent)}} />
                                                                         <label class="custom-control-label" for="mkt_phone_consent_2">Telephone</label>
                                                                     </div>
 
@@ -575,7 +575,7 @@
                                                             <li class="list-group-item bg-primary">
                                                                 <div class="form-group mb-0 {{ $errors->has('mkt_sms_consent_2') ? ' is-invalid' : '' }}">
                                                                     <div class="custom-control custom-checkbox">
-                                                                        <input type="checkbox" name="mkt_sms_consent_2" id="mkt_sms_consent_2" class="custom-control-input" value="Y" {{checked('Y', $link->mkt_sms_consent)}} /> 
+                                                                        <input type="checkbox" name="mkt_sms_consent_2" id="mkt_sms_consent_2" class="custom-control-input" value="Y" {{checked('Y', $link->mkt_sms_consent)}} />
                                                                         <label class="custom-control-label" for="mkt_sms_consent_2">SMS / Text Message</label>
                                                                     </div>
 
@@ -590,7 +590,7 @@
                                                             <li class="list-group-item bg-primary">
                                                                 <div class="form-group mb-0 {{ $errors->has('mkt_email_consent_2') ? ' is-invalid' : '' }}">
                                                                     <div class="custom-control custom-checkbox">
-                                                                        <input type="checkbox" name="mkt_email_consent_2" id="mkt_email_consent_2" class="custom-control-input" value="Y" {{checked('Y', $link->mkt_email_consent)}} /> 
+                                                                        <input type="checkbox" name="mkt_email_consent_2" id="mkt_email_consent_2" class="custom-control-input" value="Y" {{checked('Y', $link->mkt_email_consent)}} />
                                                                         <label class="custom-control-label" for="mkt_email_consent_2">Email</label>
                                                                     </div>
 
@@ -601,11 +601,11 @@
                                                                     @endif
                                                                 </div>
                                                             </li>
-                                                            
+
                                                             <li class="list-group-item bg-primary">
                                                                 <div class="form-group mb-0 {{ $errors->has('mkt_thirdparty_consent_2') ? ' is-invalid' : '' }}">
                                                                     <div class="custom-control custom-checkbox">
-                                                                        <input type="checkbox" name="mkt_thirdparty_consent_2" id="mkt_thirdparty_consent_2" class="custom-control-input" value="Y" {{checked('Y', $link->mkt_thirdparty_consent)}} /> 
+                                                                        <input type="checkbox" name="mkt_thirdparty_consent_2" id="mkt_thirdparty_consent_2" class="custom-control-input" value="Y" {{checked('Y', $link->mkt_thirdparty_consent)}} />
                                                                         <label class="custom-control-label" for="mkt_thirdparty_consent_2">Third Party Intermediaries</label>
                                                                     </div>
 
@@ -620,7 +620,7 @@
                                                             <li class="list-group-item bg-primary">
                                                                 <div class="form-group mb-0 {{ $errors->has('mkt_other_consent_2') ? ' is-invalid' : '' }}">
                                                                     <div class="custom-control custom-checkbox">
-                                                                        <input type="checkbox" name="mkt_other_consent_2" id="mkt_other_consent_2" class="custom-control-input" value="Y" {{checked('Y', $link->mkt_other_consent)}} /> 
+                                                                        <input type="checkbox" name="mkt_other_consent_2" id="mkt_other_consent_2" class="custom-control-input" value="Y" {{checked('Y', $link->mkt_other_consent)}} />
                                                                         <label class="custom-control-label" for="mkt_other_consent_2">Other</label>
                                                                     </div>
 
@@ -635,7 +635,7 @@
                                                             <li class="list-group-item bg-primary">
                                                                 <div class="form-group mb-0 {{ $errors->has('mkt_post_consent_2') ? ' is-invalid' : '' }}">
                                                                     <div class="custom-control custom-checkbox">
-                                                                        <input type="checkbox" name="mkt_post_consent_2" id="mkt_post_consent_2" class="custom-control-input" value="Y" {{checked('Y', $link->mkt_post_consent)}} /> 
+                                                                        <input type="checkbox" name="mkt_post_consent_2" id="mkt_post_consent_2" class="custom-control-input" value="Y" {{checked('Y', $link->mkt_post_consent)}} />
                                                                         <label class="custom-control-label" for="mkt_post_consent_2">Post</label>
                                                                     </div>
 
@@ -650,7 +650,7 @@
                                                             <li class="list-group-item bg-primary">
                                                                 <div class="form-group mb-0 {{ $errors->has('mkt_automatedcall_consent_2') ? ' is-invalid' : '' }}">
                                                                     <div class="custom-control custom-checkbox">
-                                                                        <input type="checkbox" name="mkt_automatedcall_consent_2" id="mkt_automatedcall_consent_2" class="custom-control-input" value="Y" {{checked('Y', $link->mkt_automatedcall_consent)}} /> 
+                                                                        <input type="checkbox" name="mkt_automatedcall_consent_2" id="mkt_automatedcall_consent_2" class="custom-control-input" value="Y" {{checked('Y', $link->mkt_automatedcall_consent)}} />
                                                                         <label class="custom-control-label" for="mkt_automatedcall_consent_2">Automated Call</label>
                                                                     </div>
 
@@ -665,7 +665,7 @@
                                                             {{--<li class="list-group-item bg-primary">
                                                                 <div class="form-group mb-0 {{ $errors->has('mkt_web_consent_2') ? ' is-invalid' : '' }}">
                                                                     <div class="custom-control custom-checkbox">
-                                                                        <input type="checkbox" name="mkt_web_consent_2" id="mkt_web_consent_2" class="custom-control-input" value="Y" {{checked('Y', $link->mkt_web_consent)}} /> 
+                                                                        <input type="checkbox" name="mkt_web_consent_2" id="mkt_web_consent_2" class="custom-control-input" value="Y" {{checked('Y', $link->mkt_web_consent)}} />
                                                                         <label class="custom-control-label" for="mkt_web_consent_2">Website Enquiry</label>
                                                                     </div>
 
@@ -710,7 +710,7 @@
                                                     Address
                                                 </td>
                                                 <td>
-                                                    8 Steel Close, Eaton Socon, St Neots, PE19 8TT
+                                                    The Waterfront, Wyboston Lakes, Great North Road, Wyboston, Bedfordshire, MK44 3AL
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -759,7 +759,7 @@
                                                         @elseif($record->timing == "Offer")
                                                             paid on receipt of the mortgage offer
                                                         @elseif($record->timing == "Completion")
-                                                            paid on completion of the mortgage (i.e. when the funds are drawn down) 
+                                                            paid on completion of the mortgage (i.e. when the funds are drawn down)
                                                         @endif
                                                     @endif
                                                 </td>
@@ -789,7 +789,7 @@
                                         <div class="card-body">
                                             <div class="form-group mb-0 py-3 {{ $errors->has('terms_consent') ? ' is-invalid' : '' }}">
                                                 <div class="custom-control custom-control-lg custom-checkbox">
-                                                    <input type="checkbox" name="terms_consent" id="terms_consent" class="custom-control-input" value="Y" required /> 
+                                                    <input type="checkbox" name="terms_consent" id="terms_consent" class="custom-control-input" value="Y" required />
                                                     <label class="custom-control-label" for="terms_consent">I agree to the terms above and the fee structure.</label>
                                                 </div>
                                                 @if ($errors->has('terms_consent'))
@@ -808,7 +808,7 @@
                                         <div class="card-body">
                                             <div class="form-group mb-0 py-3 {{ $errors->has('consent') ? ' is-invalid' : '' }}">
                                                 <label for="signature"><h3 class="mb-0">Your Signature</h3></label>
-                                                <input type="text" name="signature" id="signature" class="form-control" required /> 
+                                                <input type="text" name="signature" id="signature" class="form-control" required />
                                                 <small id="signatureHelpBlock" class="form-text">
                                                     By typing your name, this acts as your signature
                                                 </small>
@@ -827,11 +827,11 @@
                                 </div>
                             </div>
 
-                            
+
 
                             <div class="w-100 d-flex justify-content-center">
                                 <button type="button" class="btn btn-lg btn-outline-dark previous">Back</button>
-                                &nbsp;&nbsp;&nbsp; 
+                                &nbsp;&nbsp;&nbsp;
                                 <button type="submit" class="btn btn-lg btn-primary">
                                     {{ __('Submit Response') }}
                                 </button>
@@ -840,8 +840,8 @@
 
                     </div>
 
-                </form>  
-            </section> 
+                </form>
+            </section>
             <!-- End Multi step form -->
 
         </div>
@@ -891,17 +891,17 @@
             $('#privacy_consent').prop('checked', true);
         });
 
-        /*Function Calls*/  
+        /*Function Calls*/
         verificationForm ();
 
         $('input[name="consent"]').change(function(){
             $('input[name="consent_additional"]').val($(this).data("consent-selection"));
         });
 
-        
+
     });
 
-       
+
     //* Form js
     function verificationForm(){
         //jQuery time
@@ -1009,7 +1009,7 @@
                 easing: 'swing'
             });
         });
-    }; 
+    };
 
     function smoothScroll(target){
         var $target = $(target);
@@ -1017,6 +1017,6 @@
             scrollTop: $target.offset().top
         }, 1000);
     }
-    
+
 </script>
 @endpush

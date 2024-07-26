@@ -97,7 +97,7 @@
                     Address
                 </td>
                 <td>
-                    8 Steel Close, Eaton Socon, St Neots, PE19 8TT
+                    The Waterfront, Wyboston Lakes, Great North Road, Wyboston, Bedfordshire, MK44 3AL
                 </td>
             </tr>
         </tbody>
@@ -149,7 +149,7 @@
                             @elseif($record->timing == "Offer")
                                 paid on receipt of the mortgage offer
                             @elseif($record->timing == "Completion")
-                                paid on completion of the mortgage (i.e. when the funds are drawn down) 
+                                paid on completion of the mortgage (i.e. when the funds are drawn down)
                             @endif
                         @endif
                     </td>
@@ -238,7 +238,7 @@
             </tr>
         </thead>
         <tbody>
-            
+
             <tr>
                 <td class="bg-dark text-white">
                     Phone
@@ -357,7 +357,7 @@
                         </tr>
                     </thead>
                     <tbody>
-            
+
                         <tr>
                             <td class="bg-dark text-white">
                                 Phone
