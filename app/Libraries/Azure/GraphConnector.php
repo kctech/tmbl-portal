@@ -363,7 +363,7 @@ class GraphConnector
             return json_decode($response?->getBody()?->getContents() ?? '');
 
         } catch (\GuzzleHttp\Exception\RequestException $exception) {
-            dd($exception->getResponse()->getBody()->getContents());
+            //dd($exception->getResponse()?->getBody()->getContents() ?? 'no body');
             Log::critical($exception->getMessage(),['tenant_id' => $this->provider->getTenantId()]);
             return null;
         } catch (\Exception $exception) {

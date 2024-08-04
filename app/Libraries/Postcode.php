@@ -31,9 +31,4 @@ class Postcode {
 	public static function clean($postcode){
 		return strtoupper(str_replace(' ','',$postcode));
 	}
-
-	public static function unitsNearTo( $postcode,$mode='badger',$results=10 ){
-		$limit = config('search.search_results',10);
-		return DB::select( "select *,geo_distance('$postcode',postcode) as distance from units where postcode!='' and geo_distance('$postcode',postcode) is not null and unit_name like '%$mode%' order by geo_distance('$postcode',postcode) asc limit 0,$limit");
-	}
 }

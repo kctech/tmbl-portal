@@ -47,7 +47,7 @@ class LeadChaseStrategy extends Model
      */
     public function steps()
     {
-        return $this->hasMany(\App\Models\LeadChaser::class, 'strategy_id', 'id');
+        return $this->hasMany(\App\Models\LeadChaseStep::class, 'strategy_id', 'id');
     }
 
 }

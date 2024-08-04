@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use \Maatwebsite\Excel\Excel;
+use App\Exports\LeadsExport;
+
 class LeadController extends Controller
 {
     /**
@@ -34,6 +37,17 @@ class LeadController extends Controller
     public function manager()
     {
         return view('admin.leads.manager');
+    }
+
+    /**
+     * Show the leads manager.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function export_leads()
+    {
+        //(new LeadsExport)->queue('leads.xlsx');
+        return (new LeadsExport)->download('all_leads_'.date("Y-m-d_H-i-s").'.xlsx', Excel::XLSX);
     }
 
     /**
@@ -84,6 +98,16 @@ class LeadController extends Controller
     public function chasers()
     {
         return view('admin.leads.chasers');
+    }
+
+    /**
+     * Show the lead sources editor.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function email_templates()
+    {
+        return view('admin.leads.email-templates');
     }
 
     /**

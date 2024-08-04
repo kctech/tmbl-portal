@@ -7,7 +7,7 @@ use Livewire\WithPagination;
 
 use App\Models\Lead;
 use App\Models\LeadEvent;
-use App\Models\LeadChaser;
+use App\Models\LeadChaseStep;
 
 use App\Libraries\MABApi;
 
@@ -47,7 +47,7 @@ class LeadTable extends Component
         $this->search_filter = session(self::$session_prefix . 'search_filter') ?? '';
         $this->sort_order = session(self::$session_prefix . 'sort_order') ?? 'oldest_first';
 
-        $this->contact_schedule = LeadChaser::where('method','email')->where('status',LeadChaser::ACTIVE)->get();
+        $this->contact_schedule = LeadChaseStep::where('status',LeadChaseStep::ACTIVE)->get();
         $this->claimable_id = Lead::where(function($q){
             $q->whereNull('user_id')->orWhere('user_id',session('user_id'));
         })->whereNotIn('status',[Lead::ARCHIVED,Lead::TRANSFERRED])->orderBy('id', 'asc')->first()->id ?? 0;

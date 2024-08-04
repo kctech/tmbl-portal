@@ -50,8 +50,11 @@
                     </div>
                     <ul class="list-group list-group-flush">
                         @forelse($strategy->data as $lead)
-                            @php $lead = (object) $lead; @endphp
-                            <li class="list-group-item p-1">
+                            @php
+                                $lead = (object) $lead;
+                                $next_contact_due = \App\Models\Lead::is_next_contact_due($lead->id);
+                            @endphp
+                            <li class="list-group-item p-1 @if($next_contact_due) bg-warning @endif">
                                 <div class="row">
                                     <div class="col-auto">
                                         <span class="badge badge-dark tip" data-title="From source: {{$lead->source['source'] ?? 'Default'}}"><i class="fa fa-fw {{$lead->source['icon'] ?? 'fa-star'}}"></i> {{$lead->id}}</span> {{$lead->first_name}} {{$lead->last_name}}
@@ -61,7 +64,9 @@
                                                 <i class="fa fa-user"></i>
                                             </span>
                                         @endif
-                                        <span class="badge @if(\App\Models\Lead::is_next_step_due($lead->id)) badge-warning @else badge-info text-white @endif tip" data-title="Created {{\Carbon\Carbon::parse($lead->created_at)->format('d/m/Y H:i')}}"><i class="fa fa-plus"></i>{{\Carbon\Carbon::parse($lead->created_at)->diffForHumans()}}</span>
+                                        {{--
+                                        <span class="badge @if($next_contact_due) badge-warning @else badge-info text-white @endif tip" data-title="Created {{\Carbon\Carbon::parse($lead->created_at)->format('d/m/Y H:i')}}"><i class="fa fa-plus"></i>{{\Carbon\Carbon::parse($lead->created_at)->diffForHumans()}}</span>
+                                        --}}
                                         @if(!empty($lead->last_contacted_at))
                                             <span class="badge badge-success tip" title="Contacted {{ $lead->contact_count }} times, last at {{$lead->last_contacted_at}}"><i class="fas fa-phone"></i> {{\Carbon\Carbon::parse($lead->last_contacted_at)->diffForHumans()}}</span>
                                         @endif

@@ -22,10 +22,10 @@ $(document).ready(function() {
     app.uiElements();
     app.formElements();
 
-	/* esc closes modal */
+	/* esc closes modal
 	$(document).bind('keydown', 'esc', function(){
 		$('.modal').modal('hide');
-	});
+	}); */
 	/* enter fires search */
 	$('#search').on('keypress',function(e) {
 		if(e.which == 13) {
@@ -484,3 +484,27 @@ accounting.settings = {
 		decimal : "."
 	}
 };
+
+/*app.makeTextEditor = function(element){
+    if (typeof ck_editor === 'undefined') {
+        let ck_editor;
+    }
+    if($(element).length > 0){
+        ClassicEditor.create( document.querySelector( element ),{
+            toolbar: ['heading', '|', 'bold', 'italic' ,'link','|', 'indent','outdent','|', 'bulletedList', 'numberedList', 'blockQuote','|', 'insertTable' ] //'underline',
+        } ).then( editor => {
+            ck_editor = editor; // Save for later use.
+            editor.editing.view.document.on( 'keydown', ( evt, data ) => {
+                app.emailIsEdited = true;
+            });
+            editor.editing.view.document.on('keyup', (evt, data) => {
+                document.querySelector(element).value = editor.getData();
+            });
+        } )
+        .catch( error => {
+            console.error( error );
+        } );
+    }else{
+        console.log('cant create text editor: '+element+' does not exist');
+    }
+}*/

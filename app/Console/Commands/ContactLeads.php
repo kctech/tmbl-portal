@@ -7,7 +7,8 @@ use Illuminate\Console\Command;
 use App\Libraries\ChaseEmail;
 
 use App\Models\Lead;
-use App\Models\LeadChaser;
+use App\Models\LeadChaseStep;
+use App\Models\LeadChaseStepContactMethod;
 use App\Models\LeadEvent;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -47,7 +48,7 @@ class ContactLeads extends Command
     public function handle()
     {
         session()->put('account_id',$this->option('account_id'));
-        $contact_schedule = LeadChaser::where('method','email')->where('status',LeadChaser::ACTIVE)->where('auto_contact',0)->get();
+        $chase_steps = LeadChaseStep::where('status',LeadChaseStep::ACTIVE)->get();
         $prospects = Lead::whereIn('status',[Lead::PROSPECT,Lead::CONTACT_ATTEMPTED,Lead::CLAIMED])->get();
 
         $live = false;
@@ -59,39 +60,44 @@ class ContactLeads extends Command
             $this->info($prospect->id."|".$prospect->email_address."|".$prospect->created_at);
 
             $created_at = Carbon::parse($prospect->created_at);
-            $prospect_auto_comms = $prospect->events()->where('event_id',LeadEvent::AUTO_CONTACT_ATTEMPTED)->pluck('information')->toArray();
+            $prospect_auto_comms = $prospect->events()->where('event_id',LeadEvent::AUTO_CONTACT_ATTEMPTED)->pluck('information')->toArray(); //avoid re-sending the same thing
 
-            foreach($contact_schedule as $chaser){
-                $this->info("> checking ".$chaser->id);
-                if(!in_array($chaser->id, $prospect_auto_comms)){
-                    $this->info("check time for ".$chaser->id." - ".$chaser->chase_duration);
-                    if($created_at->copy()->add($chaser->chase_duration)->isPast()){
-                        $this->info("> send ".$chaser->id);
+            foreach($chase_steps as $step){
+                $this->info("> checking step ".$step->id);
+                foreach($step->contact_methods()->where(function($q){ $q->where('method','email')->where('auto_contact',LeadChaseStepContactMethod::AUTO_CONTACT); })->get() as $contact){
+                    $this->info("> checking contact method ".$contact->id);
+                    if(!in_array($contact->id, $prospect_auto_comms)){
+                        $this->info("check time for ".$contact->id." - ".$contact->chase_duration);
+                        if($created_at->copy()->add($contact->chase_duration)->isPast()){
+                            $this->info("> send ".$contact->id);
 
-                        try{
-                            $merge_data_compiled = ChaseEmail::createAndSend($prospect,$chaser,$live);
-                        }catch(\Exception $e){
-                            Log::error($merge_data_compiled);
-                            Log::error($e->getMessage());
-                        }
+                            try{
+                                $merge_data_compiled = ChaseEmail::createAndSend($prospect,$contact,$live);
+                            }catch(\Exception $e){
+                                Log::error($merge_data_compiled);
+                                Log::error($e->getMessage());
+                            }
 
-                        if($live){
-                            //record event
-                            //$prospect->status = Lead::AUTO_CONTACT_ATTEMPTED;
-                            $prospect->last_contacted_at = date("Y-m-d H:i:s");
-                            $prospect->strategy_position_id = $chaser->id;
-                            ++$prospect->contact_count;
-                            $prospect->save();
-                            $prospect->events()->create([
-                                'account_id' => $prospect->account_id,
-                                'user_id' => 0,
-                                'event_id' => LeadEvent::AUTO_CONTACT_ATTEMPTED,
-                                'information' => $chaser->id
-                            ]);
-                        }else{
-                            //dump($adviser->email ?? $adviser['email']);
-                            dump($merge_data_compiled);
-                            //dump(Render::merge_data($merge_data_compiled,$chaser->body));
+                            if($live){
+                                //record event
+                                //$prospect->status = Lead::AUTO_CONTACT_ATTEMPTED;
+                                $prospect->last_contacted_at = date("Y-m-d H:i:s");
+                                if($step->auto_progress == LeadChaseStep::AUTO_PROGRESS){
+                                    $prospect->strategy_position_id = LeadChaseStep::getNextStep(1,$prospect->strategy_position_id)->id ?? $prospect->strategy_position_id;
+                                }
+                                ++$prospect->contact_count;
+                                $prospect->save();
+                                $prospect->events()->create([
+                                    'account_id' => $prospect->account_id,
+                                    'user_id' => 0,
+                                    'event_id' => LeadEvent::AUTO_CONTACT_ATTEMPTED,
+                                    'information' => $contact->id
+                                ]);
+                            }else{
+                                //dump($adviser->email ?? $adviser['email']);
+                                dump($merge_data_compiled);
+                                //dump(Render::merge_data($merge_data_compiled,$contact->body));
+                            }
                         }
                     }
                 }

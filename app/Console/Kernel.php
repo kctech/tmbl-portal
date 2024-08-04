@@ -38,7 +38,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('queue:restart')->environments(['production'])->everyMinute();
         $schedule->command('queue:retry all')->environments(['production'])->everyFifteenMinutes();
-        $schedule->command('queue:work --queue=adviseremails,clientemails,lead_chasers --timeout=60 --sleep=5 --tries=3')->environments(['production'])->withoutOverlapping()->everyMinute();
+        $schedule->command('queue:work --queue=adviseremails,clientemails,lead_chase_steps --timeout=60 --sleep=5 --tries=3')->environments(['production'])->withoutOverlapping()->everyMinute();
 
         $schedule->command('portal_cache:calendars --account_id=1 --base_user_email=sam@tmblgroup.co.uk --weeks=4')->environments(['production'])->withoutOverlapping()->everyThirtyMinutes();
 

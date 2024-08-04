@@ -7,7 +7,7 @@ use Livewire\WithPagination;
 
 use App\Models\Lead;
 use App\Models\LeadEvent;
-use App\Models\LeadChaser;
+use App\Models\LeadChaseStep;
 
 use App\Libraries\MABApi;
 
@@ -15,6 +15,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
+
+use \Maatwebsite\Excel\Excel;
+use App\Exports\LeadsExport;
 
 class LeadManager extends Component
 {
@@ -49,7 +52,7 @@ class LeadManager extends Component
         $this->search_filter = session(self::$session_prefix . 'search_filter') ?? '';
         $this->sort_order = session(self::$session_prefix . 'sort_order') ?? 'oldest_first';
         $this->advisers = $this->buildAdvisersList();
-        $this->contact_schedule = LeadChaser::where('method','email')->where('status',LeadChaser::ACTIVE)->get();
+        $this->contact_schedule = LeadChaseStep::where('status',LeadChaseStep::ACTIVE)->get();
     }
 
     public function updated($prop, $value)
@@ -446,6 +449,12 @@ class LeadManager extends Component
         return view('livewire.lead-manager', [
             'list' => $list
         ]);
+    }
+
+    public function export(){
+        //(new LeadsExport)->queue('leads.xlsx');
+        $this->data();
+        return (new LeadsExport($this->data))->download('leads_'.date("Y-m-d_H-i-s").'.xlsx', Excel::XLSX);
     }
 
 }

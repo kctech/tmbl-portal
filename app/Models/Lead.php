@@ -71,10 +71,25 @@ class Lead extends Model
     }
 
     /**
+     * Get the lead events
+     */
+    public function contact_events()
+    {
+        return $this->hasMany(\App\Models\LeadEvent::class,'lead_id','id')->whereIn('event_id',[\App\Models\LeadEvent::AUTO_CONTACT_ATTEMPTED,\App\Models\LeadEvent::MANUAL_CONTACT_ATTEMPTED]);
+    }
+
+    /**
      * Get the next step in the chase process
      */
     public function next_step(){
-        return LeadChaser::getNextStep($this->strategy_id, $this->strategy_position_id);
+        return LeadChaseStep::getNextStep($this->strategy_id, $this->strategy_position_id);
+    }
+
+    /**
+     * Get the current step in the chase process
+     */
+    public function current_step(){
+        return LeadChaseStep::getCurrentStep($this->strategy_id, $this->strategy_position_id);
     }
 
     /**
@@ -82,7 +97,6 @@ class Lead extends Model
      */
     public function next_step_due(){
         $next_step = $this->next_step();
-        //dd($next_step);
         if(!is_bool($next_step)){
             if(Carbon::parse($this->created_at)->add($next_step->chase_duration) <= Carbon::now()){
                 return true;
@@ -98,6 +112,35 @@ class Lead extends Model
         $lead = self::find($lead_id);
         if($lead){
             return $lead->next_step_due();
+        }
+        return false;
+    }
+
+    /**
+     * Get the next step in the chase process
+     */
+    public function next_contact_due(){
+        $current_step = $this->current_step();
+        $step_contact_methods = array_map('strval', $current_step->contact_methods->pluck('id')->toArray());
+        $step_contact_events = array_map('strval', $this->contact_events->whereIn('information', $step_contact_methods)->pluck('information')->toArray());
+        if(!is_bool($current_step)){
+            foreach($current_step->contact_methods as $cm){
+                if(\Carbon\Carbon::parse($this->created_at)->add($cm->chase_duration) <= \Carbon\Carbon::now() && $this->strategy_position_id == $current_step->id && !in_array(strval($cm->id), array_values($step_contact_events))){
+                    //dump($cm);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+        /**
+     * Get the next step in the chase process
+     */
+    public static function is_next_contact_due($lead_id){
+        $lead = self::find($lead_id);
+        if($lead){
+            return $lead->next_contact_due();
         }
         return false;
     }

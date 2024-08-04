@@ -17,7 +17,7 @@ class CreateLeadChaseStrategiesTable extends Migration
             $table->id();
             $table->bigInteger('account_id')->unsigned();
             $table->string('name');
-            $table->tinyInteger('status')->default(\App\Models\LeadChaser::ACTIVE);
+            $table->tinyInteger('status')->default(\App\Models\LeadChaseStep::ACTIVE);
             $table->timestamps();
 
             $table->softDeletes();

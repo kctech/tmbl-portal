@@ -7,9 +7,10 @@
     <div class="btn-toolbar mb-2 mb-md-0">
         {{ Breadcrumbs::render('leads') }}
         @can('lead_admin')
-        <a href="{{ route('leads.sources') }}" class="btn btn-lg btn-primary ml-3 mb-3"><i class="fa fa-inbox-in"></i> Lead Sources</a>
-        <a href="{{ route('leads.chasers') }}" class="btn btn-lg btn-primary ml-3 mb-3"><i class="fa fa-share-alt"></i> Lead Chasers</a>
-        <a href="{{ route('leads.adviser-availability') }}" class="btn btn-lg btn-primary ml-3 mb-3"><i class="fa fa-users"></i> Adviser Availability</a>
+            <a href="{{ route('leads.email_templates') }}" class="btn btn-lg btn-primary ml-3 mb-3"><i class="fa fa-envelope"></i> Email Templates</a>
+            <a href="{{ route('leads.sources') }}" class="btn btn-lg btn-primary ml-3 mb-3"><i class="fa fa-inbox-in"></i> Lead Sources</a>
+            <a href="{{ route('leads.chasers') }}" class="btn btn-lg btn-primary ml-3 mb-3"><i class="fa fa-share-alt"></i> Lead Chasers</a>
+            <a href="{{ route('leads.adviser-availability') }}" class="btn btn-lg btn-primary ml-3 mb-3"><i class="fa fa-users"></i> Adviser Availability</a>
         @endcan
         @can('sources')
             <a href="{{ route('leads.sources') }}" class="btn btn-lg btn-primary ml-3 mb-3"><i class="fa fa-inbox-in"></i> Lead Sources</a>
@@ -28,80 +29,76 @@
 <div class="card mb-4">
     <div class="card-body">
         <div class="d-flex align-self-center">
-            {{--<div class="card">
-                <div class="card-body bg-light d-flex align-items-center">
-                    <div class="custom-control custom-radio custom-control-inline">
-                        <input wire:click="$set('lead_status','')" type="radio" id="lead_status_all" name="lead_status" class="custom-control-input" value="" {{checked('', $lead_status)}}>
-                        <label class="custom-control-label" for="lead_status_all">All Leads</label>
-                    </div>
-                    <div class="custom-control custom-radio custom-control-inline">
-                        <input wire:click="$set('lead_status','{{\App\Models\Lead::PROSPECT}},{{\App\Models\Lead::PAUSE_CONTACTING}}')" type="radio" id="lead_status_no" name="lead_status" class="custom-control-input" value="{{\App\Models\Lead::PROSPECT}}" {{checked(\App\Models\Lead::PROSPECT, $lead_status)}}>
-                        <label class="custom-control-label" for="lead_status_no">New Leads Only</label>
-                    </div>
+            {{--<div class="">
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input wire:click="$set('lead_status','')" type="radio" id="lead_status_all" name="lead_status" class="custom-control-input" value="" {{checked('', $lead_status)}}>
+                    <label class="custom-control-label" for="lead_status_all">All Leads</label>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input wire:click="$set('lead_status','{{\App\Models\Lead::PROSPECT}},{{\App\Models\Lead::PAUSE_CONTACTING}}')" type="radio" id="lead_status_no" name="lead_status" class="custom-control-input" value="{{\App\Models\Lead::PROSPECT}}" {{checked(\App\Models\Lead::PROSPECT, $lead_status)}}>
+                    <label class="custom-control-label" for="lead_status_no">New Leads Only</label>
                 </div>
             </div>--}}
-            <div class="card ml-3">
-                <div class="card-body bg-light">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text"><i class="far fa-filter"></i></div>
-                        </div>
-                        <select wire:model="lead_status" id="lead_status"  class="form-control">
-                            <option value="new_unclaimed" >New &amp; Unclaimed</option>
-                            <option value="new_claimed" >New &amp; Claimed</option>
-                            <option value="contacted">Contacted</option>
-                            <option value="not_contacted">Not Contacted</option>
-                            <option value="chase_1">Step 1 of Chase Process</option>
-                            <option value="chase_2">Step 2 of Chase Process</option>
-                            <option value="chase_3">Step 3 of Chase Process</option>
-                            <option value="chase_4">Step 4 of Chase Process</option>
-                            <option value="chase_5">Step 5 of Chase Process</option>
-                            <option value="transferred">Transferred</option>
-                            <option value="archived" >Archived</option>
-                            <option value="all" >All</option>
-                        </select>
+            <div class="ml-0">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text"><i class="far fa-filter"></i></div>
                     </div>
+                    <select wire:model="lead_status" id="lead_status"  class="form-control">
+                        <option value="new_unclaimed" >New &amp; Unclaimed</option>
+                        <option value="new_claimed" >New &amp; Claimed</option>
+                        <option value="contacted">Contacted</option>
+                        <option value="not_contacted">Not Contacted</option>
+                        <option value="chase_1">Step 1 of Chase Process</option>
+                        <option value="chase_2">Step 2 of Chase Process</option>
+                        <option value="chase_3">Step 3 of Chase Process</option>
+                        <option value="chase_4">Step 4 of Chase Process</option>
+                        <option value="chase_5">Step 5 of Chase Process</option>
+                        <option value="transferred">Transferred</option>
+                        <option value="archived" >Archived</option>
+                        <option value="all" >All</option>
+                    </select>
                 </div>
             </div>
-            <div class="card ml-3">
-                <div class="card-body bg-light">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text"><i class="far fa-user"></i></div>
-                        </div>
-                        <select wire:model="selected_adviser" id="selected_adviser" class="form-control">
-                            <option value="" >All</option>
-                            @foreach($advisers as $adviser)
-                                @php $adviser = (object) $adviser; @endphp
-                                <option value="{{$adviser->id}}" >{{$adviser->first_name}} {{$adviser->last_name}}</option>
-                            @endforeach
-                        </select>
+            <div class="ml-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text"><i class="far fa-user"></i></div>
                     </div>
+                    <select wire:model="selected_adviser" id="selected_adviser" class="form-control">
+                        <option value="" >All</option>
+                        @foreach($advisers as $adviser)
+                            @php $adviser = (object) $adviser; @endphp
+                            <option value="{{$adviser->id}}" >{{$adviser->first_name}} {{$adviser->last_name}}</option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
-            <div class="card ml-3">
-                <div class="card-body bg-light">
-                    <input class="form-control" placeholder="Lead Search" wire:model="search_filter" value="{{$search_filter}}" />
-                </div>
+            <div class="ml-3">
+                <input class="form-control" placeholder="Lead Search" wire:model="search_filter" value="{{$search_filter}}" />
             </div>
-            <div class="card ml-3">
-                <div class="card-body bg-light">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text"><i class="far fa-sort-alpha-down"></i></div>
-                        </div>
-                        <select wire:model="sort_order" id="sort_order"  class="form-control">
-                            <option value="recent" {{selected('recent', $sort_order)}}>Recently Updated</option>
-                            <option value="newest_first" {{selected('newest_first', $sort_order)}} {{selected('default', $sort_order)}}>Newest First</option>
-                            <option value="oldest_first" {{selected('oldest_first', $sort_order)}}>Oldest First</option>
-                            <option value="surname_az" {{selected('surname_az', $sort_order)}}>Surname A-Z</option>
-                            <option value="surname_za" {{selected('surname_za', $sort_order)}}>Surname Z-A</option>
-                        </select>
+            <div class="ml-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text"><i class="far fa-sort-alpha-down"></i></div>
                     </div>
+                    <select wire:model="sort_order" id="sort_order"  class="form-control">
+                        <option value="recent" {{selected('recent', $sort_order)}}>Recently Updated</option>
+                        <option value="newest_first" {{selected('newest_first', $sort_order)}} {{selected('default', $sort_order)}}>Newest First</option>
+                        <option value="oldest_first" {{selected('oldest_first', $sort_order)}}>Oldest First</option>
+                        <option value="surname_az" {{selected('surname_az', $sort_order)}}>Surname A-Z</option>
+                        <option value="surname_za" {{selected('surname_za', $sort_order)}}>Surname Z-A</option>
+                    </select>
                 </div>
             </div>
             <div class="ml-auto d-flex align-items-center justify-content-center">
-                <button wire:click="resetFilters" class="btn btn-outline-dark btn-lg">
+                <a href="{{signedRoute('leads.export')}}" target="_blank" class="btn btn-dark mr-2">
+                    <i class="fas fa-download fa-sm"></i> All
+                </a>
+                <button wire:click="export" target="_blank" class="btn btn-dark mr-2">
+                    <i class="fas fa-download fa-sm"></i> List
+                </button>
+                <button wire:click="resetFilters" class="btn btn-outline-dark">
                     <i class="fas fa-times fa-sm"></i> Clear
                 </button>
             </div>
@@ -312,6 +309,7 @@
                                                 <a class="dropdown-item" href="{{route('leads.edit', ['id' => $item->id, 'redirect' => 'leads.manager'])}}">Edit</a>
                                                 <div class="dropdown-divider"></div>
                                                 @foreach(App\Libraries\Interpret::LeadStatus(null,'arr') as $type => $label)
+                                                    @continue(in_array($type,[2,3]))
                                                     <a class="dropdown-item" href="#" wire:click="update_status({{$item->id}},{{$type}})">Mark as "{{$label}}"</a>
                                                 @endforeach
                                             </div>

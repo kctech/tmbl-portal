@@ -5,6 +5,7 @@ namespace App\Libraries;
 use Illuminate\Support\Facades\Blade;
 use App\Jobs\QueueRenderedEmail;
 use App\Libraries\Render;
+use App\Models\EmailTemplate;
 
 class ChaseEmail {
 
@@ -15,7 +16,7 @@ class ChaseEmail {
     //TEAMS GRAPH CREATION ERROR
     public static function createAndSend($prospect, $chaser, $send_email=false)
     {
-
+        $template = EmailTemplate::find($chaser->default_template_id);
         if(!empty($prospect->owner)){
             $adviser = $prospect->owner;
         }else{
@@ -42,15 +43,15 @@ class ChaseEmail {
 
         if($send_email){
             //build email
-            $email['ident'] = $chaser->name;
-            $email['subject'] = $chaser->subject;
-            $email['body'] = Blade::render(Render::merge_data($merge_data_compiled,$chaser->body));
+            $email['ident'] = $template->name;
+            $email['subject'] = $template->subject;
+            $email['body'] = Blade::render(Render::merge_data($merge_data_compiled,$template->body));
             $email['to'] = $prospect->email_address;
             $email['from'] = $adviser->email;
             $email['fromName'] = $adviser->first_name ." ". $adviser->last_name;
             $email['replyTo'] = $adviser->email;
 
-            dispatch(new QueueRenderedEmail($email))->onQueue('lead_chasers');
+            dispatch(new QueueRenderedEmail($email))->onQueue('lead_chase_steps');
         }
 
         return $merge_data_compiled;

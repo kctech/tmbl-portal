@@ -12,7 +12,7 @@ use App\Libraries\ChaseEmail;
 
 use App\Models\Lead;
 use App\Models\LeadEvent;
-use App\Models\LeadChaser;
+use App\Models\LeadChaseStep;
 use App\Models\PortalCache;
 use App\Models\User;
 use Carbon\Carbon;
@@ -67,7 +67,7 @@ class LeadContact extends Component
 
         $this->selected_adviser = User::where('id',session('user_id'))->first()->email;
 
-        $this->contact_schedule = LeadChaser::where('method','email')->where('status',LeadChaser::ACTIVE)->get();
+        $this->contact_schedule = LeadChaseStep::where('method','email')->where('status',LeadChaseStep::ACTIVE)->get();
     }
 
     public function loadData()
@@ -257,7 +257,7 @@ class LeadContact extends Component
     public function contact_progress(){
 
         //next contact step
-        //$next_step = \App\Models\LeadChaser::getNextStep($this->lead->strategy_id, $this->lead->strategy_position_id);
+        //$next_step = \App\Models\LeadChaseStep::getNextStep($this->lead->strategy_id, $this->lead->strategy_position_id);
         $next_step = $this->lead->next_step();
         $this->lead = Lead::where('id',$this->lead_id)->first();
 
@@ -307,7 +307,7 @@ class LeadContact extends Component
     public function contact_progress_silent(){
 
         //next contact step
-        //$next_step = \App\Models\LeadChaser::getNextStep($this->lead->strategy_id, $this->lead->strategy_position_id);
+        //$next_step = \App\Models\LeadChaseStep::getNextStep($this->lead->strategy_id, $this->lead->strategy_position_id);
         $next_step = $this->lead->next_step();
 
         $lead_data = json_decode($this->lead->data);

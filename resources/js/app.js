@@ -36,5 +36,6 @@ window.LazyLoad = require('vanilla-lazyload');
 window.datepicker = require('bootstrap-datepicker');
 window.Swal = window.swal = require('sweetalert2');
 window.accounting = require('accounting-js');
+window.ClassicEditor = require('@ckeditor/ckeditor5-build-classic');
 
 Alpine.start();
