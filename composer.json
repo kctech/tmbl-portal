@@ -16,6 +16,7 @@
         "laravel/tinker": "^2.5",
         "laravel/ui": "^4.0",
         "livewire/livewire": "^2.12",
+        "maatwebsite/excel": "^3.1",
         "socialiteproviders/microsoft-azure": "^5.1"
     },
     "require-dev": {
