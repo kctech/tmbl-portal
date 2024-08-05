@@ -4,21 +4,28 @@ namespace App\Http\Livewire;
 
 use Livewire\Component;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Blade;
+
 use App\Libraries\MABApi;
 use App\Libraries\Azure\GraphConnector;
 use App\Libraries\SSO\AzureProvider;
 use App\Libraries\Azure\OnlineMeeting;
 use App\Libraries\ChaseEmail;
+use App\Libraries\Render;
 
 use App\Models\Lead;
 use App\Models\LeadEvent;
 use App\Models\LeadChaseStep;
 use App\Models\PortalCache;
+use App\Models\EmailTemplate;
 use App\Models\User;
+
+use App\Jobs\QueueRenderedEmail;
+
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class LeadContact extends Component
 {
@@ -35,7 +42,16 @@ class LeadContact extends Component
     public $message_bar = '';
     public $lead_id = null;
     public $lead = null;
+    public $adviser = null;
     public $redirect = null;
+
+    public $show_contact_email = false;
+    public $email_templates = [];
+    public $email_template_search = '';
+    public $email_template_id = null;
+    public $contact_email_modal_step = null;
+    public $contact_email_content = null;
+    public $contact_email_subject = null;
 
     public $show_contact = false;
     public $weeks = 4;
@@ -65,9 +81,23 @@ class LeadContact extends Component
 
         $this->lead_notes = json_decode($this->lead->data)->contact_notes ?? '';
 
-        $this->selected_adviser = User::where('id',session('user_id'))->first()->email;
+        $adviser = User::where('id',session('user_id'))->first();
+        $this->selected_adviser = $adviser->email;
+        $this->adviser = $adviser->toArray();
 
-        $this->contact_schedule = LeadChaseStep::where('method','email')->where('status',LeadChaseStep::ACTIVE)->get();
+        $this->contact_schedule = LeadChaseStep::where('status',LeadChaseStep::ACTIVE)->get();
+        $email_template_ids = [];
+        foreach($this->contact_schedule as $cs){
+            if($cs->id == $this->lead->strategy_position_id){
+                foreach($cs->contact_methods as $cm){
+                    if($cm->method == 'email'){
+                        $email_template_ids[] = $cm->template_ids;
+                    }
+                }
+            }
+        }
+        $email_template_ids = implode(",",$email_template_ids); //may be multiple elements with comma separated ID's, so implode to get a complete string of comma separated ids that can then be exploded
+        $this->email_templates = EmailTemplate::where('status',EmailTemplate::ACTIVE)->whereIn('id',explode(",",$email_template_ids))->get(); //->where('name', 'LIKE', '%Welcome%')
     }
 
     public function loadData()
@@ -79,6 +109,14 @@ class LeadContact extends Component
     {
         session()->put(self::$session_prefix . $prop, $value);
         $this->message_bar = '';
+
+        if($prop == 'template_search'){
+            $this->load_templates();
+        }
+
+        if($prop == 'email_template_id'){
+            $this->set_template($value);
+        }
     }
 
     public function select_slot($date, $hour)
@@ -238,6 +276,112 @@ class LeadContact extends Component
             $this->isLoaded = true;
         }
 
+    }
+
+    public function set_template($template_id){
+        if(!empty($template_id)){
+            $email_template = EmailTemplate::find($template_id);
+            if($email_template){
+                $this->contact_email_subject = $email_template->subject;
+
+                $merge_data = ['prospect'=>json_decode($this->lead->data), 'adviser'=>$this->adviser, 'chaser'=>$email_template->toArray()];
+                $merge_data_compiled = [];
+                foreach($merge_data as $datatype => $values){
+                    foreach($values as $key => $value){
+                        $merge_data_compiled[$datatype.":".$key] = $value;
+                    }
+                }
+                $this->contact_email_content = Blade::render(Render::merge_data($merge_data_compiled,$email_template->body));;
+
+                $this->emit('contact_email_updated');
+                return;
+            }
+        }
+        $this->emit('error', ['message' => "Unable to load email template"]);
+    }
+
+    public function load_templates($clear = ''){
+        if($clear == 'all'){
+            $this->email_templates = EmailTemplate::where('status',EmailTemplate::ACTIVE)->get();
+        }else{
+            $this->email_templates = EmailTemplate::where('status',EmailTemplate::ACTIVE)->where(function($q){ $q->where('name', 'LIKE', '%'.$this->email_template_search.'%')->orWhere('id', 'LIKE', $this->email_template_search);})->get();
+        }
+    }
+
+    public function send_email(){
+
+        if(empty(trim($this->contact_email_content)) || empty(trim($this->contact_email_subject))){
+            $this->emit('error', ['message' => "Cannot send an email without any content or a subject"]);
+        }else{
+            //build email
+            $email['ident'] = "Chaser Email - ". ($this->contact_email_id ?? 'Ad Hoc') ." for ". $this->lead_id ." at step ". $this->contact_email_modal_step;
+            $email['subject'] = $this->contact_email_subject;
+            $email['body'] = $this->contact_email_content;
+            $email['to'] = $this->lead->email_address;
+            $email['from'] = $this->adviser['email'];
+            $email['fromName'] = $this->adviser['first_name'] ." ". $this->adviser['last_name'];
+            $email['replyTo'] = $this->adviser['email'];
+
+            dispatch(new QueueRenderedEmail($email))->onQueue('lead_chase_steps');
+
+            $this->lead->events()->create([
+                'account_id' => $this->lead->account_id,
+                'user_id' => session('user_id'),
+                'event_id' => LeadEvent::MANUAL_CONTACT_ATTEMPTED,
+                'information' => $this->contact_email_modal_step
+            ]);
+
+            $this->emit('success', ['message' => "Email queued"]);
+            $this->close_email_modal();
+            $this->contact_email_subject = null;
+            $this->contact_email_content = null;
+            $this->email_template_id = null;
+
+            return redirect(request()->header('Referer'));
+        }
+    }
+
+    public function save_notes(){
+        $lead_data = json_decode($this->lead->data);
+        $lead_data->contact_notes = $this->lead_notes;
+        $this->lead->data = json_encode($lead_data);
+        $this->lead->save();
+    }
+
+    public function record_email_modal($chase_step_id){
+        $this->contact_email_modal_step = $chase_step_id;
+        $this->show_contact_email = true;
+        $this->emit('show_email_modal', ["message"=>"load modal"]);
+    }
+
+    public function close_email_modal(){
+        $this->contact_email_modal_step = null;
+        $this->show_contact_email = false;
+        $this->emit('close_email_modal', ["message"=>"close modal"]);
+    }
+
+    public function record_call($chase_step_id){
+
+        $lead_data = json_decode($this->lead->data);
+        $lead_data->contact_notes = $this->lead_notes;
+        $this->lead->data = json_encode($lead_data);
+        $this->lead->last_contacted_at = date("Y-m-d H:i:s");
+        //$this->lead->status = Lead::CONTACT_ATTEMPTED;
+        ++$this->lead->contact_count;
+        $this->lead->save();
+        //$this->emit('updated', ['message' => "Lead status updated [" . $this->lead_id . "]"]);
+
+        $this->lead->events()->create([
+            'account_id' => $this->lead->account_id,
+            'user_id' => session('user_id'),
+            'event_id' => LeadEvent::MANUAL_CONTACT_ATTEMPTED,
+            'information' => $chase_step_id
+        ]);
+
+        //$this->skipRender();
+        //session()->flash('alert-success','Marked lead ID '.$this->lead_id.' as contacted');
+        //return $this->redirectRoute($this->redirect);
+        return redirect(request()->header('Referer'));
     }
 
     public function archive(){
