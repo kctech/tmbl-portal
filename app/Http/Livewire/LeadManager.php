@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
 
 use \Maatwebsite\Excel\Excel;
-use App\Exports\LeadsExport;
+use \App\Exports\LeadsExport;
 
 class LeadManager extends Component
 {

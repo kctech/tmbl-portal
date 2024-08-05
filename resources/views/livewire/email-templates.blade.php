@@ -163,6 +163,7 @@
                 <table class="table table-bordered table-striped table-hover text-sm">
                     <thead class="thead-dark text-center">
                         <tr>
+                            <th>ID</th>
                             <th>Name</th>
                             <th>Subject</th>
                             <th>Last Updated</th>
@@ -180,6 +181,7 @@
                         @foreach($list as $item)
 
                             <tr class="">
+                                <td>{{ $item->id }}</td>
                                 <td>{{ $item->name }}</td>
                                 <td>{{ $item->subject }}</td>
                                 <td>

@@ -177,7 +177,7 @@
                                                         class="hover-pointer tip @if(\Carbon\Carbon::parse($lead->created_at)->add($chase_step->chase_duration) <= \Carbon\Carbon::now() && $lead->strategy_position_id == $chaser->id) text-danger text-bold @endif" data-title="mark as complete">
                                                             <i class="fa fa-square"></i>
                                                             {{$chase_step->name}}
-                                                            ({{$chase_step->method}} after {{$chase_step->chase_duration}})
+                                                            ({{$chase_step->method}} within {{$chase_step->chase_duration}})
                                                             @if(\Carbon\Carbon::parse($lead->created_at)->add($chase_step->chase_duration) <= \Carbon\Carbon::now() && $lead->strategy_position_id == $chaser->id)
                                                                 - DUE NOW
                                                             @endif
@@ -225,7 +225,7 @@
             <div class="card-body">
                 <button class="btn btn-sm btn-danger" onclick="confirm('Are you sure you want to archive this lead?') || event.stopImmediatePropagation()" wire:click="archive()">Archive Lead</button>
 
-                <button class="float-right ml-3 btn btn-sm btn-success text-white" wire:click="$set('show_contact',true)">Allocate &amp; Transfer to MAB</button>
+                <button class="float-right ml-3 btn btn-sm btn-success text-white" wire:click="$set('show_contact',true)">Allocate / Transfer to MAB</button>
                 <button class="float-right ml-3 btn btn-sm btn-info text-white" wire:click="show_meeting_contact()">Teams Meeting Organiser</button>
                 {{--
                 <button class="ml-3 btn-sm btn btn-secondary" wire:click="mark_as_contacted()">Mark as contacted, leave at current step</button>
@@ -465,6 +465,7 @@
             <div class="row">
                 <div class="col ml-auto text-right">
                     @if(!empty($selected_adviser))
+                        <button class="ml-3 btn btn-success" wire:click="allocate()">Allocate</button>
                         <button class="ml-3 btn btn-success" wire:click="allocate_and_transfer()">Allocate and Transfer Lead @if(!empty($selected_date) && !empty($selected_time)) (with meeting) @endif</button>
                     @endif
                 </div>
@@ -527,7 +528,8 @@
                 </div>
                 <div class="modal-footer d-flex justify-content-between">
                     <button type="button" class="btn btn-danger" wire:click="close_email_modal()" {{--data-dismiss="modal"--}}>Cancel</button>
-                    <button type="button" class="btn btn-success" id="send_email_btn">Send Email</button>
+                    <button type="button" class="btn btn-dark" wire:click="mark_at_sent_email()">Mark as sent</button>
+                    <button type="button" class="ml-3 btn btn-success" id="send_email_btn">Send Email</button>
                 </div>
             </div>
         </div>

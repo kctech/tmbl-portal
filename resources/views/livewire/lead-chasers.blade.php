@@ -403,8 +403,7 @@
                             <th>Strategy</th>
                             <th>Order</th>
                             <th>Name</th>
-                            <th>Method</th>
-                            <th>Chase Duration</th>
+                            <th>Contact Methods</th>
                             <th>Last Updated</th>
                             <th>Status</th>
                             <th></th>
@@ -423,18 +422,7 @@
                                 <td>{{ $item->strategy->name }}</td>
                                 <td>{{ $item->chase_order }}</td>
                                 <td>{{ $item->name }}</td>
-                                <td>
-                                    @if($item->auto_contact == 0)
-                                        {{ __('Automatic') }}
-                                    @else
-                                        {{ __('Manual') }}
-                                    @endif
-                                    {{ $item->method }}
-                                    @if($item->auto_progress == 0)
-                                        {{ __('then progress') }}
-                                    @endif
-                                </td>
-                                <td>{{ $item->chase_duration }}</td>
+                                <td>{{ $item->contact_methods->count() }}</td>
                                 <td>
                                     {{\Carbon\Carbon::parse($item->updated_at)->format('d/m/Y H:i')}}
                                     <span class="badge badge-primary">{{\Carbon\Carbon::parse($item->updated_at)->diffForHumans()}}</span>

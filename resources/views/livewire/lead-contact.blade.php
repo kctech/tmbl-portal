@@ -177,7 +177,7 @@
                                                         class="hover-pointer tip @if(\Carbon\Carbon::parse($lead->created_at)->add($chase_step->chase_duration) <= \Carbon\Carbon::now() && $lead->strategy_position_id == $chaser->id) text-danger text-bold @endif" data-title="mark as complete">
                                                             <i class="fa fa-square"></i>
                                                             {{$chase_step->name}}
-                                                            ({{$chase_step->method}} after {{$chase_step->chase_duration}})
+                                                            ({{$chase_step->method}} within {{$chase_step->chase_duration}})
                                                             @if(\Carbon\Carbon::parse($lead->created_at)->add($chase_step->chase_duration) <= \Carbon\Carbon::now() && $lead->strategy_position_id == $chaser->id)
                                                                 - DUE NOW
                                                             @endif
@@ -363,7 +363,8 @@
                 </div>
                 <div class="modal-footer d-flex justify-content-between">
                     <button type="button" class="btn btn-danger" wire:click="close_email_modal()" {{--data-dismiss="modal"--}}>Cancel</button>
-                    <button type="button" class="btn btn-success" id="send_email_btn">Send Email</button>
+                    <button type="button" class="btn btn-dark" wire:click="mark_at_sent_email()">Mark as sent</button>
+                    <button type="button" class="ml-3 btn btn-success" id="send_email_btn">Send Email</button>
                 </div>
             </div>
         </div>

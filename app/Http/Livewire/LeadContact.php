@@ -341,6 +341,22 @@ class LeadContact extends Component
         }
     }
 
+    public function mark_at_sent_email(){
+        $this->lead->events()->create([
+            'account_id' => $this->lead->account_id,
+            'user_id' => session('user_id'),
+            'event_id' => LeadEvent::MANUAL_CONTACT_ATTEMPTED,
+            'information' => $this->contact_email_modal_step
+        ]);
+
+        $this->close_email_modal();
+        $this->contact_email_subject = null;
+        $this->contact_email_content = null;
+        $this->email_template_id = null;
+
+        return redirect(request()->header('Referer'));
+    }
+
     public function save_notes(){
         $lead_data = json_decode($this->lead->data);
         $lead_data->contact_notes = $this->lead_notes;
@@ -639,7 +655,7 @@ class LeadContact extends Component
                             //TEAMS
                             $meeting = new OnlineMeeting($adviser->email);
                             $meeting->subject = "Mortgage Appointment: ".$this->lead->full_name();
-                            $meeting->description = "Testing Azure/Teams API credentials";
+                            $meeting->description = "Your mortgage appointment - The Mortgage Broker";
                             $meeting->date = $meeting_date->format("Y-m-d");
                             $meeting->time = $meeting_date->startOfHour()->addHour()->format("H:i");
                             $meeting->duration = 60;

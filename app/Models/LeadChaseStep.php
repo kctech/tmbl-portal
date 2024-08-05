@@ -45,7 +45,7 @@ class LeadChaseStep extends Model
     }
 
     public function contact_methods(){
-        return $this->hasMany(LeadChaseStepContactMethod::class, 'step_id', 'id');
+        return $this->hasMany(LeadChaseStepContactMethod::class, 'step_id', 'id')->orderBy('chase_order','asc');
     }
 
     /**

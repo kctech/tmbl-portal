@@ -200,7 +200,6 @@ class EmailTemplates extends Component
 
     public function save()
     {
-        $chase_duration = $this->time_amount." ".$this->time_unit;
         $validatedData = Validator::make(
             [
                 'account_id' => session('account_id'),
